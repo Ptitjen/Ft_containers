@@ -1,24 +1,56 @@
 #ifndef IS_INTEGRAL_HPP
 #define IS_INTEGRAL_HPP
+#include <iostream>
+#include <type_traits>
+#include <typeinfo>
 
-template <class T> class is_integral;
-// returns true type or false type
+namespace ft {
+template <class T>
+class is_integral : std::false_type {};
 
-// integral type :
-//  bool
-//  char
-//  char16_t
-//  char32_t
-//  wchar_t
-//  signed char
-//  short int
-//  int
-//  long int
-//  long long int
-//  unsigned char
-//  unsigned short int
-//  unsigned int
-//  unsigned long int
-//  unsigned long long int
+template <>
+class is_integral<bool> : public std::true_type {};
+template <>
+class is_integral<char> : public std::true_type {};
+
+template <>
+class is_integral<char16_t> : public std::true_type {};
+
+template <>
+class is_integral<char32_t> : public std::true_type {};
+
+template <>
+class is_integral<wchar_t> : public std::true_type {};
+
+template <>
+class is_integral<signed char> : public std::true_type {};
+
+template <>
+class is_integral<short int> : public std::true_type {};
+
+template <>
+class is_integral<int> : public std::true_type {};
+
+template <>
+class is_integral<long int> : public std::true_type {};
+
+template <>
+class is_integral<long long int> : public std::true_type {};
+
+template <>
+class is_integral<unsigned char> : public std::true_type {};
+
+template <>
+class is_integral<unsigned short int> : public std::true_type {};
+
+template <>
+class is_integral<unsigned int> : public std::true_type {};
+
+template <>
+class is_integral<unsigned long int> : public std::true_type {};
+
+template <>
+class is_integral<unsigned long long int> : public std::true_type {};
+}  // namespace ft
 
 #endif
