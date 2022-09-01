@@ -125,32 +125,36 @@ class vector {
     typedef T& reference;
     typedef T* pointer;
     typedef std::random_access_iterator_tag iterator_category;
-    typedef std::ptrdiff_t difference_type;  // TO DO : check type of difftype
+    typedef long unsigned difference_type;  // ou ptrdiff?
 
     /* Constructors and destructor */
     const_iterator() : ptr_(NULL){};
     const_iterator(pointer ptr) : ptr_(ptr) {}
-    const_iterator(const_iterator const& it);
-    const_iterator& operator=(const_iterator const& it);
+    const_iterator(const_iterator const& it) : ptr_(it.ptr_){};
+    const_iterator& operator=(const_iterator const& it) {  // PB?
+      if (&it == this) return (*this);
+      ptr_ = it.ptr_;
+      return (*this);
+    };
     ~const_iterator(){};
 
     /* incrementation and decrementation */
-    const_iterator operator++() {
+    const_iterator& operator++() {
       ptr_++;
       return *this;
     }
     const_iterator operator++(int i) {
-      const_iterator it = *this;
+      iterator it = *this;
       ptr_++;
       return it;
     }
-    // const_iterator
-    // operator++(const_iterator *it) { // CHECK function template => *a++
+
+    // pointer operator++() { // TO CHECK => *a++
     //   *ptr_++;
     //   return *this;
     // }
 
-    const_iterator operator--() {
+    const_iterator& operator--() {
       ptr_--;
       return *this;
     }
@@ -159,8 +163,7 @@ class vector {
       ptr_--;
       return it;
     }
-    // const_iterator
-    // operator--(const_iterator *it) { // CHECK function template => *a--
+    // iterator operator--(iterator *it) { // BAD => *a--
     //   *ptr_--;
     //   return *this;
     // }
@@ -171,41 +174,35 @@ class vector {
 
     /* add and substract */
     const_iterator operator+(difference_type n) const {
-      const_iterator it = *this;
+      iterator it = *this;
       it.ptr_ = ptr_ + n;
       return it;
     };
     const_iterator operator+(const_iterator it) const {
-      const_iterator itcpy = *this;
+      iterator itcpy = *this;
       itcpy.ptr_ = ptr_ + it.ptr_;
       return itcpy;
     };
-
     const_iterator operator-(difference_type n) const {
-      const_iterator it = *this;
+      iterator it = *this;
       it.ptr_ = ptr_ - n;
       return it;
     };
-    const_iterator operator-(const_iterator it) const {
-      const_iterator itcpy = *this;
-      itcpy.ptr_ = ptr_ - it.ptr_;
-      return itcpy;
+    difference_type operator-(const_iterator it) const {
+      return ptr_ - it.ptr_;
     };
 
-    const_iterator operator+=(difference_type n) {
+    const_iterator& operator+=(difference_type n) {
       ptr_ += n;
       return *this;
     };
-    const_iterator operator-=(difference_type n) {
+    const_iterator& operator-=(difference_type n) {
       ptr_ -= n;
       return *this;
     };
-
     /* ref */
     reference operator[](difference_type n) const {
-      {
-        return ptr_[n];  //???
-      };
+      return ptr_ + n;  //???
     };
 
     /* comparison */

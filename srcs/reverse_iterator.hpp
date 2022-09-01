@@ -25,7 +25,7 @@ class reverse_iterator {
 
   Iterator base() const {
     Iterator it;
-    it = current + 1;  // access to next element??
+    it = current + 1;
     return it;
   };  // verify - returns pointer to adjacent (next)element
 
@@ -100,7 +100,6 @@ class reverse_iterator {
 /* ***************** const reverse operator **************** */
 template <class Iterator>
 class const_reverse_iterator {
- public:
   typedef Iterator iterator_type;
   typedef typename Iterator::difference_type difference_type;
   typedef typename Iterator::reference reference;
@@ -109,8 +108,7 @@ class const_reverse_iterator {
   explicit const_reverse_iterator(Iterator x) : current(x){};
 
   template <class U>
-  const_reverse_iterator(const const_reverse_iterator<U> &u)
-      : current(u.current){};
+  const_reverse_iterator(const reverse_iterator<U> &u) : current(u.current){};
   const_reverse_iterator &operator=(const_reverse_iterator const &it) {  // PB?
     if (&it == this) return (*this);
     ptr_(it.ptr_);
@@ -132,7 +130,7 @@ class const_reverse_iterator {
   };
 
   const_reverse_iterator operator++(int i) {
-    Iterator it = *this;
+    const_reverse_iterator it = *this;
     current--;
     return it;
   };
@@ -143,14 +141,14 @@ class const_reverse_iterator {
   };
 
   const_reverse_iterator operator--(int i) {
-    Iterator it = *this;
+    const_reverse_iterator it = *this;
     current++;
     return it;
   };
 
   const_reverse_iterator operator+(difference_type n) const {
-    Iterator it = *this;
-    it.ptr_ = current - n;
+    const_reverse_iterator it = *this;
+    it.current = current - n;
     return it;
   };
 
@@ -160,8 +158,8 @@ class const_reverse_iterator {
   };
 
   const_reverse_iterator operator-(difference_type n) const {
-    Iterator it = *this;
-    it.ptr_ = current + n;
+    const_reverse_iterator it = *this;
+    it.current = current + n;
     return it;
   };
 
@@ -172,58 +170,27 @@ class const_reverse_iterator {
 
   reference operator[](difference_type n) const { return current - n; };  //???
 
+  bool operator==(const const_reverse_iterator &rhs) {
+    return current == rhs.current;
+  }
+  bool operator!=(const const_reverse_iterator &rhs) {
+    return current != rhs.current;
+  }
+  bool operator<(const const_reverse_iterator &rhs) {
+    return current > rhs.current;
+  }
+  bool operator>(const const_reverse_iterator &rhs) {
+    return current < rhs.current;
+  }
+  bool operator<=(const const_reverse_iterator &rhs) {
+    return current >= rhs.current;
+  }
+  bool operator>=(const const_reverse_iterator &rhs) {
+    return current <= rhs.current;
+  }
+
  protected:
   Iterator current;
-};
-
-template <class Iterator>
-bool operator==(const const_reverse_iterator<Iterator> &x,
-                const const_reverse_iterator<Iterator> &y) {
-  return x == y;
-};
-
-template <class Iterator>
-bool operator<(const const_reverse_iterator<Iterator> &x,
-               const const_reverse_iterator<Iterator> &y) {
-  return x < y;
-};  // TODO :verify if inversion or not
-
-template <class Iterator>
-bool operator!=(const const_reverse_iterator<Iterator> &x,
-                const const_reverse_iterator<Iterator> &y) {
-  return x != y;
-};
-
-template <class Iterator>
-bool operator>(const const_reverse_iterator<Iterator> &x,
-               const const_reverse_iterator<Iterator> &y) {
-  return x > y;
-};
-
-template <class Iterator>
-bool operator>=(const const_reverse_iterator<Iterator> &x,
-                const const_reverse_iterator<Iterator> &y) {
-  return x >= y;
-};
-
-template <class Iterator>
-bool operator<=(const const_reverse_iterator<Iterator> &x,
-                const const_reverse_iterator<Iterator> &y) {
-  return x <= y;
-};
-
-template <class Iterator>
-typename const_reverse_iterator<Iterator>::difference_type operator-(
-    const const_reverse_iterator<Iterator> &x,
-    const const_reverse_iterator<Iterator> &y) {
-  return x - y;
-};
-
-template <class Iterator>
-const_reverse_iterator<Iterator> operator+(
-    typename const_reverse_iterator<Iterator>::difference_type n,
-    const const_reverse_iterator<Iterator> &x) {
-  return x + n;
 };
 }  // namespace ft
 #endif
