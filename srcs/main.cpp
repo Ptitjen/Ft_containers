@@ -92,6 +92,7 @@ int main(void) {
     }
 
     std::cout << BOLDCYAN "Begin : " END << *v.begin() << std::endl;
+
     /* Reverse iterator : not working */
     // std::cout << BOLDCYAN "Rbegin : " END << *v.rbegin() << std::endl;
     // std::cout << BOLDCYAN "Rend : " END << *v.rend() << std::endl;
@@ -113,17 +114,28 @@ int main(void) {
     v.resize(8);
     print_int_ftvector(v);
 
+    std::cout << "Iterator + : v.begin() + 2 : " << *(v.begin() + 2)
+              << std::endl;
+    std::cout << "Iterator - : v.end() - 2 : " << *(v.end() - 2) << std::endl;
+
+    // for (int i = 0; i < v.size(); i++) {
+    //   std::cout << &v[i] << std::endl;
+    //   std::cout << v.begin().ptr_ + i << std::endl;
+    // }  // ok right adress
+
     std::cout << BOLDCYAN "Insert :" END << std::endl;
 
     std::cout << "Insert one value 42 at begin: " << std::endl;
-    v.insert(v.begin(), 42);
+    // std::cout << v.begin().ptr_ << std::endl;
+    std::cout << RED << *(v.insert(v.begin(), 42)) << END << std::endl;
     print_int_ftvector(v);
 
     std::cout << "Insert one value 42 at position 2: " << std::endl;
-    v.insert(v.begin() + 2, 42);
+    std::cout << RED << *(v.insert(v.begin() + 2, 42)) << END << std::endl;
     print_int_ftvector(v);
 
-    std::cout << "Insert multiple value 42 42 42 42: " << std::endl;
+    std::cout << "Insert multiple value 42 42 42 42 at position 7 : "
+              << std::endl;
     v.insert(v.begin() + 7, 4, 42);
     print_int_ftvector(v);
 
@@ -136,19 +148,21 @@ int main(void) {
 
     std::cout << BOLDCYAN "Erase" END << std::endl;
     std::cout << CYAN "Erase position 2 : " END << std::endl;
-    v.erase(&v[2]);
+    std::cout << RED << *(v.erase(v.begin() + 2)) << END << std::endl;
     print_int_ftvector(v);
 
     std::cout << CYAN "Erase begin : " END << std::endl;
-    v.erase(v.begin());
+    std::cout << RED << *(v.erase(v.begin())) << END << std::endl;
     print_int_ftvector(v);
 
     std::cout << CYAN "Erase from 2 to 5 (excluding 5): " END << std::endl;
-    v.erase(v.begin() + 2, v.begin() + 5);
+    std::cout << RED << *(v.erase(v.begin() + 2, v.begin() + 5)) << END
+              << std::endl;
     print_int_ftvector(v);
 
     std::cout << CYAN "Erase from 5 to 9 (excluding 9): " END << std::endl;
-    v.erase(v.begin() + 5, v.begin() + 9);
+    std::cout << RED << *(v.erase(v.begin() + 5, v.begin() + 9)) << END
+              << std::endl;
     print_int_ftvector(v);
 
     std::cout << "Adress of v : " << &v << std::endl;
