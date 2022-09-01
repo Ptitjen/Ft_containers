@@ -80,6 +80,8 @@ int main(void) {
     std::cout << CYAN "Back : " END << v.back() << std::endl;
     std::cout << BOLDCYAN "Pop back" END << std::endl;
     v.pop_back();
+    print_int_ftvector(v);
+
     std::cout << CYAN "Back : " END << v.back() << std::endl;
     std::cout << CYAN "Front : " END << v.front() << std::endl;
 
@@ -92,10 +94,6 @@ int main(void) {
     }
 
     std::cout << BOLDCYAN "Begin : " END << *v.begin() << std::endl;
-
-    /* Reverse iterator : not working */
-    // std::cout << BOLDCYAN "Rbegin : " END << *v.rbegin() << std::endl;
-    // std::cout << BOLDCYAN "Rend : " END << *v.rend() << std::endl;
 
     std::cout << BOLDCYAN "Resize 15 with 1: " END << std::endl;
     v.resize(15, 1);
@@ -118,20 +116,16 @@ int main(void) {
               << std::endl;
     std::cout << "Iterator - : v.end() - 2 : " << *(v.end() - 2) << std::endl;
 
-    // for (int i = 0; i < v.size(); i++) {
-    //   std::cout << &v[i] << std::endl;
-    //   std::cout << v.begin().ptr_ + i << std::endl;
-    // }  // ok right adress
-
     std::cout << BOLDCYAN "Insert :" END << std::endl;
 
     std::cout << "Insert one value 42 at begin: " << std::endl;
-    // std::cout << v.begin().ptr_ << std::endl;
-    std::cout << RED << *(v.insert(v.begin(), 42)) << END << std::endl;
+    std::cout << "Return value : " RED << *(v.insert(v.begin(), 42)) << END
+              << std::endl;
     print_int_ftvector(v);
 
     std::cout << "Insert one value 42 at position 2: " << std::endl;
-    std::cout << RED << *(v.insert(v.begin() + 2, 42)) << END << std::endl;
+    std::cout << "Return value : " RED << *(v.insert(v.begin() + 2, 42)) << END
+              << std::endl;
     print_int_ftvector(v);
 
     std::cout << "Insert multiple value 42 42 42 42 at position 7 : "
@@ -148,21 +142,23 @@ int main(void) {
 
     std::cout << BOLDCYAN "Erase" END << std::endl;
     std::cout << CYAN "Erase position 2 : " END << std::endl;
-    std::cout << RED << *(v.erase(v.begin() + 2)) << END << std::endl;
+    std::cout << "Return value : " RED << *(v.erase(v.begin() + 2)) << END
+              << std::endl;
     print_int_ftvector(v);
 
     std::cout << CYAN "Erase begin : " END << std::endl;
-    std::cout << RED << *(v.erase(v.begin())) << END << std::endl;
+    std::cout << "Return value : " RED << *(v.erase(v.begin())) << END
+              << std::endl;
     print_int_ftvector(v);
 
     std::cout << CYAN "Erase from 2 to 5 (excluding 5): " END << std::endl;
-    std::cout << RED << *(v.erase(v.begin() + 2, v.begin() + 5)) << END
-              << std::endl;
+    std::cout << "Return value : " RED
+              << *(v.erase(v.begin() + 2, v.begin() + 5)) << END << std::endl;
     print_int_ftvector(v);
 
     std::cout << CYAN "Erase from 5 to 9 (excluding 9): " END << std::endl;
-    std::cout << RED << *(v.erase(v.begin() + 5, v.begin() + 9)) << END
-              << std::endl;
+    std::cout << "Return value : " RED
+              << *(v.erase(v.begin() + 5, v.begin() + 9)) << END << std::endl;
     print_int_ftvector(v);
 
     std::cout << "Adress of v : " << &v << std::endl;
@@ -181,6 +177,68 @@ int main(void) {
     print_int_ftvector(v);
     std::cout << "Empty ? " << (v.empty() ? "True" : "False") << std::endl;
 
+    ft::vector<int> to_assign;
+
+    to_assign.push_back(5);
+    to_assign.push_back(4);
+    to_assign.push_back(3);
+    to_assign.push_back(2);
+    to_assign.push_back(1);
+
+    std::cout << BOLDCYAN "Assign on empty vector: " END << std::endl;
+    std::cout << "on empty vector with other vector 5 4 3 2 1 (5 values): "
+              << std::endl;
+    v.assign(to_assign.begin(), to_assign.begin() + 5);
+    print_int_ftvector(v);
+
+    std::cout << "on not empty vector with other vector 5 4 3 2 1 (2 values): "
+              << std::endl;
+    v.assign(to_assign.begin(), to_assign.begin() + 2);
+    print_int_ftvector(v);
+
+    std::cout << "on not empty vector with value 42 (5 values): " << std::endl;
+    v.assign(5, 42);
+    print_int_ftvector(v);
+
+    std::cout << BOLDCYAN "Reverse iterator" END << std::endl;
+    ft::vector<int> myvector;  // 5 default-constructed ints
+    myvector.push_back(1);
+    myvector.push_back(2);
+    myvector.push_back(3);
+    myvector.push_back(4);
+    myvector.push_back(5);
+    std::cout << "My vector : " << std::endl;
+    print_int_ftvector(myvector);
+
+    std::cout << "Printing vector with iterator : " << std::endl;
+    for (ft::vector<int>::iterator it = myvector.begin(); it != myvector.end();
+         ++it) {
+      std::cout << *it << std::endl;
+    }  // ok
+
+    std::cout << "Reverse printing vector with iterator : " << std::endl;
+    for (ft::vector<int>::iterator it = myvector.end(); it != myvector.begin();
+         --it) {
+      std::cout << *(it - 1) << std::endl;
+    }  // ok
+
+    std::cout << "Printing vector with reverse iterator : " << std::endl;
+    std::cout << "End adress : " << &*(myvector.end()) << std::endl;
+    std::cout << "Rbegin adress : " << &*(myvector.rbegin()) << std::endl;
+    for (ft::vector<int>::reverse_iterator it = myvector.rend();
+         it != myvector.rbegin(); --it) {
+      std::cout << *(it - 1) << std::endl;
+    }
+    std::cout << "Reverse printing vector with reverse iterator : "
+              << std::endl;
+    for (ft::vector<int>::reverse_iterator it = myvector.rbegin();
+         it != myvector.rend(); ++it) {
+      std::cout << *it << std::endl;
+    }
+
+    /* ***************** HERE ****************** */
+
+    // std::cout << std::endl;
     // /* Operateur d'affectation */
     // ft::vector<int> cpy;
     // cpy = v;
@@ -188,70 +246,64 @@ int main(void) {
     // print_int_ftvector(cpy);
     // cpy[0] = 100;
     // print_int_ftvector(cpy);
-    // std::cout << "Verifying original : "<< std::endl;
+    // std::cout << "Verifying original : " << std::endl;
     // print_int_ftvector(v);
+    // std::cout << std::endl;
 
     // /* Constructeur de recopie */
     // std::cout << BOLDCYAN "Copy constructor : " END << std::endl;
-    // ft::vector<int> cpy2 (v);
+    // ft::vector<int> cpy2(v);
     // print_int_ftvector(cpy2);
     // cpy2[0] = 200;
     // print_int_ftvector(cpy2);
-    // std::cout << "Verifying original : "<< std::endl;
-    // /* verifying original */
+    // std::cout << "Verifying original : " << std::endl;
     // print_int_ftvector(v);
-  }  // OK
+  }
 
-  {
-    // ft::vector<int> v = ft::vector<int>(4);
-    // std::cout << v[0] << std::endl;
-    // std::cout << v[3] << std::endl;
-    // std::cout << v[4] << std::endl;
-    // v[0] = 1;
-    // std::cout << v[0] << std::endl;
-    // std::cout << v.size() << std::endl;
-    // std::cout << v.max_size() << std::endl;
-    // std::cout << v.capacity() << std::endl;
+  //   /***** Constructor vector(nb elem) *****/
+  //   {
+  //     std::cout << BOLDCYAN "Vector of 4 int without value : " END <<
+  //     std::endl; ft::vector<int> v = ft::vector<int>(4);
+  //     print_int_ftvector(v);
+  //     v[0] = 1;
+  //     print_int_ftvector(v);
+  //   }
 
-    //} /* Constructor vector(nb elem, value) */
-    // {
-    //   unsigned int i = 42;
-    //   ft::vector<unsigned int> v = ft::vector<unsigned int>(10, i);
-    //   std::cout << v.size() << std::endl;
-    //   std::cout << v.max_size() << std::endl;
-    //   std::cout << v.capacity() << std::endl;
-    //   print_unsignedint_ftvector(v);
-    // }  // works
-    // {  // TO DO :check
-    //   int i = 42;
-    //   ft::vector<int> v = ft::vector<int>(10, i);
-    //   std::cout << v.size() << std::endl;
-    //   std::cout << v.max_size() << std::endl;
-    //   std::cout << v.capacity() << std::endl;
-    //   print_int_ftvector(v);
-    // }
-    // {  // TO DO :check
-    //   long int i = 42;
-    //   ft::vector<long int> v = ft::vector<long int>(10, i);
-    //   std::cout << v.size() << std::endl;
-    //   std::cout << v.max_size() << std::endl;
-    //   std::cout << v.capacity() << std::endl;
-    //   print_longint_ftvector(v);
-    // }
-    // {
-    //   ft::vector<std::string> v = ft::vector<std::string>(10, "bla");
-    //   std::cout << v.size() << std::endl;
-    //   std::cout << v.max_size() << std::endl;
-    //   std::cout << v.capacity() << std::endl;
-    //   print_str_ftvector(v);
-  }  // works
-  // /*Iterator constructor */
-  // {
-  //   ft::vector<int> v = ft::vector<int>(3, 1);
-  //   ft::vector<int> my_v(v.begin(), v.end());
+  //   /***** Constructor vector(nb elem, value) *****/
+  //   {
+  //     std::cout << BOLDCYAN "Vector of 10 unsigned int with value 42 : " END
+  //               << std::endl;
+  //     unsigned int i = 42;
+  //     ft::vector<unsigned int> v = ft::vector<unsigned int>(10, i);
+  //     std::cout << v.size() << std::endl;
+  //     std::cout << v.max_size() << std::endl;
+  //     std::cout << v.capacity() << std::endl;
+  //     print_unsignedint_ftvector(v);
+  //   }
+  //   {
+  //     std::cout << BOLDCYAN "Vector of 10 int with value 42 : " END <<
+  //     std::endl; int i = 42; ft::vector<int> v = ft::vector<int>(10, i);
+  //     print_int_ftvector(v);
+  //   }
+  //   {
+  //     std::cout << BOLDCYAN "Vector of 10 string with value bla : " END
+  //               << std::endl;
+  //     ft::vector<std::string> v = ft::vector<std::string>(10, "bla");
+  //     print_str_ftvector(v);
+  //   }
+
+  //   /*****Iterator constructor *****/
+  //   {
+  //     std::cout << BOLDCYAN "Constructor using iterators :" END << std::endl;
+
+  //     ft::vector<int> v = ft::vector<int>(3, 1);
+  //     ft::vector<int> my_v(v.begin(), v.end());
+  //     print_int_ftvector(v);
+  //     print_int_ftvector(my_v);
+  //     my_v[0] = 42;
+  //     print_int_ftvector(v);
+  //     print_int_ftvector(my_v);
+  //   }
   // }
 }
-
 #endif
-
-// std::uninitialized fill pour reallocation

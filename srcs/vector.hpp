@@ -33,7 +33,7 @@ class vector {
     iterator(iterator const& it) : ptr_(it.ptr_){};
     iterator& operator=(iterator const& it) {  // PB?
       if (&it == this) return (*this);
-      ptr_(it.ptr_);
+      ptr_ = it.ptr_;
       return (*this);
     };
     ~iterator(){};
@@ -98,8 +98,9 @@ class vector {
       ptr_ -= n;
       return *this;
     };
-    /* ref */ reference operator[](difference_type n) const {
-      return ptr_[n];  //???
+    /* ref */
+    reference operator[](difference_type n) const {
+      return ptr_ + n;  //???
     };
 
     /* comparison */
@@ -112,7 +113,7 @@ class vector {
     bool operator<=(const iterator& rhs) { return ptr_ <= rhs.ptr_; }
     bool operator>=(const iterator& rhs) { return ptr_ >= rhs.ptr_; }
 
-    //  private: //TODO : reput private when OK
+   private:
     pointer ptr_;
   };
 
@@ -238,7 +239,6 @@ class vector {
 
   // 23.2.4.1 construct/copy/destroy:
   explicit vector(const Allocator& = Allocator()) {
-    // std::allocator<T> a;
     _array = a.allocate(1);
     _size = 0;
     _capacity = 0;
@@ -247,17 +247,11 @@ class vector {
 
   explicit vector(size_type n, const T& value = T(),
                   const Allocator& = Allocator()) {
-    // std::allocator<T> a;
     _array = a.allocate(n + 1);
     std::uninitialized_fill(_array, _array + n, value);
     _size = n;
     _capacity = n;
     _max_size = 4611686018427387903;
-    // for (size_type i = 0; i < n; i++) {
-    //   // _array[i] = a.construct(_array[i], value);
-    //   _array[i] = value;
-    //   // replace with construct ?
-    // }
   };  // OK - test with uninitialized fill
 
   template <typename InputIterator>
@@ -265,7 +259,6 @@ class vector {
          typename std::enable_if<!std::is_integral<InputIterator>::value,
                                  InputIterator>::type last,
          const Allocator& = Allocator()) {
-    // std::allocator<T> a;
     size_type to_insert = 0;
     for (iterator it = first; it != last; it++) to_insert++;
     a.allocate(to_insert + 1);
@@ -280,7 +273,6 @@ class vector {
   }
 
   vector(const vector<T, Allocator>& x) {
-    // std::allocator<T> a;
     _max_size = x._max_size;
     _size = x._size;
     _capacity = x._capacity;
@@ -288,13 +280,14 @@ class vector {
     for (size_type i = 0; i < _size; i++) _array[i] = x._array[i];
   };  // OK
 
-  ~vector(){
-      // deallocate ?
+  ~vector() {
+    for (size_type i = 0; i < _capacity; i++) {  //_Capacity or size?
+      a.destroy(_array + i);
+    }
   };
 
   vector<T, Allocator>& operator=(const vector<T, Allocator>& x) {
     if (&x == this) return (*this);
-    // std::allocator<T> a;
     _max_size = x._max_size;
     _size = x._size;
     _capacity = x._capacity;
@@ -304,16 +297,18 @@ class vector {
   };  // OK
 
   template <class InputIterator>
-  void assign(InputIterator first, InputIterator last) {
+  void assign(InputIterator first,
+              typename std::enable_if<!std::is_integral<InputIterator>::value,
+                                      InputIterator>::type last) {
     clear();
-    insert(first, last);
+    insert(begin(), first, last);
   };
   void assign(size_type n, const T& u) {
     clear();
-    insert(n, u);
+    insert(begin(), n, u);
   };
 
-  allocator_type get_allocator() const { return Allocator(); };  //???
+  allocator_type get_allocator() const { return a; };
 
   // iterators: OK
   iterator begin() { return _array; };
@@ -328,21 +323,25 @@ class vector {
   };
 
   // reverse iterator :
-  /* NOT OK */
-  reverse_iterator rbegin() { return &(_array[_size - 1]); };
+  /* /!\ NOT OK */
+  reverse_iterator rbegin() {
+    reverse_iterator it(_array + _size - 1);
+    return it;  // seems ok
+  };
   const_reverse_iterator rbegin() const {
-    const iterator& it = &_array[_size - 1];
+    const reverse_iterator& it(_array + _size - 1);
     return it;
   };
-  reverse_iterator rend() { return &(_array[0]) - 1; };
+  reverse_iterator rend() {
+    reverse_iterator it(_array - 1);
+    return it;  // probably false
+  };
   const_reverse_iterator rend() const {
-    const iterator& it = &_array[0] - 1;
-    return it;
+    const reverse_iterator& it(_array - 1);
+    return it;  // probably false
   };
 
   // TODO +++++ : save array before reallocation in case of fail to restore it
-  // TODO : try catch for each allocation - catch badalloc
-  // TODO : use destroy to destroy elements...
 
   //  23.2.4.2 capacity:
   size_type size() const { return _size; };          // ok
@@ -351,8 +350,7 @@ class vector {
   void resize(size_type n, T c = T()) {
     if (n < _size) {
       for (size_type i = n; i < _size; i++) {
-        _array[i].~T();
-        // dealloc
+        a.destroy(_array + i);
       }
       _size = n;
       _capacity = n;
@@ -366,7 +364,7 @@ class vector {
     for (size_type i = save_size; i < _size; i++) {
       _array[i] = c;
     }
-  };  // ok - TO TEST WITH VALUES
+  };  // ok
 
   size_type capacity() const { return _capacity; };  // ok
   bool empty() const { return _size == 0; };         // ok
@@ -433,16 +431,27 @@ class vector {
     _array[_size] = x;
     _size++;
   };
+
   void pop_back() {
     if (_size > 0) {
-      _array[_size - 1].~T();
+      a.destroy(_array + _size - 1);
       _size--;
     }
   };  // ok
 
   iterator insert(iterator position, const T& x) {
     if (_size == _max_size) return NULL;  // ?
+    if (_size == 0) {
+      try {
+        realloc(1);
 
+      } catch (std::bad_alloc& e) {
+        return _array;
+      }
+      _array[0] = x;
+      _size = 1;
+      return _array;
+    }
     size_type ins = 0;
     for (iterator it = _array; it != position; it++) {
       ins++;
@@ -452,7 +461,7 @@ class vector {
         realloc(_capacity + 1);
       }
     } catch (std::bad_alloc& e) {
-      return NULL;
+      return _array;
     }
     for (size_type i = _size; i > ins; i--) _array[i] = _array[i - 1];
     _size++;
@@ -462,6 +471,14 @@ class vector {
 
   void insert(iterator position, size_type n, const T& x) {
     if (_size + n >= _max_size) return;  // ?
+    if (_size == 0) {
+      realloc(n);
+      for (size_type i = 0; i < n; i++) {
+        _array[i] = x;
+      }
+      _size = n;
+      return;
+    }
     size_type ins = 0;
     for (iterator it = _array; it != position; it++) {
       ins++;
@@ -483,8 +500,19 @@ class vector {
               typename std::enable_if<!std::is_integral<InputIterator>::value,
                                       InputIterator>::type last) {
     size_type to_insert = 0;
+
     for (iterator it = first; it != last; it++) to_insert++;
     size_type ins = 0;
+    if (_size == 0) {
+      realloc(to_insert);
+      for (size_type i = 0; i < to_insert; i++) {
+        _array[i] = *first;
+        first++;
+      }
+      _size = to_insert;
+      return;
+    }
+
     for (iterator it = _array; it != position; it++) {
       ins++;
     };
@@ -547,7 +575,7 @@ class vector {
 
   void clear() {
     for (size_type i = 0; i < _size; i++) {
-      _array[i].~T();  // dealloc
+      a.destroy(_array + i);
     }
     _size = 0;
     _capacity = 0;
@@ -561,7 +589,6 @@ class vector {
   std::allocator<T> a;
 
   void realloc(size_type n) {
-    // std::allocator<T> a;
     T* tmp = a.allocate(n + 1);
     std::uninitialized_fill(tmp, tmp + n, T());
     for (size_type i = 0; i < _size; i++) {
@@ -570,7 +597,7 @@ class vector {
     _array = tmp;
     _capacity = n;
 
-    // destroy and deallocate tmp ?
+    // destroy and deallocate previous ?
   };
 };
 
