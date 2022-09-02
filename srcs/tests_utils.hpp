@@ -36,7 +36,7 @@ void printDiffVector(ft::vector<T> my_v, std::vector<T> v) {
   }
   if (success)
     for (unsigned long long int i = 0; i < my_v.size(); i++) {
-      if (my_v[i] != v[i]) {
+      if (!(my_v[i] == v[i])) {
         std::cout << BOLDRED "Diff KO - content " END;
         std::cout << " - Error at [" << i << "]";
         success = false;
@@ -67,7 +67,7 @@ class bli {
   bli() : int_(1), char_('a'), string_("bla") {}
   bli(const int& i, const char& c, const std::string& s)  // NOLINT
       : int_(i), char_(c), string_(s) {}
-  ~bli();
+  ~bli(){};
   int int_;
   char char_;
   std::string string_;
@@ -76,18 +76,6 @@ class bli {
 bool operator==(const bli& x, const bli& y);
 void print_Ftbli(ft::vector<bli> v);
 
-// void print_Ftbli(ft::vector<bli> v) {
-//   for (unsigned long i = 0; i < v.size(); i++) {
-//     std::cout << v[i].int_ << " " << v[i].char_ << " " << v[i].string_
-//               << (i != v.size() - 1 ? " - " : "");
-//   }
-//   std::cout << std::endl;
-// }
-
-// bool operator==(const bli& x, const bli& y) {
-//   return ((x.int_ == y.int_) && (x.char_ == y.char_) &&
-//           (x.string_ == y.string_));
-// }
 #endif
 
 // TODO : write specializations for bli classes // enable if is integral
