@@ -835,7 +835,104 @@ int main(void) {
   }
 
   /* ***************** NON MEMBER FUNCTIONS ****************** */
+  {
+    std::cout << std::endl
+              << std::endl
+              << BOLDBLUE "Comparison operators : " END << std::endl;
+    ft::vector<int> my_v1;
+    my_v1.push_back(1);
+    my_v1.push_back(2);
+    my_v1.push_back(3);
+    my_v1.push_back(4);
+    my_v1.push_back(5);
 
+    std::vector<int> v1;
+    v1.push_back(1);
+    v1.push_back(2);
+    v1.push_back(3);
+    v1.push_back(4);
+    v1.push_back(5);
+
+    ft::vector<int> my_v2;
+    my_v2.push_back(1);
+    my_v2.push_back(2);
+    my_v2.push_back(3);
+
+    std::vector<int> v2;
+    v2.push_back(1);
+    v2.push_back(2);
+    v2.push_back(3);
+
+    ft::vector<int> my_v3;
+    my_v3.push_back(2);
+    my_v3.push_back(3);
+    my_v3.push_back(3);
+
+    std::vector<int> v3;
+    v3.push_back(1);
+    v3.push_back(2);
+    v3.push_back(3);
+
+    if ((my_v1 == my_v2) == (v1 == v2))
+      std::cout << BOLDGREEN "OK " END;
+    else
+      std::cout << BOLDRED "KO " END;
+
+    if ((my_v1 == my_v3) == (v1 == v3))
+      std::cout << BOLDGREEN "OK " END;
+    else
+      std::cout << BOLDRED "KO " END;
+
+    if ((my_v1 < my_v2) == (v1 < v2))
+      std::cout << BOLDGREEN "OK " END;
+    else
+      std::cout << BOLDRED "KO " END;
+
+    if ((my_v1 < my_v3) == (v1 < v3))
+      std::cout << BOLDGREEN "OK " END;
+    else
+      std::cout << BOLDRED "KO " END;
+
+    if ((my_v1 != my_v2) == (v1 != v2))
+      std::cout << BOLDGREEN "OK " END;
+    else
+      std::cout << BOLDRED "KO " END;
+
+    if ((my_v1 != my_v3) == (v1 != v3))
+      std::cout << BOLDGREEN "OK " END;
+    else
+      std::cout << BOLDRED "KO " END;
+
+    if ((my_v1 > my_v2) == (v1 > v2))
+      std::cout << BOLDGREEN "OK " END;
+    else
+      std::cout << BOLDRED "KO " END;
+
+    if ((my_v1 > my_v3) == (v1 > v3))
+      std::cout << BOLDGREEN "OK " END;
+    else
+      std::cout << BOLDRED "KO " END;
+
+    if ((my_v1 >= my_v2) == (v1 >= v2))
+      std::cout << BOLDGREEN "OK " END;
+    else
+      std::cout << BOLDRED "KO " END;
+
+    if ((my_v1 >= my_v3) == (v1 >= v3))
+      std::cout << BOLDGREEN "OK " END;
+    else
+      std::cout << BOLDRED "KO " END;
+
+    if ((my_v1 <= my_v2) == (v1 <= v2))
+      std::cout << BOLDGREEN "OK " END;
+    else
+      std::cout << BOLDRED "KO " END;
+
+    if ((my_v1 <= my_v3) == (v1 <= v3))
+      std::cout << BOLDGREEN "OK " END;
+    else
+      std::cout << BOLDRED "KO " END;
+  }
   //
   //   {
   //     std::cout << BOLDCYAN "Comparison operators : non member functions"
