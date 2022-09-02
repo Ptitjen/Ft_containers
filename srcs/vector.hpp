@@ -3,6 +3,7 @@
 
 #include <exception>
 #include <iterator>
+#include <limits>
 #include <memory>
 #include <new>
 #include <stdexcept>
@@ -27,13 +28,13 @@ class vector {
     typedef T& reference;
     typedef T* pointer;
     typedef std::random_access_iterator_tag iterator_category;
-    typedef long unsigned difference_type;  // ou ptrdiff?
+    typedef long long unsigned difference_type;
 
     /* Constructors and destructor */
     iterator() : ptr_(NULL){};
     iterator(pointer ptr) : ptr_(ptr) {}
     iterator(iterator const& it) : ptr_(it.ptr_){};
-    iterator& operator=(iterator const& it) {  // PB?
+    iterator& operator=(iterator const& it) {
       if (&it == this) return (*this);
       ptr_ = it.ptr_;
       return (*this);
@@ -127,13 +128,13 @@ class vector {
     typedef T& reference;
     typedef T* pointer;
     typedef std::random_access_iterator_tag iterator_category;
-    typedef long unsigned difference_type;  // ou ptrdiff?
+    typedef long long unsigned difference_type;
 
     /* Constructors and destructor */
     const_iterator() : ptr_(NULL){};
     const_iterator(pointer ptr) : ptr_(ptr) {}
     const_iterator(const_iterator const& it) : ptr_(it.ptr_){};
-    const_iterator& operator=(const_iterator const& it) {  // PB?
+    const_iterator& operator=(const_iterator const& it) {
       if (&it == this) return (*this);
       ptr_ = it.ptr_;
       return (*this);
@@ -228,8 +229,8 @@ class vector {
   typedef typename Allocator::const_reference const_reference;
   typedef iterator iterator;
   typedef const_iterator const_iterator;
-  typedef long unsigned int size_type;
-  typedef long unsigned int difference_type;
+  typedef long long unsigned int size_type;
+  typedef long long unsigned int difference_type;
   typedef T value_type;
   typedef Allocator allocator_type;
   typedef typename Allocator::pointer pointer;
@@ -242,8 +243,8 @@ class vector {
     _array = a.allocate(1);
     _size = 0;
     _capacity = 0;
-    _max_size = 4611686018427387903;
-  };
+    _max_size = std::numeric_limits<long long unsigned>::max();
+  };  // Strong guarantee: no effects in case an exception is thrown.
 
   explicit vector(size_type n, const T& value = T(),
                   const Allocator& = Allocator()) {
@@ -251,8 +252,8 @@ class vector {
     std::uninitialized_fill(_array, _array + n, value);
     _size = n;
     _capacity = n;
-    _max_size = 4611686018427387903;
-  };
+    _max_size = std::numeric_limits<long long unsigned>::max();
+  };  // Strong guarantee: no effects in case an exception is thrown.
 
   template <typename InputIterator>
   vector(InputIterator first,
@@ -264,13 +265,13 @@ class vector {
     _array = a.allocate(to_insert + 1);
     _size = to_insert;
     _capacity = to_insert;
-    _max_size = 4611686018427387903;
+    _max_size = std::numeric_limits<long long unsigned>::max();
     std::uninitialized_fill(_array, _array + _capacity, T());
     for (size_type i = 0; i < to_insert; i++) {
       _array[i] = *first;
       first++;
     }
-  }
+  };  // Strong guarantee: no effects in case an exception is thrown.
 
   vector(const vector<T, Allocator>& x) {
     _max_size = x._max_size;
@@ -278,14 +279,19 @@ class vector {
     _capacity = x._capacity;
     _array = a.allocate(_capacity + 1);
     for (size_type i = 0; i < _size; i++) _array[i] = x._array[i];
-  };  // OK
+  };  // Strong guarantee: no effects in case an exception is thrown.
 
   ~vector() {
     for (size_type i = 0; i < _capacity; i++) {
       a.destroy(_array + i);
     }
-  };
+    a.deallocate(_array, _capacity);
+  };  // no-throw guarantee
 
+  // Basic guarantee: if an exception is thrown, the container is in a valid
+  // state. If allocator_traits::construct is not supported with the appropriate
+  // arguments for the element constructions, or if value_type is not copy
+  // assignable (or move assignable for (2)), it causes undefined behavior.
   vector<T, Allocator>& operator=(const vector<T, Allocator>& x) {
     if (&x == this) return (*this);
     _max_size = x._max_size;
@@ -296,6 +302,8 @@ class vector {
     return (*this);
   };
 
+  // assign // Basic guarantee: if an exception is thrown, the container is in a
+  // valid state.
   template <class InputIterator>
   void assign(InputIterator first,
               typename std::enable_if<!std::is_integral<InputIterator>::value,
@@ -308,14 +316,25 @@ class vector {
     insert(begin(), n, u);
   };
 
+  // get alloc No-throw guarantee: this member function never throws exceptions.
+  // Copying any instantiation of the default allocator is also guaranteed to
+  // never throw.
   allocator_type get_allocator() const { return a; };
 
   /**************** ITERATOR OPERATORS *****************/
+
+  // begin : No-throw guarantee: this member function never throws exceptions.
+  // The copy construction or assignment of the returned iterator is also
+  // guaranteed to never throw.
   iterator begin() { return _array; };
   const_iterator begin() const {
     const iterator& it = _array;
     return it;
   };
+
+  // end : No-throw guarantee: this member function never throws exceptions.
+  // The copy construction or assignment of the returned iterator is also
+  // guaranteed to never throw.
   iterator end() { return _array + _size; };
   const_iterator end() const {
     const iterator& it = _array + _size;
@@ -323,7 +342,9 @@ class vector {
   };
 
   /**************** REVERSE ITERATOR OPERATORS *****************/
-
+  // No-throw guarantee: this member function never throws exceptions.
+  // The copy construction or assignment of the returned iterator is also
+  // guaranteed to never throw.
   reverse_iterator rbegin() {
     reverse_iterator it(_array + _size - 1);
     return it;
@@ -332,6 +353,9 @@ class vector {
     const reverse_iterator& it(_array + _size - 1);
     return it;
   };
+  // No-throw guarantee: this member function never throws exceptions.
+  // The copy construction or assignment of the returned iterator is also
+  // guaranteed to never throw.
   reverse_iterator rend() {
     reverse_iterator it(_array - 1);
     return it;
@@ -342,8 +366,17 @@ class vector {
   };
 
   /**************** CAPACITY *****************/
+  // No-throw guarantee: this member function never throws exceptions.
   size_type size() const { return _size; };
+  // No-throw guarantee: this member function never throws exceptions.
   size_type max_size() const { return _max_size; };
+
+  // If n is less than or equal to the size of the container, the function never
+  // throws exceptions (no-throw guarantee). If n is greater and a reallocation
+  // happens, there are no changes in the container in case of exception (strong
+  // guarantee) if the type of the elements is either copyable or no-throw
+  // moveable. Otherwise, if an exception is thrown, the container is left with
+  // a valid state (basic guarantee).
 
   void resize(size_type n, T c = T()) {
     if (n < _size) {
@@ -364,8 +397,18 @@ class vector {
     }
   };
 
+  // cpacity : No-throw guarantee: this member function never throws exceptions.
   size_type capacity() const { return _capacity; };
+
+  // empty : No-throw guarantee: this member function never throws exceptions.
   bool empty() const { return _size == 0; };
+
+  // If no reallocations happen or if the type of the elements has either a
+  // non-throwing move constructor or a copy constructor, there are no changes
+  // in the container in case of exception (strong guarantee).
+  //  Otherwise, the container is guaranteed to end in a valid state (basic
+  //  guarantee). The function throws length_error if n is greater than
+  //  max_size.
   void reserve(size_type n) {
     if (n > max_size()) {
       throw std::length_error("");
@@ -376,6 +419,10 @@ class vector {
   };
 
   /**************** ACCESS *****************/
+
+  //[]If the container size is greater than n, the function never throws
+  // exceptions (no-throw guarantee).
+  // Otherwise, the behavior is undefined.
   reference operator[](size_type n) {
     T& ref = _array[n];
     return ref;
@@ -384,6 +431,10 @@ class vector {
     const T& ref = _array[n];
     return (ref);
   };
+
+  // at Strong guarantee: if an exception is thrown, there are no changes in the
+  // container.
+  // It throws out_of_range if n is out of bounds.
   const_reference at(size_type n) const {
     if (n < size()) {
       const T& ref = _array[n];
@@ -398,6 +449,9 @@ class vector {
     }
     throw std::out_of_range("");
   };
+
+  // front : If the container is not empty, the function never throws exceptions
+  // (no-throw guarantee). Otherwise, it causes undefined behavior.
   reference front() {
     T& ref = _array[0];
     return ref;
@@ -406,6 +460,10 @@ class vector {
     const T& ref = _array[0];
     return ref;
   };
+
+  // Back :If the container is not empty, the function never throws exceptions
+  // (no-throw guarantee).
+  // Otherwise, it causes undefined behavior.
   reference back() {
     T& ref = _array[size() - 1];
     return ref;
@@ -416,6 +474,15 @@ class vector {
   };
 
   /**************** MODIFIERS *****************/
+
+  //   If no reallocations happen, there are no changes in the container in case
+  //   of exception (strong guarantee).
+  // If a reallocation happens, the strong guarantee is also given if the type
+  // of the elements is either copyable or no-throw moveable. Otherwise, the
+  // container is guaranteed to end in a valid state (basic guarantee). If
+  // allocator_traits::construct is not supported with val as argument, it
+  // causes undefined behavior.
+
   void push_back(const T& x) {
     if (_size == _max_size) { /* ??? */
       return;
@@ -429,6 +496,9 @@ class vector {
     _size++;
   };
 
+  // If the container is not empty, the function never throws exceptions
+  // (no-throw guarantee).
+  /// Otherwise, it causes undefined behavior.
   void pop_back() {
     if (_size > 0) {
       a.destroy(_array + _size - 1);
@@ -437,6 +507,15 @@ class vector {
     }
   };
 
+  // insert If the operation inserts a single element at the end, and no
+  // reallocations happen, there are no changes in the container in case of
+  // exception (strong guarantee). In case of reallocations, the strong
+  // guarantee is also given in this case if the type of the elements is either
+  // copyable or no-throw moveable. Otherwise, the container is guaranteed to
+  // end in a valid state (basic guarantee). If allocator_traits::construct is
+  // not supported with the appropriate arguments for the element constructions,
+  // or if an invalid position or range is specified, it causes undefined
+  // behavior.
   iterator insert(iterator position, const T& x) {
     if (_size == _max_size) return NULL; /* ??? */
     if (_size == 0) {
@@ -527,6 +606,10 @@ class vector {
     };
   };
 
+  // erase If the removed elements include the last element in the container, no
+  // exceptions are thrown (no-throw guarantee).
+  //  Otherwise, the container is guaranteed to end in a valid state (basic
+  //  guarantee). An invalid position or range causes undefined behavior.
   iterator erase(iterator position) {
     iterator saved = position;
     size_type i = 0;
@@ -553,9 +636,17 @@ class vector {
     for (size_type i = 0; i < to_erase; i++) {
       a.destroy(_array + _size + i);
     }
+    // dealloc
+
     _capacity -= to_erase;
     return last - to_erase;
   };
+
+  /* ??? */
+  //   If the allocators in both vectors compare equal, or if their allocator
+  //   traits indicate that the allocators shall propagate, the function never
+  //   throws exceptions (no-throw guarantee).
+  // Otherwise, it causes undefined behavior.
 
   void swap(ft::vector<T, Allocator>& other) {
     try {
@@ -568,10 +659,12 @@ class vector {
     }
   };
 
+  // clear : No-throw guarantee: this member function never throws exceptions.
   void clear() {
     for (size_type i = 0; i < _size; i++) {
       a.destroy(_array + i);
     }
+    // dealloc
     _size = 0;
     _capacity = 0;
   };
@@ -595,7 +688,8 @@ class vector {
   };
 };
 
-/* ************* TODO ************* */
+// If the type of the elements supports the appropriate operation with no-throw
+// guarantee, the function never throws exceptions (no-throw guarantee).
 template <class T, class Allocator>
 bool operator==(const vector<T, Allocator>& x, const vector<T, Allocator>& y) {
   if (x.size() != y.size()) return false;
@@ -617,10 +711,6 @@ template <class T, class Allocator>
 bool operator<(const vector<T, Allocator>& x, const vector<T, Allocator>& y) {
   return ft::lexicographical_compare(x.begin(), x.end(), y.begin(), y.end());
 };
-/*The less-than comparison (operator<) behaves as if using algorithm
- * lexicographical_compare, which compares the elements sequentially using
- * operator< in a reciprocal manner (i.e., checking both a<b and b<a) and
- * stopping at the first occurrence.*/
 
 template <class T, class Allocator>
 bool operator!=(vector<T, Allocator>& x, vector<T, Allocator>& y) {
@@ -659,8 +749,19 @@ bool operator<=(const vector<T, Allocator>& x, const vector<T, Allocator>& y) {
   return !(y < x);
 };
 
-// TODOspecialized algorithms:
+// If the allocators in both vectors compare equal, or if their allocator traits
+// indicate that the allocators shall propagate, the function never throws
+// exceptions (no-throw guarantee). Otherwise, it causes undefined behavior.
 template <class T, class Allocator>
-void swap(vector<T, Allocator>& x, vector<T, Allocator>& y);
+void swap(vector<T, Allocator>& x, vector<T, Allocator>& y) {
+  try {
+    if (x.size() > y.max_size() || y.size() > x.max_size()) return;
+    ft::vector<T> tmp = x;
+    x = y;
+    y = tmp;
+  } catch (std::exception& e) {
+    return;
+  }
+};
 }  // namespace ft
 #endif
