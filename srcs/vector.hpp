@@ -46,36 +46,28 @@ class vector {
       ptr_++;
       return *this;
     }
-    iterator operator++(int i) {
+    iterator operator++(int) {
       iterator it = *this;
       ptr_++;
       return it;
     }
 
-    // pointer operator++() { // TO CHECK => *a++
-    //   *ptr_++;
-    //   return *this;
-    // }
+    // TO CHECK => *a++
 
     iterator& operator--() {
       ptr_--;
       return *this;
     }
-    iterator operator--(int i) {
+    iterator operator--(int) {
       iterator it = *this;
       ptr_--;
       return it;
     }
-    // iterator operator--(iterator *it) { // BAD => *a--
-    //   *ptr_--;
-    //   return *this;
-    // }
+    // TO CHECK => a--
 
-    /* deref */
     reference operator*() { return *ptr_; }
     pointer operator->() { return ptr_; }
 
-    /* add and substract */
     iterator operator+(difference_type n) const {
       iterator it = *this;
       it.ptr_ = ptr_ + n;
@@ -101,10 +93,8 @@ class vector {
       ptr_ -= n;
       return *this;
     };
-    /* ref */
-    reference operator[](difference_type n) const {
-      return ptr_ + n;  //???
-    };
+
+    reference operator[](difference_type n) const { return ptr_ + n; };
 
     /* comparison */
     bool operator==(const iterator& rhs) { return ptr_ == rhs.ptr_; }
@@ -146,7 +136,7 @@ class vector {
       ptr_++;
       return *this;
     }
-    const_iterator operator++(int i) {
+    const_iterator operator++(int) {
       iterator it = *this;
       ptr_++;
       return it;
@@ -161,7 +151,7 @@ class vector {
       ptr_--;
       return *this;
     }
-    const_iterator operator--(int i) {
+    const_iterator operator--(int) {
       const_iterator it = *this;
       ptr_--;
       return it;

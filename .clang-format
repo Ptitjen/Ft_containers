@@ -1,0 +1,5 @@
+Language: Cpp
+BasedOnStyle: Google
+Standard: Cpp03
+ColumnLimit: 80
+

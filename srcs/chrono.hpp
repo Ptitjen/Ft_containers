@@ -1,4 +1,5 @@
-#pragma once
+#ifndef CHRONO_HPP
+#define CHRONO_HPP
 
 #include <sys/time.h>
 
@@ -18,3 +19,5 @@ class Chrono {
   void begin();
   void stop();
 };
+
+#endif

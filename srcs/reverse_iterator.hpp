@@ -37,7 +37,7 @@ class reverse_iterator {
     return *this;
   };
 
-  reverse_iterator operator++(int i) {
+  reverse_iterator operator++(int) {
     reverse_iterator it = *this;
     current--;
     return it;
@@ -48,7 +48,7 @@ class reverse_iterator {
     return *this;
   };
 
-  reverse_iterator operator--(int i) {
+  reverse_iterator operator--(int) {
     reverse_iterator it = *this;
     current++;
     return it;
@@ -129,7 +129,7 @@ class const_reverse_iterator {
     return *this;
   };
 
-  const_reverse_iterator operator++(int i) {
+  const_reverse_iterator operator++(int) {
     const_reverse_iterator it = *this;
     current--;
     return it;
@@ -140,7 +140,7 @@ class const_reverse_iterator {
     return *this;
   };
 
-  const_reverse_iterator operator--(int i) {
+  const_reverse_iterator operator--(int) {
     const_reverse_iterator it = *this;
     current++;
     return it;
