@@ -1,6 +1,7 @@
 #ifndef PAIR_HPP
 #define PAIR_HPP
 
+namespace ft {
 template <class T1, class T2>
 struct pair {
   typedef T1 first_type;
@@ -68,4 +69,5 @@ template <class T1, class T2>
 bool operator>=(const pair<T1, T2>& x, const pair<T1, T2>& y) {
   return !(x < y);
 }
+}  // namespace ft
 #endif

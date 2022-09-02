@@ -2,6 +2,7 @@
 #define EQUAL_HPP
 
 #include <exception>
+namespace ft {
 template <class InputIterator1, class InputIterator2>
 bool equal(InputIterator1 first1, InputIterator1 last1, InputIterator2 first2) {
   try {
@@ -30,5 +31,5 @@ bool equal(InputIterator1 first1, InputIterator1 last1, InputIterator2 first2,
     throw e;
   }
 }
-
+}  // namespace ft
 #endif

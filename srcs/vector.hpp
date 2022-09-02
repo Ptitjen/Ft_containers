@@ -9,7 +9,9 @@
 #include <type_traits>
 
 #include "enable_if.hpp"
+#include "equal.hpp"
 #include "is_integral.hpp"
+#include "lexicographical_compare.hpp"
 #include "reverse_iterator.hpp"
 
 namespace ft {
@@ -219,14 +221,15 @@ class vector {
     pointer ptr_;
   };
 
+  // TODO +++++ : strong guarantee & verify exceptions
  public:
-  // types:
+  /************ TYPEDEFS ************/
   typedef typename Allocator::reference reference;
   typedef typename Allocator::const_reference const_reference;
   typedef iterator iterator;
   typedef const_iterator const_iterator;
-  typedef long unsigned int size_type;        // OK
-  typedef long unsigned int difference_type;  // TO CHECK
+  typedef long unsigned int size_type;
+  typedef long unsigned int difference_type;
   typedef T value_type;
   typedef Allocator allocator_type;
   typedef typename Allocator::pointer pointer;
@@ -234,13 +237,13 @@ class vector {
   typedef ft::reverse_iterator<iterator> reverse_iterator;
   typedef ft::const_reverse_iterator<const_iterator> const_reverse_iterator;
 
-  // 23.2.4.1 construct/copy/destroy:
+  /************ CONSTRUCTORS AND DESTRUCTOR ************/
   explicit vector(const Allocator& = Allocator()) {
     _array = a.allocate(1);
     _size = 0;
     _capacity = 0;
     _max_size = 4611686018427387903;
-  };  // OK
+  };
 
   explicit vector(size_type n, const T& value = T(),
                   const Allocator& = Allocator()) {
@@ -249,7 +252,7 @@ class vector {
     _size = n;
     _capacity = n;
     _max_size = 4611686018427387903;
-  };  // OK - test with uninitialized fill
+  };
 
   template <typename InputIterator>
   vector(InputIterator first,
@@ -258,7 +261,7 @@ class vector {
          const Allocator& = Allocator()) {
     size_type to_insert = 0;
     for (iterator it = first; it != last; it++) to_insert++;
-    a.allocate(to_insert + 1);
+    _array = a.allocate(to_insert + 1);
     _size = to_insert;
     _capacity = to_insert;
     _max_size = 4611686018427387903;
@@ -278,7 +281,7 @@ class vector {
   };  // OK
 
   ~vector() {
-    for (size_type i = 0; i < _capacity; i++) {  //_Capacity or size?
+    for (size_type i = 0; i < _capacity; i++) {
       a.destroy(_array + i);
     }
   };
@@ -291,7 +294,7 @@ class vector {
     _array = a.allocate(_capacity);
     for (size_type i = 0; i < _size; i++) _array[i] = x._array[i];
     return (*this);
-  };  // OK
+  };
 
   template <class InputIterator>
   void assign(InputIterator first,
@@ -307,7 +310,7 @@ class vector {
 
   allocator_type get_allocator() const { return a; };
 
-  // iterators: OK
+  /**************** ITERATOR OPERATORS *****************/
   iterator begin() { return _array; };
   const_iterator begin() const {
     const iterator& it = _array;
@@ -319,11 +322,11 @@ class vector {
     return it;
   };
 
-  // reverse iterator :
-  /* /!\ NOT OK */
+  /**************** REVERSE ITERATOR OPERATORS *****************/
+
   reverse_iterator rbegin() {
     reverse_iterator it(_array + _size - 1);
-    return it;  // seems ok
+    return it;
   };
   const_reverse_iterator rbegin() const {
     const reverse_iterator& it(_array + _size - 1);
@@ -331,18 +334,16 @@ class vector {
   };
   reverse_iterator rend() {
     reverse_iterator it(_array - 1);
-    return it;  // probably false
+    return it;
   };
   const_reverse_iterator rend() const {
     const reverse_iterator& it(_array - 1);
-    return it;  // probably false
+    return it;
   };
 
-  // TODO +++++ : save array before reallocation in case of fail to restore it
-
-  //  23.2.4.2 capacity:
-  size_type size() const { return _size; };          // ok
-  size_type max_size() const { return _max_size; };  // ok
+  /**************** CAPACITY *****************/
+  size_type size() const { return _size; };
+  size_type max_size() const { return _max_size; };
 
   void resize(size_type n, T c = T()) {
     if (n < _size) {
@@ -361,10 +362,10 @@ class vector {
     for (size_type i = save_size; i < _size; i++) {
       _array[i] = c;
     }
-  };  // ok
+  };
 
-  size_type capacity() const { return _capacity; };  // ok
-  bool empty() const { return _size == 0; };         // ok
+  size_type capacity() const { return _capacity; };
+  bool empty() const { return _size == 0; };
   void reserve(size_type n) {
     if (n > max_size()) {
       throw std::length_error("");
@@ -372,50 +373,49 @@ class vector {
     if (n > _capacity) {
       realloc(n);
     }
-  };  // ok
+  };
 
-  // ************ element access ************** - ok:
+  /**************** ACCESS *****************/
   reference operator[](size_type n) {
     T& ref = _array[n];
     return ref;
-  };  // no exception is thrown - no bound check - ok
-  const_reference operator[](size_type n) const {  // ok
+  };
+  const_reference operator[](size_type n) const {
     const T& ref = _array[n];
     return (ref);
   };
-  const_reference at(
-      size_type n) const {  // throws exception - bound check - ok
+  const_reference at(size_type n) const {
     if (n < size()) {
       const T& ref = _array[n];
       return (ref);
     }
     throw std::out_of_range("");
   };
-  reference at(size_type n) {  // ok
+  reference at(size_type n) {
     if (n < size()) {
       T& ref = _array[n];
       return ref;
     }
     throw std::out_of_range("");
   };
-  reference front() {  // undefined behavior if empty - ok OK
+  reference front() {
     T& ref = _array[0];
     return ref;
   };
-  const_reference front() const {  // undefined behavior if empty - ok OK
+  const_reference front() const {
     const T& ref = _array[0];
     return ref;
   };
-  reference back() {  // undefined behavior if empty - ok OK
+  reference back() {
     T& ref = _array[size() - 1];
     return ref;
   };
-  const_reference back() const {  // ok
+  const_reference back() const {
     const T& ref = _array[size() - 1];
     return ref;
   };
 
-  // 23.2.4.3 modifiers:  /// TODO : keep copy until realloc - try catch
+  /**************** MODIFIERS *****************/
   void push_back(const T& x) {
     if (_size == _max_size) { /* ??? */
       return;
@@ -433,15 +433,15 @@ class vector {
     if (_size > 0) {
       a.destroy(_array + _size - 1);
       _size--;
+      _capacity--;
     }
-  };  // ok
+  };
 
   iterator insert(iterator position, const T& x) {
-    if (_size == _max_size) return NULL;  // ?
+    if (_size == _max_size) return NULL; /* ??? */
     if (_size == 0) {
       try {
         realloc(1);
-
       } catch (std::bad_alloc& e) {
         return _array;
       }
@@ -464,10 +464,10 @@ class vector {
     _size++;
     _array[ins] = x;
     return _array + ins;
-  };  // ok
+  };
 
   void insert(iterator position, size_type n, const T& x) {
-    if (_size + n >= _max_size) return;  // ?
+    if (_size + n >= _max_size) return; /* ??? */
     if (_size == 0) {
       realloc(n);
       for (size_type i = 0; i < n; i++) {
@@ -490,14 +490,13 @@ class vector {
     for (size_type i = _size; i >= ins; i--) _array[i + n] = _array[i];
     _size += n;
     for (size_type i = ins; i < n + ins; i++) _array[i] = x;
-  };  // ok
+  };
 
   template <class InputIterator>
   void insert(iterator position, InputIterator first,
               typename std::enable_if<!std::is_integral<InputIterator>::value,
                                       InputIterator>::type last) {
     size_type to_insert = 0;
-
     for (iterator it = first; it != last; it++) to_insert++;
     size_type ins = 0;
     if (_size == 0) {
@@ -509,7 +508,6 @@ class vector {
       _size = to_insert;
       return;
     }
-
     for (iterator it = _array; it != position; it++) {
       ins++;
     };
@@ -527,7 +525,7 @@ class vector {
       _array[i] = *first;
       first++;
     };
-  };  // ok
+  };
 
   iterator erase(iterator position) {
     iterator saved = position;
@@ -542,7 +540,7 @@ class vector {
     a.destroy(_array + _size);
     _capacity--;
     return saved;
-  };  // seems ok
+  };
 
   iterator erase(iterator first, iterator last) {
     iterator saved = last;
@@ -557,7 +555,7 @@ class vector {
     }
     _capacity -= to_erase;
     return last - to_erase;
-  };  // seems ok
+  };
 
   void swap(ft::vector<T, Allocator>& other) {
     try {
@@ -568,7 +566,7 @@ class vector {
     } catch (std::exception& e) {
       return;
     }
-  };  // ok
+  };
 
   void clear() {
     for (size_type i = 0; i < _size; i++) {
@@ -576,7 +574,7 @@ class vector {
     }
     _size = 0;
     _capacity = 0;
-  };  // ok
+  };
 
  private:
   T* _array;
@@ -590,29 +588,78 @@ class vector {
     std::uninitialized_fill(tmp, tmp + n, T());
     for (size_type i = 0; i < _size; i++) {
       tmp[i] = _array[i];
+      a.destroy(_array + i);
     }
     _array = tmp;
     _capacity = n;
-
-    // destroy and deallocate previous ?
   };
 };
 
 /* ************* TODO ************* */
+template <class T, class Allocator>
+bool operator==(const vector<T, Allocator>& x, const vector<T, Allocator>& y) {
+  if (x.size() != y.size()) return false;
+  return (ft::equal(x.begin(), x.end(), y.begin()));
+};
 
 template <class T, class Allocator>
-bool operator==(const vector<T, Allocator>& x, const vector<T, Allocator>& y);
+bool operator==(vector<T, Allocator>& x, vector<T, Allocator>& y) {
+  if (x.size() != y.size()) return false;
+  return (ft::equal(x.begin(), x.end(), y.begin()));
+};
+
 template <class T, class Allocator>
-bool operator<(const vector<T, Allocator>& x, const vector<T, Allocator>& y);
+bool operator<(vector<T, Allocator>& x, vector<T, Allocator>& y) {
+  return lexicographical_compare(x.begin(), x.end(), y.begin(), y.end());
+};
+
 template <class T, class Allocator>
-bool operator!=(const vector<T, Allocator>& x, const vector<T, Allocator>& y);
+bool operator<(const vector<T, Allocator>& x, const vector<T, Allocator>& y) {
+  return ft::lexicographical_compare(x.begin(), x.end(), y.begin(), y.end());
+};
+/*The less-than comparison (operator<) behaves as if using algorithm
+ * lexicographical_compare, which compares the elements sequentially using
+ * operator< in a reciprocal manner (i.e., checking both a<b and b<a) and
+ * stopping at the first occurrence.*/
+
 template <class T, class Allocator>
-bool operator>(const vector<T, Allocator>& x, const vector<T, Allocator>& y);
+bool operator!=(vector<T, Allocator>& x, vector<T, Allocator>& y) {
+  return !(x == y);
+};
 template <class T, class Allocator>
-bool operator>=(const vector<T, Allocator>& x, const vector<T, Allocator>& y);
+bool operator!=(const vector<T, Allocator>& x, const vector<T, Allocator>& y) {
+  return !(x == y);
+};
+
 template <class T, class Allocator>
-bool operator<=(const vector<T, Allocator>& x, const vector<T, Allocator>& y);
-// specialized algorithms:
+bool operator>(vector<T, Allocator>& x, vector<T, Allocator>& y) {
+  return (y < x);
+};
+template <class T, class Allocator>
+bool operator>(const vector<T, Allocator>& x, const vector<T, Allocator>& y) {
+  return (y < x);
+};
+
+template <class T, class Allocator>
+bool operator>=(vector<T, Allocator>& x, vector<T, Allocator>& y) {
+  return !(x < y);
+};
+
+template <class T, class Allocator>
+bool operator>=(const vector<T, Allocator>& x, const vector<T, Allocator>& y) {
+  return !(x < y);
+};
+
+template <class T, class Allocator>
+bool operator<=(vector<T, Allocator>& x, vector<T, Allocator>& y) {
+  return !(y < x);
+};
+template <class T, class Allocator>
+bool operator<=(const vector<T, Allocator>& x, const vector<T, Allocator>& y) {
+  return !(y < x);
+};
+
+// TODOspecialized algorithms:
 template <class T, class Allocator>
 void swap(vector<T, Allocator>& x, vector<T, Allocator>& y);
 }  // namespace ft
