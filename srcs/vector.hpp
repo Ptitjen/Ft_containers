@@ -551,7 +551,7 @@ class vector {
     };
     try {
       if (_size >= _capacity) {
-        realloc(_capacity + n + 1);
+        realloc(_capacity + n);
       }
     } catch (std::bad_alloc& e) {
       return;
