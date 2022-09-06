@@ -7,36 +7,44 @@
 #include "Chrono.hpp"
 #include "make_pair.hpp"
 #include "tests_utils.hpp"
+#include "vector.hpp"
 
 int main(void) {
   /* *************** PERFORMANCE TESTS **************** */  // OK
-  {
-    std::cout << BOLDBLUE "Performance test : " END << std::endl;
-    // "Vector of 10 000 000 - Push - Pop - Insert - Erase - Swap"
-    Chrono chrono = Chrono("My vector", "Std vector");
-    chrono.begin();
-    ft::vector<int> my_large_v = ft::vector<int>(10000000, 42);
-    my_large_v.push_back(1);
-    my_large_v.pop_back();
-    my_large_v.insert(my_large_v.begin() + 500000, 43);
-    my_large_v.erase(my_large_v.begin() + 500000);
-    my_large_v.insert(my_large_v.begin() + 400000, 100000, 43);
-    my_large_v.erase(my_large_v.begin() + 400000, my_large_v.begin() + 500000);
-    ft::vector<int> my_large_v_swap = ft::vector<int>(999999, 41);
-    my_large_v.swap(my_large_v_swap);
-    chrono.stop();
-    std::vector<int> large_v = std::vector<int>(10000000, 42);
-    large_v.push_back(1);
-    large_v.pop_back();
-    large_v.insert(large_v.begin() + 500000, 43);
-    large_v.erase(large_v.begin() + 500000);
-    large_v.insert(large_v.begin() + 400000, 100000, 43);
-    large_v.erase(large_v.begin() + 400000, large_v.begin() + 500000);
-    std::vector<int> large_v_swap = std::vector<int>(999999, 41);
-    large_v.swap(large_v_swap);
-    chrono.stop();
-    printDiffVector(my_large_v, large_v);
-  }
+  // {
+  //   std::cout << BOLDBLUE "Performance test : " END << std::endl;
+  //   // "Vector of 10 000 000 - Push - Pop - Insert - Erase - Swap"
+  //   Chrono chrono = Chrono("My vector", "Std vector");
+  //   chrono.begin();
+  //   ft::vector<int> my_large_v = ft::vector<int>(10000000, 42);
+  //   ft::vector<int> my_large_v2 = ft::vector<int>(10000000, 41);
+
+  //   my_large_v.push_back(1);
+  //   my_large_v.pop_back();
+  //   my_large_v.insert(my_large_v.begin() + 500000, 43);
+  //   my_large_v.erase(my_large_v.begin() + 500000);
+  //   my_large_v.insert(my_large_v.begin() + 400000, 100000, 43);
+  //   my_large_v.insert(my_large_v.begin() + 5000000, my_large_v2.begin(),
+  //                     my_large_v2.end());
+
+  //   my_large_v.erase(my_large_v.begin() + 400000, my_large_v.begin() +
+  //   500000); ft::vector<int> my_large_v_swap = ft::vector<int>(999999, 41);
+  //   my_large_v.swap(my_large_v_swap);
+  //   chrono.stop();
+  //   std::vector<int> large_v = std::vector<int>(10000000, 42);
+  //   std::vector<int> large_v2 = std::vector<int>(10000000, 41);
+  //   large_v.push_back(1);
+  //   large_v.pop_back();
+  //   large_v.insert(large_v.begin() + 500000, 43);
+  //   large_v.erase(large_v.begin() + 500000);
+  //   large_v.insert(large_v.begin() + 400000, 100000, 43);
+  //   large_v.insert(large_v.begin() + 5000000, large_v2.begin(),
+  //   large_v2.end()); large_v.erase(large_v.begin() + 400000, large_v.begin()
+  //   + 500000); std::vector<int> large_v_swap = std::vector<int>(999999, 41);
+  //   large_v.swap(large_v_swap);
+  //   chrono.stop();
+  //   printDiffVector(my_large_v, large_v);
+  // }
 
   /* *************** CONSTRUCTOR AND ASSIGNMENT TESTS **************** */
   {
@@ -336,6 +344,8 @@ int main(void) {
     printDiffVector(my_v, v);
     my_v.resize(50);
     v.resize(50);
+    my_v.push_back(2);
+    v.push_back(2);
     printDiffVector(my_v, v);
     my_v.resize(3);
     v.resize(3);
@@ -344,6 +354,9 @@ int main(void) {
     printDiffVector(my_v, v);
     v.reserve(80);
     my_v.reserve(80);
+    my_v.push_back(2);
+    v.push_back(2);
+    printDiffVector(my_v, v);
     if (my_v.empty() == v.empty())
       std::cout << BOLDGREEN "OK " END;
     else
@@ -388,8 +401,10 @@ int main(void) {
       std::cout << BOLDGREEN "OK " END;
     else
       std::cout << BOLDRED "KO " END;
+    my_v.at(3) = 8;
+    v.at(3) = 8;
+    printDiffVector(my_v, v);
 
-    // exception test
     bool success = false;
     try {
       my_v.at(80);  // NOLINT
@@ -432,13 +447,27 @@ int main(void) {
     v.push_back(3);
     v.push_back(4);
     v.push_back(5);
+    printDiffVector(my_v, v);
 
     ft::vector<int> my_v_insert;
     my_v_insert.push_back(1);
     my_v_insert.push_back(2);
     my_v_insert.push_back(3);
+    my_v_insert.push_back(1);
+    my_v_insert.push_back(2);
+    my_v_insert.push_back(3);
+
+    my_v_insert.push_back(1);
+    my_v_insert.push_back(2);
+    my_v_insert.push_back(3);
 
     std::vector<int> v_insert;
+    v_insert.push_back(1);
+    v_insert.push_back(2);
+    v_insert.push_back(3);
+    v_insert.push_back(1);
+    v_insert.push_back(2);
+    v_insert.push_back(3);
     v_insert.push_back(1);
     v_insert.push_back(2);
     v_insert.push_back(3);

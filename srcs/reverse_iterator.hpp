@@ -12,16 +12,17 @@ class reverse_iterator {
   typedef typename Iterator::difference_type difference_type;
   typedef typename Iterator::reference reference;
   typedef typename Iterator::pointer pointer;
-  reverse_iterator() : current(NULL){};  //??
-  explicit reverse_iterator(Iterator x) : current(x){};
+  reverse_iterator() throw() : current(NULL){};
+  explicit reverse_iterator(Iterator x) throw() : current(x){};
 
   template <class U>
-  reverse_iterator(const reverse_iterator<U> &u) : current(u.current){};
-  reverse_iterator &operator=(reverse_iterator const &it) {  // PB?
+  reverse_iterator(const reverse_iterator<U> &u) throw() : current(u.current){};
+  reverse_iterator &operator=(reverse_iterator const &it) throw() {  // PB?
     if (&it == this) return (*this);
     ptr_(it.ptr_);
     return (*this);
   };
+  ~reverse_iterator() throw(){};
 
   Iterator base() const {
     Iterator it;
@@ -104,16 +105,20 @@ class const_reverse_iterator {
   typedef typename Iterator::difference_type difference_type;
   typedef typename Iterator::reference reference;
   typedef typename Iterator::pointer pointer;
-  const_reverse_iterator() : current(NULL){};  //??
-  explicit const_reverse_iterator(Iterator x) : current(x){};
+  const_reverse_iterator() throw() : current(NULL){};
+  explicit const_reverse_iterator(Iterator x) throw() : current(x){};
 
   template <class U>
-  const_reverse_iterator(const reverse_iterator<U> &u) : current(u.current){};
-  const_reverse_iterator &operator=(const_reverse_iterator const &it) {  // PB?
+  const_reverse_iterator(const reverse_iterator<U> &u) throw()
+      : current(u.current){};
+  const_reverse_iterator &operator=(
+      const_reverse_iterator const &it) throw() {  // PB?
     if (&it == this) return (*this);
     ptr_(it.ptr_);
     return (*this);
   };
+
+  ~const_reverse_iterator() throw(){};
 
   Iterator base() const {
     Iterator it;

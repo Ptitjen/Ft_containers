@@ -24,15 +24,17 @@
 #define END "\033[0m"
 
 template <class T>
-void printDiffVector(ft::vector<T> my_v, std::vector<T> v) {
+void printDiffVector(ft::vector<T>& my_v, std::vector<T>& v) {
   bool success = true;
   if (my_v.size() != v.size()) {
     std::cout << BOLDRED "Diff KO - size " END;
     success = false;
   }
+
   if (my_v.capacity() != v.capacity()) {
     std::cout << BOLDRED "Diff KO - capacity " END;
     success = false;
+    std::cout << std::endl << my_v.capacity() << " " << v.capacity() << " ";
   }
   if (success)
     for (unsigned long long int i = 0; i < my_v.size(); i++) {
@@ -47,7 +49,7 @@ void printDiffVector(ft::vector<T> my_v, std::vector<T> v) {
 };
 
 template <class T>
-void printSimpleFtVector(ft::vector<T> my_v) {
+void printSimpleFtVector(ft::vector<T>& my_v) {
   if (my_v.empty()) return;
   for (unsigned long long int i = 0; i < my_v.size(); i++)
     std::cout << my_v[i] << (i != my_v.size() - 1 ? " - " : "");
@@ -55,7 +57,7 @@ void printSimpleFtVector(ft::vector<T> my_v) {
 }
 
 template <class T>
-void printSimpleStdVector(std::vector<T> v) {
+void printSimpleStdVector(std::vector<T>& v) {
   if (v.empty()) return;
   for (unsigned long long int i = 0; i < v.size(); i++)
     std::cout << v[i] << (i != v.size() - 1 ? " - " : "");
@@ -77,5 +79,3 @@ bool operator==(const bli& x, const bli& y);
 void print_Ftbli(ft::vector<bli> v);
 
 #endif
-
-// TODO : write specializations for bli classes // enable if is integral
