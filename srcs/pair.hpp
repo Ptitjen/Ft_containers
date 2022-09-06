@@ -25,7 +25,7 @@ struct pair {
     first = other.first;
     second = other.second;
     other.first = tmp1;
-    other.first = tmp2;
+    other.second = tmp2;
   };
 };
 
@@ -37,7 +37,7 @@ void swap(pair<T1, T2>& x, pair<T1, T2>& y)  // NOLINT
   x.first = y.first;
   x.second = y.second;
   y.first = tmp1;
-  y.first = tmp2;
+  y.second = tmp2;
 };
 
 template <class T1, class T2>

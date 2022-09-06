@@ -1,8 +1,12 @@
 #ifndef TESTS_UTILS_HPP
 #define TESTS_UTILS_HPP
 
+#include <stack>
+#include <utility>
 #include <vector>
 
+#include "pair.hpp"
+#include "stack.hpp"
 #include "vector.hpp"
 
 #define BLACK "\033[30m"              /* Black */
@@ -45,6 +49,41 @@ void printDiffVector(ft::vector<T>& my_v, std::vector<T>& v) {
         break;
       }
     }
+  if (success) std::cout << BOLDGREEN "OK " END;
+};
+
+template <class T>
+void printDiffStack(ft::stack<T>& my_v, std::stack<T>& v) {
+  bool success = true;
+  if (my_v.size() != v.size()) {
+    std::cout << BOLDRED "Diff KO - size " END;
+    success = false;
+  }
+
+  if (success)
+    while (!my_v.empty()) {
+      if (!(my_v.top() == v.top())) {
+        std::cout << BOLDRED "Diff KO - content " END;
+        success = false;
+        break;
+      }
+      my_v.pop();
+      v.pop();
+    }
+  if (success) std::cout << BOLDGREEN "OK " END;
+};
+
+template <class T1, class T2>
+void printDiffPair(ft::pair<T1, T2>& my_v, std::pair<T1, T2>& v) {
+  bool success = true;
+  if (my_v.first != v.first) {
+    std::cout << BOLDRED "Diff KO - first " END;
+    success = false;
+  }
+  if (my_v.second != v.second) {
+    std::cout << BOLDRED "Diff KO - first " END;
+    success = false;
+  }
   if (success) std::cout << BOLDGREEN "OK " END;
 };
 

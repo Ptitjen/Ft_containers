@@ -211,7 +211,6 @@ class vector {
     pointer ptr_;
   };
 
-  // TODO +++++ : strong guarantee & verify exceptions
  public:
   /************ TYPEDEFS ************/
   typedef typename Allocator::reference reference;
@@ -235,10 +234,10 @@ class vector {
       _capacity = 0;
       _max_size = std::numeric_limits<long long unsigned>::max();
     } catch (std::exception& e) {
-      // dealloc
+      this->~vector();
       throw e;
     }
-  };  // Strong guarantee: no effects in case an exception is thrown.
+  };
 
   explicit vector(size_type n, const T& value = T(),
                   const Allocator& = Allocator()) {
@@ -251,10 +250,10 @@ class vector {
       _capacity = n;
       _max_size = std::numeric_limits<long long unsigned>::max();
     } catch (std::exception& e) {
-      // dealloc
+      this->~vector();
       throw e;
     }
-  };  // Strong guarantee: no effects in case an exception is thrown.
+  };
 
   template <typename InputIterator>
   vector(InputIterator first,
@@ -280,10 +279,10 @@ class vector {
         first++;
       }
     } catch (std::exception& e) {
-      // dealloc
+      this->~vector();
       throw e;
     }
-  };  // Strong guarantee: no effects in case an exception is thrown.
+  };
 
   vector(const vector<T, Allocator>& x) {
     try {
@@ -293,10 +292,10 @@ class vector {
       _array = a.allocate(_capacity + 1);
       for (size_type i = 0; i < _size; i++) _array[i] = x._array[i];
     } catch (std::exception& e) {
-      // dealloc
+      this->~vector();
       throw e;
     }
-  };  // Strong guarantee: no effects in case an exception is thrown.
+  };
 
   ~vector() throw() {
     for (size_type i = 0; i < _capacity; i++) {
@@ -314,7 +313,7 @@ class vector {
       _array = a.allocate(_capacity);
       for (size_type i = 0; i < _size; i++) _array[i] = x._array[i];
     } catch (std::exception& e) {
-      // dealloc
+      this->~vector();
       throw e;
     }
     return (*this);
@@ -329,7 +328,6 @@ class vector {
       clear();
       reserve(save);
       insert(begin(), first, last);
-
     } catch (std::exception& e) {
       throw e;
     }
