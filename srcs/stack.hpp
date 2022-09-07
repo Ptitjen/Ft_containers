@@ -1,10 +1,8 @@
 #ifndef STACK_HPP
 #define STACK_HPP
 
-//#include <deque>
 #include "vector.hpp"
 namespace ft {
-// template <class T, class Container = std::deque<T> >
 template <class T, class Container = vector<T> >
 class stack {
  public:
@@ -25,71 +23,49 @@ class stack {
   void push(const value_type& x) { c.push_back(x); }
   void pop() { c.pop_back(); }
 
-  template <class T_, class C_>
-  friend bool operator==(const stack<T_, C_>& lhs,
-                         const stack<T_, C_>& rhs) throw();
-  template <class T_, class C_>
-  friend bool operator<(const stack<T_, C_>& lhs,
-                        const stack<T_, C_>& rhs) throw();
-  template <class T_, class C_>
-  friend bool operator==(stack<T_, C_>& lhs, stack<T_, C_>& rhs) throw();
-  template <class T_, class C_>
-  friend bool operator<(stack<T_, C_>& lhs, stack<T_, C_>& rhs) throw();
+  template <class T_, class Container_>
+  friend bool operator==(const stack<T_, Container_>& lhs,
+                         const stack<T_, Container_>& rhs) throw();
+  template <class T_, class Container_>
+  friend bool operator<(const stack<T_, Container_>& lhs,
+                        const stack<T_, Container_>& rhs) throw();
 };
 
 template <class T, class Container>
 bool operator==(const stack<T, Container>& x,
                 const stack<T, Container>& y) throw() {
-  return (x == y);
+  return (x.c == y.c);
 };
-template <class T, class Container>
-bool operator==(stack<T, Container>& x, stack<T, Container>& y) throw() {
-  return (x == y);
-};
+
 template <class T, class Container>
 bool operator<(const stack<T, Container>& x,
                const stack<T, Container>& y) throw() {
-  return (x < y);
+  return x.c < y.c;
 };
-template <class T, class Container>
-bool operator<(stack<T, Container>& x, stack<T, Container>& y) throw() {
-  return (x < y);
-};
+
 template <class T, class Container>
 bool operator!=(const stack<T, Container>& x,
                 const stack<T, Container>& y) throw() {
   return !(x == y);
 };
-template <class T, class Container>
-bool operator!=(stack<T, Container>& x, stack<T, Container>& y) throw() {
-  return !(x == y);
-};
+
 template <class T, class Container>
 bool operator>(const stack<T, Container>& x,
                const stack<T, Container>& y) throw() {
   return (y < x);
 };
-template <class T, class Container>
-bool operator>(stack<T, Container>& x, stack<T, Container>& y) throw() {
-  return (y < x);
-};
+
 template <class T, class Container>
 bool operator>=(const stack<T, Container>& x,
                 const stack<T, Container>& y) throw() {
   return !(x < y);
 };
-template <class T, class Container>
-bool operator>=(stack<T, Container>& x, stack<T, Container>& y) throw() {
-  return !(x < y);
-};
+
 template <class T, class Container>
 bool operator<=(const stack<T, Container>& x,
                 const stack<T, Container>& y) throw() {
   return !(y < x);
 };
-template <class T, class Container>
-bool operator<=(stack<T, Container>& x, stack<T, Container>& y) throw() {
-  return !(y < x);
-};
+
 }  // namespace ft
 #endif

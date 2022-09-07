@@ -6,6 +6,7 @@
 
 #include "Chrono.hpp"
 #include "make_pair.hpp"
+#include "stack.hpp"
 #include "tests_utils.hpp"
 #include "vector.hpp"
 
@@ -631,87 +632,110 @@ int main(void) {
   /* ********************** STACK *********************** */
   std::cout << BOLDMAGENTA "*********** STACK **********" END << std::endl;
   {
-    /* *************** PERFORMANCE TESTS **************** */  // OK
-    {
-      std::cout << BOLDBLUE "Performance test : " END << std::endl;
-      // "Vector of 10 000 000 - Push - Pop - Insert - Erase - Swap"
-      Chrono chrono = Chrono("My stack", "Std stack");
-      chrono.begin();
-      ft::stack<int> my_large_s = ft::stack<int>();
-      for (unsigned long long int i = 0; i < 100; i++) my_large_s.push(42);
-      for (unsigned long long int i = 0; i < 50; i++) my_large_s.pop();
+    // /* *************** PERFORMANCE TESTS **************** */  // OK
+    // {
+    //     // PB
+    //     //  std::cout << BOLDBLUE "Performance test : " END << std::endl;
+    //     //  Chrono chrono = Chrono("My stack", "Std stack");
+    //     //  chrono.begin();
+    //     //  ft::stack<int> my_large_s = ft::stack<int>();
+    //     //  for (unsigned long long int i = 0; i < 10000000; i++)
+    //     //  my_large_s.push(42); for (unsigned long long int i = 0; i < 5000;
+    //     //  i++) my_large_s.pop();
 
-      chrono.stop();
-      std::stack<int> large_s = std::stack<int>();
-      for (unsigned long long int i = 0; i < 100; i++) large_s.push(42);
-      for (unsigned long long int i = 0; i < 50; i++) large_s.pop();
-      chrono.stop();
+    //     // chrono.stop();
+    //     // std::stack<int> large_s = std::stack<int>();
+    //     // for (unsigned long long int i = 0; i < 10000000; i++)
+    //     // large_s.push(42); for (unsigned long long int i = 0; i < 5000;
+    //     i++)
+    //     // large_s.pop(); chrono.stop();
 
-      printDiffStack(my_large_s, large_s);
-    }
-    {
-      std::cout << std::endl
-                << std::endl
-                << BOLDBLUE "Empty : " END << std::endl;
-      ft::stack<int> my_v1;
-      if (my_v1.empty())
-        std::cout << BOLDGREEN "OK " END;
-      else
-        std::cout << BOLDRED "KO " END;
+    //     // printDiffStack(my_large_s, large_s);
+    // } {
+    //   std::cout << std::endl
+    //             << std::endl
+    //             << BOLDBLUE "Empty : " END << std::endl;
+    //   ft::stack<int> my_v1;
+    //   if (my_v1.empty())
+    //     std::cout << BOLDGREEN "OK " END;
+    //   else
+    //     std::cout << BOLDRED "KO " END;
 
-      my_v1.push(1);
-      my_v1.push(2);
-      my_v1.push(3);
-      my_v1.push(4);
-      my_v1.push(5);
-      if (!my_v1.empty())
-        std::cout << BOLDGREEN "OK " END;
-      else
-        std::cout << BOLDRED "KO " END;
+    //   my_v1.push(1);
+    //   my_v1.push(2);
+    //   my_v1.push(3);
+    //   my_v1.push(4);
+    //   my_v1.push(5);
+    //   if (!my_v1.empty())
+    //     std::cout << BOLDGREEN "OK " END;
+    //   else
+    //     std::cout << BOLDRED "KO " END;
 
-      std::stack<int> v1;
-      v1.push(1);
-      v1.push(2);
-      v1.push(3);
-      v1.push(4);
-      v1.push(5);
-      std::cout << std::endl
-                << std::endl
-                << BOLDBLUE "Push : " END << std::endl;
+    //   std::stack<int> v1;
+    //   v1.push(1);
+    //   v1.push(2);
+    //   v1.push(3);
+    //   v1.push(4);
+    //   v1.push(5);
+    //   std::cout << std::endl
+    //             << std::endl
+    //             << BOLDBLUE "Push : " END << std::endl;
 
-      printDiffStack(my_v1, v1);
-    }
-    // my_v1.pop();
-    // v1.pop();
-    // printDiffStack(my_v1, v1);
+    //   ft::stack<int> my_v1cpy(my_v1);
+    //   std::stack<int> v1cpy(v1);
 
-    // ft::stack<int> my_v2;
-    // my_v2.push(1);
-    // my_v2.push(2);
-    // my_v2.push(3);
-
-    // std::stack<int> v2;
-    // v2.push(1);
-    // v2.push(2);
-    // v2.push(3);
-
-    // ft::stack<int> my_v3;
-    // my_v3.push(8);
-    // my_v3.push(2);
-    // my_v3.push(3);
-    // my_v3.push(4);
-    // my_v3.push(5);
-
-    // std::stack<int> v3;
-    // v3.push(8);
-    // v3.push(2);
-    // v3.push(3);
-    // v3.push(4);
-    // v3.push(5);
-
+    //   printDiffStack(my_v1cpy, v1cpy);
+    //   std::cout << std::endl << std::endl << BOLDBLUE "Top : " END <<
+    //   std::endl; if (my_v1.top() == v1.top())
+    //     std::cout << BOLDGREEN "OK " END;
+    //   else
+    //     std::cout << BOLDRED "KO " END;
+    //   std::cout << std::endl << std::endl << BOLDBLUE "Pop : " END <<
+    //   std::endl; my_v1.pop(); v1.pop(); printDiffStack(my_v1, v1);
+    // }
+    // {
     //   std::cout << std::endl
     //             << std::endl
     //             << BOLDBLUE "Comparison operators : " END << std::endl;
+
+    //   ft::stack<int> my_v1;
+    //   my_v1.push(1);
+    //   my_v1.push(2);
+    //   my_v1.push(3);
+    //   my_v1.push(4);
+    //   my_v1.push(5);
+
+    //   std::stack<int> v1;
+    //   v1.push(1);
+    //   v1.push(2);
+    //   v1.push(3);
+    //   v1.push(4);
+    //   v1.push(5);
+
+    //   ft::stack<int> my_v2;
+    //   my_v2.push(1);
+    //   my_v2.push(2);
+    //   my_v2.push(3);
+
+    //   std::stack<int> v2;
+    //   v2.push(1);
+    //   v2.push(2);
+    //   v2.push(3);
+
+    //   ft::stack<int> my_v3;
+    //   my_v3.push(8);
+    //   my_v3.push(2);
+    //   my_v3.push(3);
+    //   my_v3.push(4);
+    //   my_v3.push(5);
+
+    //   std::stack<int> v3;
+    //   v3.push(8);
+    //   v3.push(2);
+    //   v3.push(3);
+    //   v3.push(4);
+    //   v3.push(5);
+
     //   if ((my_v1 == my_v2) == (v1 == v2))
     //     std::cout << BOLDGREEN "OK " END;
     //   else
@@ -775,7 +799,8 @@ int main(void) {
   }
 
   /* ********************** PAIR & MAKEPAIR *********************** */
-  std::cout << BOLDMAGENTA "*********** PAIR & MAKEPAIR **********" END
+  std::cout << std::endl
+            << BOLDMAGENTA "*********** PAIR & MAKEPAIR **********" END
             << std::endl;
   {
     // std::cout << BOLDBLUE "Performance test : " END << std::endl;
@@ -841,7 +866,6 @@ int main(void) {
     // else
     //   std::cout << BOLDRED "KO " END;
   }
-}
 }
 
 // to test guarantee : create class which throws in constructor / destructor /

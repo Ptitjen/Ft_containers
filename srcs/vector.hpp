@@ -349,24 +349,22 @@ class vector {
   /**************** ITERATOR OPERATORS *****************/
 
   iterator begin() throw() { return _array; };
-  const_iterator begin() const throw() {
-    const iterator& it = _array;
-    return it;
-  };
+
+  const_iterator begin() const throw() { return _array; };
 
   iterator end() throw() { return _array + _size; };
-  const_iterator end() const throw() {
-    const iterator& it = _array + _size;
-    return it;
-  };
+
+  const_iterator end() const throw() { return _array + _size; };
 
   /**************** REVERSE ITERATOR OPERATORS *****************/
+  // return directement reverseop
   reverse_iterator rbegin() throw() {
     reverse_iterator it(_array + _size - 1);
     return it;
   };
+
   const_reverse_iterator rbegin() const throw() {
-    const reverse_iterator& it(_array + _size - 1);
+    const_reverse_iterator& it(_array + _size - 1);
     return it;
   };
 
@@ -374,8 +372,9 @@ class vector {
     reverse_iterator it(_array - 1);
     return it;
   };
+
   const_reverse_iterator rend() const throw() {
-    const reverse_iterator& it(_array - 1);
+    const_reverse_iterator& it(_array - 1);
     return it;
   };
 
@@ -392,7 +391,6 @@ class vector {
           a.destroy(_array + i);
         }
         _size = n;
-        //_capacity = n;
         return;
       }
     } catch (std::exception& e) {
@@ -504,11 +502,11 @@ class vector {
     }
   };
 
-  void pop_back() throw() {
-    if (_size > 0) {
-      a.destroy(_array + _size - 1);
-      _size--;
-    }
+  void pop_back() throw() {  // original : segfault if empty?
+    // if (_size > 0) {
+    a.destroy(_array + _size - 1);
+    _size--;
+    //}
   };
 
   iterator insert(iterator position, const T& x) {
@@ -721,26 +719,11 @@ bool operator==(const vector<T, Allocator>& x,
 };
 
 template <class T, class Allocator>
-bool operator==(vector<T, Allocator>& x, vector<T, Allocator>& y) throw() {
-  if (x.size() != y.size()) return false;
-  return (ft::equal(x.begin(), x.end(), y.begin()));
-};
-
-template <class T, class Allocator>
-bool operator<(vector<T, Allocator>& x, vector<T, Allocator>& y) throw() {
-  return ft::lexicographical_compare(x.begin(), x.end(), y.begin(), y.end());
-};
-
-template <class T, class Allocator>
 bool operator<(const vector<T, Allocator>& x,
                const vector<T, Allocator>& y) throw() {
   return ft::lexicographical_compare(x.begin(), x.end(), y.begin(), y.end());
 };
 
-template <class T, class Allocator>
-bool operator!=(vector<T, Allocator>& x, vector<T, Allocator>& y) throw() {
-  return !(x == y);
-};
 template <class T, class Allocator>
 bool operator!=(const vector<T, Allocator>& x,
                 const vector<T, Allocator>& y) throw() {
@@ -748,18 +731,9 @@ bool operator!=(const vector<T, Allocator>& x,
 };
 
 template <class T, class Allocator>
-bool operator>(vector<T, Allocator>& x, vector<T, Allocator>& y) throw() {
-  return (y < x);
-};
-template <class T, class Allocator>
 bool operator>(const vector<T, Allocator>& x,
                const vector<T, Allocator>& y) throw() {
   return (y < x);
-};
-
-template <class T, class Allocator>
-bool operator>=(vector<T, Allocator>& x, vector<T, Allocator>& y) throw() {
-  return !(x < y);
 };
 
 template <class T, class Allocator>
@@ -768,10 +742,6 @@ bool operator>=(const vector<T, Allocator>& x,
   return !(x < y);
 };
 
-template <class T, class Allocator>
-bool operator<=(vector<T, Allocator>& x, vector<T, Allocator>& y) throw() {
-  return !(y < x);
-};
 template <class T, class Allocator>
 bool operator<=(const vector<T, Allocator>& x,
                 const vector<T, Allocator>& y) throw() {
