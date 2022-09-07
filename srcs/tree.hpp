@@ -11,6 +11,7 @@
 
 #include "Node.hpp"
 #include "pair.hpp"
+#include "tests_utils.hpp"
 namespace ft {
 
 /* ******************* TREE HEADER ****************** */
@@ -43,12 +44,20 @@ class TreeHeader {
 template <class Key, class Value, class Compare = std::less<Key>,
           class Allocator = std::allocator<Node<ft::pair<Key, Value> > > >
 class RbTree {
+  typedef Node<ft::pair<Key, Value> > T;
+
  public:
   RbTree() {}
-  RbTree(Node<ft::pair<Key, Value> > startNodeContent) {
+  RbTree(Node<ft::pair<Key, Value> > startNode) {
     _startNode = _a.allocate(1);
-    _startNode = &startNodeContent;
+    _startNode = &startNode;
     _header = TreeHeader(1, _startNode->getPtr());
+    T* leftEnd(_startNode);
+    leftEnd = _a.allocate(1);
+    T* rightEnd(_startNode);
+    rightEnd = _a.allocate(1);
+    startNode.setLeft(leftEnd);
+    startNode.setRight(rightEnd);
   }
   ~RbTree() {}
 
