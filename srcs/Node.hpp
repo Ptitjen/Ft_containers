@@ -2,6 +2,7 @@
 #define NODE_HPP
 
 #include <cstddef>
+
 namespace ft {
 
 enum Color { BLACK_NODE, RED_NODE };
@@ -12,22 +13,17 @@ class BaseNode {
  public:
   BaseNode() {
     color = BLACK_NODE;
-    ptr = NULL;
+    // ptr = NULL;
   };
-  BaseNode(BaseNode *parent) {
-    color = BLACK_NODE;
-    ptr = NULL;
-    _parent = parent;
-  };
+
   ~BaseNode(){};
 
-  BaseNode *getPtr() { return ptr; }
-  Color getColor() { return color; }
+  Color getColor() const { return color; }
+  void setColorColor(Color newColor) { color = newColor; }
 
  protected:
-  BaseNode *ptr;
+  // void *ptr;
   Color color;
-  BaseNode *_parent;
 };
 
 /* ******************* NODE ****************** */
@@ -52,18 +48,23 @@ class Node : public BaseNode {
   };
   ~Node(){};
 
-  Content getContent() { return content; }
+  Content getContent() const { return content; }
 
-  const Node *getLeft() const { return left; }
-  const Node *getRight() const { return right; }
+  Node *getLeft() const { return left; }
+  Node *getRight() const { return right; }
+  Node *getParent() const { return _parent; }
+  Node *getPtr() const { return ptr; }
 
   void setLeft(Node *l) { left = l; }
   void setRight(Node *r) { right = r; }
+  void setParent(Node *p) { _parent = p; }
 
  private:
   Node *left;
   Node *right;
   Content content;
+  Node *_parent;
+  Node *ptr;
 };
 
 }  // namespace ft

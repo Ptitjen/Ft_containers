@@ -4,6 +4,7 @@
 
 #include "pair.hpp"
 #include "reverse_iterator.hpp"
+#include "tree.hpp"
 
 namespace ft {
 template <class Key, class T, class Compare = std::less<Key>,
@@ -56,7 +57,7 @@ class map {
       const map<Key, T, Compare, Allocator>& x);
 
   /* **************** ITERATORS *************** */
-  iterator begin();
+  iterator begin() { return _tree.begin(); };
   const_iterator begin() const;
   iterator end();
   const_iterator end() const;
@@ -74,6 +75,7 @@ class map {
   T& operator[](const key_type& x);
 
   /* **************** MODIFIERS *************** */
+  // insert : use add node with position and node
   pair<iterator, bool> insert(const value_type& x);
   iterator insert(iterator position, const value_type& x);
   template <class InputIterator>
@@ -101,6 +103,9 @@ class map {
 
   pair<iterator, iterator> equal_range(const key_type& x);
   pair<const_iterator, const_iterator> equal_range(const key_type& x) const;
+
+ private:
+  RbTree<Key, T, Compare, Allocator> _tree;
 };
 template <class Key, class T, class Compare, class Allocator>
 bool operator==(const map<Key, T, Compare, Allocator>& x,
