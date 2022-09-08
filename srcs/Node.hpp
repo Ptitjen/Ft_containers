@@ -6,6 +6,8 @@
 namespace ft {
 
 enum Color { BLACK_NODE, RED_NODE };
+enum Type { LEFT_NODE, RIGHT_NODE, START_NODE, NOT_YET_DEFINED };
+
 class BaseNode;
 /* ******************* NODE BASE ****************** */
 
@@ -13,7 +15,7 @@ class BaseNode {
  public:
   BaseNode() {
     color = BLACK_NODE;
-    // ptr = NULL;
+    type = NOT_YET_DEFINED;
   };
 
   ~BaseNode(){};
@@ -21,9 +23,13 @@ class BaseNode {
   Color getColor() const { return color; }
   void setColorColor(Color newColor) { color = newColor; }
 
+  Type getType() { return type; }
+  void setType(Type newType) { type = newType; }
+
  protected:
   // void *ptr;
   Color color;
+  Type type;
 };
 
 /* ******************* NODE ****************** */
@@ -46,14 +52,22 @@ class Node : public BaseNode {
     _parent = parent;
     ptr = this;
   };
+  Node &operator=(const Node &other) {
+    if (&other == this) return (*this);
+    left = other.getLeft();
+    right = other.getRight();
+    content = other.getContent();
+    _parent = other.getParent();
+    ptr = other.getPtr();
+  }
   ~Node(){};
 
-  Content getContent() const { return content; }
+  Content getContent() { return content; }
 
-  Node *getLeft() const { return left; }
-  Node *getRight() const { return right; }
-  Node *getParent() const { return _parent; }
-  Node *getPtr() const { return ptr; }
+  Node *getLeft() { return left; }
+  Node *getRight() { return right; }
+  Node *getParent() { return _parent; }
+  Node *getPtr() { return ptr; }
 
   void setLeft(Node *l) { left = l; }
   void setRight(Node *r) { right = r; }

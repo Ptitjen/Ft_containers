@@ -19,9 +19,9 @@
 // }
 
 template <class Key, class T>
-void printNode(const ft::Node<ft::pair<Key, T> >* node) {
+void printNode(ft::Node<ft::pair<Key, T> >* node) {
   if (!node) {
-    std::cout << BOLDWHITE "END " END;
+    std::cout << BOLDWHITE "X " END;
     return;
   }
   if (node->getColor() == ft::BLACK_NODE)
@@ -36,7 +36,8 @@ template <class Key, class Value>
 void printTree(ft::RbTree<Key, Value> tree) {
   for (typename ft::RbTree<Key, Value>::iterator it = tree.begin();
        it != tree.last(); it++) {
-    // printNode(it);
+    std::cout << it->getContent().first << " " << it->getContent().second
+              << std::endl;
   }
 }
 
