@@ -7,6 +7,7 @@
 // If a node is red, both of its children are black. This means
 // no two nodes on a path can be red nodes. Every path from a root node to a
 // NULL node has the same number of black nodes.
+#include <functional>
 #include <iterator>
 #include <memory>
 
@@ -27,9 +28,6 @@ class TreeHeader {
     _start = start;
   }
   ~TreeHeader(){};
-  size_type getCount() const { return _count; }
-  void increaseCount(size_type n) { _count += n; }
-  void decreaseCount(size_type n) { _count -= n; }
 
   size_type _count;
   T* _start;
@@ -45,7 +43,8 @@ class TreeHeader {
 //            class Compare = std::less<Key>,
 //            class Allocator = std::allocator<Node<ft::pair<Key, Value> > > >
 
-template <class Key, class Value, class Compare = std::less<Key>,
+template <class Key, class Value,
+          class Compare = std::less<Key>,  // key or val?
           class Allocator = std::allocator<Node<ft::pair<Key, Value> > > >
 class RbTree {
   typedef Node<ft::pair<Key, Value> > T;
@@ -109,38 +108,34 @@ class RbTree {
     pointer ptr_;
 
     void increment() {
-      // if (isLast()) return;  // TODO : check what to do
-      if (ptr_->getType() == START_NODE) {
-        ptr_ = (ptr_->getRight())->getPtr();
-        while (ptr_->getLeft()) ptr_ = ptr_->getLeft()->getPtr();
-      } else if (ptr_->getRight()) {
-        ptr_ = ptr_->getRight()->getPtr();
-        while (ptr_->getLeft()) ptr_ = ptr_->getLeft()->getPtr();
+      if (ptr_->_type == START_NODE) {
+        ptr_ = (ptr_->_right)->_ptr;
+        while (ptr_->_left) ptr_ = ptr_->_left->_ptr;
+      } else if (ptr_->_right) {
+        ptr_ = ptr_->_right->_ptr;
+        while (ptr_->_left) ptr_ = ptr_->_left->_ptr;
 
-      } else if (ptr_->getType() == LEFT_NODE) {
-        ptr_ = ptr_->getParent()->getPtr();
-      } else if (ptr_->getType() == RIGHT_NODE) {
-        while (!(ptr_->getType() == LEFT_NODE))
-          ptr_ = ptr_->getParent()->getPtr();
-        ptr_ = ptr_->getParent()->getPtr();
+      } else if (ptr_->_type == LEFT_NODE) {
+        ptr_ = ptr_->_parent->_ptr;
+      } else if (ptr_->_type == RIGHT_NODE) {
+        while (!(ptr_->_type == LEFT_NODE)) ptr_ = ptr_->_parent->_ptr;
+        ptr_ = ptr_->_parent->_ptr;
       }
     }
 
     void decrement() {
-      // if (isBegin()) return;  // TODO : check what to do
-      if (ptr_->getType() == START_NODE) {
-        ptr_ = (ptr_->getLeft())->getPtr();
-        while (ptr_->getRight()) ptr_ = ptr_->getRight()->getPtr();
-      } else if (ptr_->getLeft()) {
-        ptr_ = ptr_->getLeft()->getPtr();
-        while (ptr_->getRight()) ptr_ = ptr_->getRight()->getPtr();
+      if (ptr_->_type == START_NODE) {
+        ptr_ = (ptr_->_left)->_ptr;
+        while (ptr_->_right) ptr_ = ptr_->_right->_ptr;
+      } else if (ptr_->_left) {
+        ptr_ = ptr_->_left->_ptr;
+        while (ptr_->_right) ptr_ = ptr_->_right->_ptr;
 
-      } else if (ptr_->getType() == RIGHT_NODE) {
-        ptr_ = ptr_->getParent()->getPtr();
-      } else if (ptr_->getType() == LEFT_NODE) {
-        while (!(ptr_->getType() == RIGHT_NODE))
-          ptr_ = ptr_->getParent()->getPtr();
-        ptr_ = ptr_->getParent()->getPtr();
+      } else if (ptr_->_type == RIGHT_NODE) {
+        ptr_ = ptr_->_parent->_ptr;
+      } else if (ptr_->_type == LEFT_NODE) {
+        while (!(ptr_->_type == RIGHT_NODE)) ptr_ = ptr_->_parent->_ptr;
+        ptr_ = ptr_->_parent->_ptr;
       }
     }
   };
@@ -196,38 +191,34 @@ class RbTree {
     pointer ptr_;
 
     void increment() {
-      // if (isLast()) return;  // TODO : check what to do
-      if (ptr_->getType() == START_NODE) {
-        ptr_ = (ptr_->getRight())->getPtr();
-        while (ptr_->getLeft()) ptr_ = ptr_->getLeft()->getPtr();
-      } else if (ptr_->getRight()) {
-        ptr_ = ptr_->getRight()->getPtr();
-        while (ptr_->getLeft()) ptr_ = ptr_->getLeft()->getPtr();
+      if (ptr_->_type == START_NODE) {
+        ptr_ = (ptr_->_right)->_ptr;
+        while (ptr_->_left) ptr_ = ptr_->_left->_ptr;
+      } else if (ptr_->_right) {
+        ptr_ = ptr_->_right->_ptr;
+        while (ptr_->_left) ptr_ = ptr_->_left->_ptr;
 
-      } else if (ptr_->getType() == LEFT_NODE) {
-        ptr_ = ptr_->getParent()->getPtr();
-      } else if (ptr_->getType() == RIGHT_NODE) {
-        while (!(ptr_->getType() == LEFT_NODE))
-          ptr_ = ptr_->getParent()->getPtr();
-        ptr_ = ptr_->getParent()->getPtr();
+      } else if (ptr_->_type == LEFT_NODE) {
+        ptr_ = ptr_->_parent->_ptr;
+      } else if (ptr_->_type == RIGHT_NODE) {
+        while (!(ptr_->_type == LEFT_NODE)) ptr_ = ptr_->_parent->_ptr;
+        ptr_ = ptr_->_parent->_ptr;
       }
     }
 
     void decrement() {
-      // if (isBegin()) return;  // TODO : check what to do
-      if (ptr_->getType() == START_NODE) {
-        ptr_ = (ptr_->getLeft())->getPtr();
-        while (ptr_->getRight()) ptr_ = ptr_->getRight()->getPtr();
-      } else if (ptr_->getLeft()) {
-        ptr_ = ptr_->getLeft()->getPtr();
-        while (ptr_->getRight()) ptr_ = ptr_->getRight()->getPtr();
+      if (ptr_->_type == START_NODE) {
+        ptr_ = (ptr_->_left)->_ptr;
+        while (ptr_->_right) ptr_ = ptr_->_right->_ptr;
+      } else if (ptr_->_left) {
+        ptr_ = ptr_->_left->_ptr;
+        while (ptr_->_right) ptr_ = ptr_->_right->_ptr;
 
-      } else if (ptr_->getType() == RIGHT_NODE) {
-        ptr_ = ptr_->getParent()->getPtr();
-      } else if (ptr_->getType() == LEFT_NODE) {
-        while (!(ptr_->getType() == RIGHT_NODE))
-          ptr_ = ptr_->getParent()->getPtr();
-        ptr_ = ptr_->getParent()->getPtr();
+      } else if (ptr_->_type == RIGHT_NODE) {
+        ptr_ = ptr_->_parent->_ptr;
+      } else if (ptr_->_type == LEFT_NODE) {
+        while (!(ptr_->_type == RIGHT_NODE)) ptr_ = ptr_->_parent->_ptr;
+        ptr_ = ptr_->_parent->_ptr;
       }
     }
   };
@@ -239,78 +230,125 @@ class RbTree {
     _startNode = _a.allocate(1);
     _startNode = &startNode;
     _header = TreeHeader<T>(1, _startNode);
-    _startNode->setLeft(startNode.getLeft());
-    _startNode->setRight(startNode.getRight());
-    _startNode->setParent(NULL);
+    _startNode->_left = startNode._left;
+    _startNode->_right = startNode._right;
+    _startNode->_parent = NULL;
     iterator it(_startNode);
-    while (it->getLeft()) {
-      it.ptr_ = it.ptr_->getLeft()->getPtr();
+    while (it->_left) {
+      it.ptr_ = it.ptr_->_left->_ptr;
     };
     _header._begin = &*it;
+    // it.ptr_->_left = _a.allocate(1);  //
+    // it.ptr_->_left = NULL;            //
     iterator itl(_startNode);
-    while (it.ptr_->getRight()) {
+    while (it.ptr_->_right) {
       itl++;
     };
+    // itl.ptr_->_right = _a.allocate(1);  //
+    // itl.ptr_->_right = NULL;            //
     _header._last = &*itl;
   }
-  ~RbTree() {}
+  ~RbTree() {  // dealloc
+  }
 
   /**************** ACCESS ************/
 
   T* getStart() { return _startNode; }
 
   iterator begin() { return iterator(_header._begin); }
-  const_iterator begin() const { return iterator(_header._begin); }
+  const_iterator begin() const { return const_iterator(_header._begin); }
 
   iterator last() { return iterator(_header._last); }
 
-  const_iterator last() const { return _header._last; }
+  const_iterator last() const { return const_iterator(_header._last); }
 
-  void addNode(T* x) {
-    iterator next = begin();
-    /* if 1st */
-    if (Compare(x->getContent().first,
-                next.getContent().first)) {  // new first
-      next.setLeft(x);
+  iterator end() { return iterator(last()->ptr_ + 1); }  // DOES NOT WORK
+
+  const_iterator end() const {
+    return const_iterator(last()->ptr_ + 1);
+  }  // DOES NOT WORK
+
+  template <typename A, typename B>
+  bool f(A a, B b, std::less<Key> u = std::less<Key>()) {
+    return u(a, b);
+  }
+
+  // HERE
+  void addNode(T& x = T()) {
+    /* FIRST */
+
+    if (f((x._content).first, begin().ptr_->_content.first)) {
+      std::cout << "Add node at beginning" << std::endl;  // new first
+      (begin().ptr_)->_left = _a.allocate(1);
+      begin().ptr_->_left = &x;
+      begin().ptr_->_left->_parent = begin().ptr_;
+      resetHeader();
+      begin().ptr_->_type = LEFT_NODE;
       // reequilibrer
+
+      return;
     }
-    /* 1. find position */
-    while (Compare(x->getContent().first, next.getContent().first)) {
-      next++;
+    /* LAST */
+
+    if (!f((x._content).first, last().ptr_->_content.first)) {
+      std::cout << "Add node at end" << std::endl;  // new first
+      (last().ptr_)->_right = _a.allocate(1);
+      last().ptr_->_right = &x;
+      last().ptr_->_right->_parent = last().ptr_;
+      resetHeader();
+      last().ptr_->_type = RIGHT_NODE;
+      // reequilibrer
+      return;
     }
-    next--;
-    /* 2. insert */
+    std::cout << "Somewhere else " << std::endl;
+    /* Find position */
+    iterator it = begin();
+    for (; it != last(); it++) {  // change with end
+      std::cout << it.ptr_->_content.first << std::endl;
+      if (f((x._content).first, it.ptr_->_content.first)) break;
+    }
+    std::cout << "Insert before " << it.ptr_->_content.first;
+    // insert
   }
 
   void leftRotate(T* x) {
-    // MARCHE PQAS
-    T* y = (x->getRight());
-    x->setRight(y->getLeft());
-    if (y->getLeft() != NULL) (y->getLeft())->setParent(x);
-    y->setParent(x->getParent());
-    if (x->getType() == START_NODE)  // x is root
+    std::cout << "Rotate around " << x->_content.first << std::endl;
+    // marche autour de 10 et 4
+    T* y = (x->_right);
+    x->_right = y->_left;
+    if (y->_left != NULL) (y->_left)->_parent = x;
+    y->_parent = x->_parent;
+    if (x->_type == START_NODE)  // x is root
       _startNode = y;
-    else if (x->getType() == LEFT_NODE)  // x is left child
-      (x->getParent())->setLeft(y);
+    else if (x->_type == LEFT_NODE)  // x is left child
+      (x->_parent)->_left = y;
     else  // x is right child
-      (x->getParent())->setRight(y);
-    y->setLeft(x);
-    x->setParent(y);
+      (x->_parent)->_right = y;
+    y->_left = x;
+    x->_type = LEFT_NODE;
+    x->_parent = y;
+    resetHeader();
   }
+
+  void rightRotate(T* x) {}
   /*
 
-*/
+  */
   void resetHeader() {
     iterator it(_startNode);
-    while (it->getLeft()) {
-      it.ptr_ = it.ptr_->getLeft()->getPtr();
+    while (it->_left) {
+      it.ptr_ = it.ptr_->_left->_ptr;
     };
     _header._begin = &*it;
     iterator itl(_startNode);
-    while (itl->getRight()) {
-      itl.ptr_ = itl.ptr_->getRight()->getPtr();
+    while (itl->_right) {
+      itl.ptr_ = itl.ptr_->_right->_ptr;
     };
+
     _header._last = &*itl;
+    // itl.ptr_->_right = _a.allocate(1);  //
+    // itl.ptr_->_right = NULL;            //
+
     // reset start?
   };
   /************ MEMBER VALUES ************/
@@ -338,15 +376,15 @@ class RbTree {
   //         else (same as then clause with “left” and “right” exchanged)
   //      T.root.color = BLACK
 
-  // while (it.getParent().getColor() == RED_NODE)
-  //   if (it.getParent() == it.getParent().getParent().getRight()) {
-  //     if (it.getParent().getParent().getLeft().getColor() == RED_NODE) {
-  //       it.getParent().getParent().getLeft().setColor(BLACK_NODE);
-  //       it.getParent().setColor(BLACK_NODE);
-  //       it.getParent().getParent().setColor(RED_NODE);
-  //       it = it.getParent().getParent();
+  // while (it._parent._color == RED_NODE)
+  //   if (it._parent == it._parent._parent._right) {
+  //     if (it._parent._parent._left._color == RED_NODE) {
+  //       it._parent._parent._left.setColor(BLACK_NODE);
+  //       it._parent.setColor(BLACK_NODE);
+  //       it._parent._parent.setColor(RED_NODE);
+  //       it = it._parent._parent;
   //     } else if (it.isLeftNode()) {
-  //       it = it.getParent();
+  //       it = it._parent;
   //       leftRotate(newNode, it);
   //     }
   //   }
