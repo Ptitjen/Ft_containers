@@ -10,6 +10,7 @@ struct pair {
   T1 first;
   T2 second;
 
+  pair(){};
   pair(T1 f, T2 s) : first(f), second(s){};
 
   pair& operator=(const pair& other) {
