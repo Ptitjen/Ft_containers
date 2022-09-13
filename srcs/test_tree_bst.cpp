@@ -4,38 +4,30 @@
 #include "tests_utils.hpp"
 
 void printWithIterators(ft::BstTree<int, char>& t) {
-  ft::BstTree<int, char>::iterator itv = t.begin();
-  std::cout << " --- " << std::endl;
-
-  //   for (; itv != t.last(); itv++) {
-  //     std::cout << "|";
-  //     std::cout << itv.node->content.first << " " << itv.node->content.second
-  //               << "|" << std::endl;
-  //     std::cout << " --- " << std::endl;
-  //   }
-
-  //   std::cout << "|";
-  //   std::cout << itv.node->content.first << " " << itv.node->content.second;
-  //   std::cout << "|" << std::endl;
-
-  //   std::cout << " --- " << std::endl;
-  // std::cout << "Header : " << t.header.node << std::endl;
-  // std::cout << "Last: " << t.last().node << std::endl;
-  // std::cout << "End: " << t.end().node << std::endl;
   for (ft::BstTree<int, char>::iterator it = t.begin(); it != t.end(); it++) {
     std::cout << "|";
     std::cout << it.node->content.first << " " << it.node->content.second << "|"
               << std::endl;
     std::cout << " --- " << std::endl;
   }
+
+  // for (ft::BstTree<int, char>::iterator it = t.end(); it != t.begin(); it--)
+  // {
+  //   std::cout << "|";
+  //   std::cout << it.node->content.first << " " << it.node->content.second <<
+  //   "|"
+  //             << std::endl;
+  //   std::cout << " --- " << std::endl;
+  // }
 }
 
 int main(void) {
   {
     std::cout << BOLDYELLOW "***** SIMPLE TREE *****" END << std::endl;
-    ft::pair<int, char> startpair = ft::make_pair(2, 'b');
-    // ft::Node<ft::pair<int, char> > n2 =
-    //     ft::Node<ft::pair<int, char> >(ft::make_pair(2, 'b'));
+    // ft::pair<int, char> startpair = ft::make_pair(2, 'b');
+    ft::Node<ft::pair<int, char> > n2 =
+        ft::Node<ft::pair<int, char> >(ft::make_pair(2, 'b'));
+
     ft::Node<ft::pair<int, char> > n3 =
         ft::Node<ft::pair<int, char> >(ft::make_pair(3, 'c'));
 
@@ -44,7 +36,8 @@ int main(void) {
     ft::Node<ft::pair<int, char> > n4 =
         ft::Node<ft::pair<int, char> >(ft::make_pair(4, 'd'));
 
-    ft::BstTree<int, char> t(startpair);
+    // ft::BstTree<int, char> t(startpair); //tree from value
+    ft::BstTree<int, char> t(&n2);  // tree from node
     t.getStart()->left = &n1;
     t.getStart()->right = &n4;
 
@@ -74,128 +67,100 @@ int main(void) {
     t.resetHeader();
     printWithIterators(t);
   }
+  {
+    std::cout << BOLDYELLOW "***** MORE COMPLICATED TREE *****" END
+              << std::endl;
+    ft::Node<ft::pair<int, char> > n1 =
+        ft::Node<ft::pair<int, char> >(ft::make_pair(1, 'a'));
+    ft::Node<ft::pair<int, char> > n2 =
+        ft::Node<ft::pair<int, char> >(ft::make_pair(2, 'b'));
+    ft::Node<ft::pair<int, char> > n3 =
+        ft::Node<ft::pair<int, char> >(ft::make_pair(3, 'c'));
+    ft::Node<ft::pair<int, char> > n4 =
+        ft::Node<ft::pair<int, char> >(ft::make_pair(4, 'd'));
+    ft::Node<ft::pair<int, char> > n5 =
+        ft::Node<ft::pair<int, char> >(ft::make_pair(5, 'e'));
+    ft::Node<ft::pair<int, char> > n6 =
+        ft::Node<ft::pair<int, char> >(ft::make_pair(6, 'f'));
+    ft::Node<ft::pair<int, char> > n7 =
+        ft::Node<ft::pair<int, char> >(ft::make_pair(7, 'g'));
+    ft::Node<ft::pair<int, char> > n8 =
+        ft::Node<ft::pair<int, char> >(ft::make_pair(8, 'h'));
+    ft::Node<ft::pair<int, char> > n9 =
+        ft::Node<ft::pair<int, char> >(ft::make_pair(10, 'j'));
 
-  // std::cout << BOLDYELLOW "***** MORE COMPLICATED TREE *****" END
-  //           << std::endl;
-  // ft::Node<ft::pair<int, char> > n1 =
-  //     ft::Node<ft::pair<int, char> >(ft::make_pair(1, 'a'));
-  // ft::Node<ft::pair<int, char> > n2 =
-  //     ft::Node<ft::pair<int, char> >(ft::make_pair(2, 'b'));
-  // ft::Node<ft::pair<int, char> > n3 =
-  //     ft::Node<ft::pair<int, char> >(ft::make_pair(3, 'c'));
-  // ft::Node<ft::pair<int, char> > n4 =
-  //     ft::Node<ft::pair<int, char> >(ft::make_pair(4, 'd'));
-  // ft::Node<ft::pair<int, char> > n5 =
-  //     ft::Node<ft::pair<int, char> >(ft::make_pair(5, 'e'));
-  // ft::Node<ft::pair<int, char> > n6 =
-  //     ft::Node<ft::pair<int, char> >(ft::make_pair(6, 'f'));
-  // ft::Node<ft::pair<int, char> > n7 =
-  //     ft::Node<ft::pair<int, char> >(ft::make_pair(7, 'g'));
-  // ft::Node<ft::pair<int, char> > n8 =
-  //     ft::Node<ft::pair<int, char> >(ft::make_pair(8, 'h'));
-  // ft::Node<ft::pair<int, char> > n9 =
-  //     ft::Node<ft::pair<int, char> >(ft::make_pair(10, 'j'));
+    std::cout << std::endl << "NODES" << std::endl;
 
-  // std::cout << std::endl << "NODES" << std::endl;
+    n6.right = &n8;
+    n8.parent = &n6;
 
-  // n6._type = ft::START_NODE;
+    n6.left = &n2;
+    n2.parent = &n6;
 
-  // n6._right = &n8;
-  // n8._parent = &n6;
-  // n8._type = ft::RIGHT_NODE;
+    n2.left = &n1;
+    n1.parent = &n2;
 
-  // n6._left = &n2;
-  // n2._parent = &n6;
-  // n2._type = ft::LEFT_NODE;
+    n2.right = &n4;
+    n4.parent = &n2;
 
-  // n2._left = &n1;
-  // n1._parent = &n2;
-  // n1._type = ft::LEFT_NODE;
+    n4.left = &n3;
+    n3.parent = &n4;
 
-  // n2._right = &n4;
-  // n4._parent = &n2;
-  // n4._type = ft::RIGHT_NODE;
+    n4.right = &n5;
+    n5.parent = &n4;
 
-  // n4._left = &n3;
-  // n3._parent = &n4;
-  // n3._type = ft::LEFT_NODE;
+    n8.right = &n9;
+    n9.parent = &n8;
 
-  // n4._right = &n5;
-  // n5._parent = &n4;
-  // n5._type = ft::RIGHT_NODE;
+    n8.left = &n7;
+    n7.parent = &n8;
 
-  // n8._right = &n9;
-  // n9._parent = &n8;
-  // n9._type = ft::RIGHT_NODE;
+    ft::BstTree<int, char> t = ft::BstTree<int, char>(&n6);
+    t.resetHeader();
+    printWithIterators(t);
+    /*** SEARCH ***/
+    std::cout << (t.search(0, t.getStart())) << std::endl;
+    std::cout << (t.search(1, t.getStart()))->content.second << std::endl;
+    std::cout << (t.search(2, t.getStart()))->content.second << std::endl;
+    std::cout << (t.search(3, t.getStart()))->content.second << std::endl;
+    std::cout << (t.search(4, t.getStart()))->content.second << std::endl;
+    std::cout << (t.search(5, t.getStart()))->content.second << std::endl;
+    std::cout << (t.search(6, t.getStart()))->content.second << std::endl;
+    std::cout << (t.search(7, t.getStart()))->content.second << std::endl;
+    std::cout << (t.search(8, t.getStart()))->content.second << std::endl;
+    std::cout << (t.search(9, t.getStart())) << std::endl;
+    std::cout << (t.search(10, t.getStart()))->content.second << std::endl;
+    std::cout << (t.search(11, t.getStart())) << std::endl;
 
-  // n8._left = &n7;
-  // n7._parent = &n8;
-  // n7._type = ft::LEFT_NODE;
+    /*** ADD ***/
+    t.addNode(ft::make_pair(1, 'A'));
+    t.addNode(ft::make_pair(2, 'B'));
+    t.addNode(ft::make_pair(3, 'C'));
+    t.addNode(ft::make_pair(4, 'D'));
+    t.addNode(ft::make_pair(5, 'E'));
+    t.addNode(ft::make_pair(6, 'F'));
+    t.addNode(ft::make_pair(7, 'G'));
+    t.addNode(ft::make_pair(8, 'H'));
+    t.addNode(ft::make_pair(9, 'I'));
+    t.addNode(ft::make_pair(10, 'J'));
 
-  // ft::RbTree<int, char> t = ft::RbTree<int, char>(n6);
-  // t.resetHeader();
-  // printThisTree(t);
-  // std::cout << std::endl << std::endl << "ACCESS" << std::endl;
-  // std::cout << std::endl << "Begin : ";
+    printWithIterators(t);
 
-  // ft::RbTree<int, char>::iterator it = t.begin();
-  // std::cout << &*t.begin() << std::endl;
-  // std::cout << it->_content.first << " " << it->_content.second << std::endl;
-  // std::cout << std::endl << "Last : ";
+    // ft::Node<ft::pair<int, char> > newNode =
+    //     ft::Node<ft::pair<int, char> >(ft::make_pair(0, '.'));
+    // t.addNode(&newNode);
+    // printWithIterators(t);
 
-  // ft::RbTree<int, char>::iterator itl = t.last();
-  // std::cout << &*t.last() << std::endl;
+    // // printWithIterators(t);
+    // // printWithDecrementIterators(t);
 
-  // std::cout << itl->_content.first << " " << itl->_content.second
-  //           << std::endl;
-
-  // std::cout << std::endl;
-
-  // std::cout << std::endl << "TREE" << std::endl;
-  // std::cout << "Incrementation" << std::endl;
-  // std::cout << " --- " << std::endl;
-  // // printWithIterators(t);
-  // std::cout << std::endl << "Decrementation" << std::endl;
-  // std::cout << " --- " << std::endl;
-
-  // // printWithDecrementIterators(t);
-
-  // ft::Node<ft::pair<int, char> > newNode =
-  //     ft::Node<ft::pair<int, char> >(ft::make_pair(0, '.'));
-  // t.addNode(newNode);
-  // printThisTree(t);
-  // // printWithIterators(t);
-  // // printWithDecrementIterators(t);
-
-  // ft::Node<ft::pair<int, char> > newNodel =
-  //     ft::Node<ft::pair<int, char> >(ft::make_pair(11, 'k'));
-  // t.addNode(newNodel);
-  // printThisTree(t);
-  // // std::cout << "-------------" << std::endl;
-  // // printWithIterators(t);
-  // // std::cout << "-------------" << std::endl;
-  // // printWithDecrementIterators(t);
-  // // std::cout << "-------------" << std::endl;
-  // ft::Node<ft::pair<int, char> > newNode2 =
-  //     ft::Node<ft::pair<int, char> >(ft::make_pair(9, 'i'));
-  // // t.addNode(newNode2);  // to do
-  // printWithIterators(t);
-  // std::cout << std::endl << "LEFT ROTATE" << std::endl;
-  // t.leftRotate(t.getStart()->_right->_right);  // TO DO
-  // std::cout << std::endl;
-  // printThisTree(t);
-  // printWithIterators(t);
-
-  // t.leftRotate(t.getStart()->_left->_right);  // TO DO
-  // std::cout << std::endl;
-  // printThisTree(t);
-  // std::cout << "     |";
-  // printNode(*t.getStart()->_left->_right->_left->_left);
-  // printNode(*t.getStart()->_left->_right->_left->_right);
-  // std::cout << std::endl;
-  // printWithIterators(t);
-
-  // t.rightRotate(t.getStart()->_left->_right);
-  // printThisTree(t);
-  // printWithIterators(t);
+    // ft::Node<ft::pair<int, char> > newNodel =
+    //     ft::Node<ft::pair<int, char> >(ft::make_pair(11, 'k'));
+    // t.addNode(&newNodel);
+    // printWithIterators(t);
+    // ft::Node<ft::pair<int, char> > newNode2 =
+    //     ft::Node<ft::pair<int, char> >(ft::make_pair(9, 'i'));
+    // t.addNode(&newNode2);
+    // printWithIterators(t);
+  }
 }

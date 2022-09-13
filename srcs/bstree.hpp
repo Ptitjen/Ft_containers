@@ -296,8 +296,8 @@ class BstTree {
       return it;
     }
 
-    reference operator*() { return *node(); }
-    pointer operator->() { return node; }
+    reference operator*() { return *node(); }  // see this
+    pointer operator->() { return node; }      // and this
 
     /* comparison */
     bool operator==(const iterator& rhs) {
@@ -306,21 +306,10 @@ class BstTree {
     bool operator!=(const iterator& rhs) { return !(node == rhs.node); }
 
     void increment() {
-      // std::cout << node << std::endl
-      //           << node->left << std::endl
-      //           << node->right << std::endl
-      //           << node->parent << std::endl
-      //           << std::endl;  // if (node->parent == NULL) {  // START NODE
-      //   node = node->right;
-      //   while (node->left != NULL) node = node->left;
-      // }
-      // } else
-      // remove when end ok
       if (node->right != NULL) {
         node = node->right;
         if (node->left == node) return;  // headernode
         while (node->left != NULL) node = node->left;
-
       } else if (node == node->parent->left) {  // LEFT NODE
         node = node->parent;
       } else if (node == node->parent->right) {  // RIGHT NODE
@@ -330,11 +319,9 @@ class BstTree {
     }
 
     void decrement() {
-      // if (node->parent == NULL) {
-      //   node = node->left;
-      //   while (node->right != NULL) node = node->right;
-      // } else
-      if (node->left != NULL) {
+      if (node->left == node)
+        node = node->parent;  // end
+      else if (node->left != NULL) {
         node = node->left;
         while (node->right != NULL) node = node->right;
       } else if (node == node->parent->right) {  // RIGHT NODE
@@ -382,9 +369,15 @@ class BstTree {
                    const allocator_type& alloc = allocator_type())
       : a(alloc){};
 
-  BstTree(value_type startNodeValue) {
+  BstTree(value_type startNodeValue) {  // tree from value
     _startNode = a.allocate(1);
     _startNode->content = startNodeValue;
+    header = BstTreeHeader<value_type, Allocator>();
+  }
+
+  BstTree(node_ptr startNode) {  // tree from node
+    _startNode = a.allocate(1);
+    _startNode = startNode;
     header = BstTreeHeader<value_type, Allocator>();
   }
   /*
@@ -459,41 +452,57 @@ class BstTree {
   const_iterator find(const key_type& k) const {}
 
   // HERE
-  void addNode(Value& x = Value()) {
-    /* FIRST */
 
-    if (f((x._content).first, begin()->content.first)) {
-      std::cout << "Add node at beginning" << std::endl;  // new first
-      (begin())->left = a.allocate(1);
-      begin()->left = &x;
-      begin()->left->parent = begin();
-      resetHeader();
-      return;
+  node_ptr search(const key_type& key, node_ptr root) {
+    if (root == NULL) {
+      std::cout << key << " not found" << std::endl;
+      return NULL;
     }
-    /* LAST */
+    if (root->content.first == key) return root;  // found
+    if (f(root->content.first, key)) {
+      if (root->right == header.node) {
+        std::cout << key << " not found - bigger"
+                  << std::endl;  // bigger then last
+        return NULL;
+      }
+      return search(key, root->right);
+    }
+    return search(key, root->left);
+  }
 
-    if (!f((x.content).first, last()->content.first)) {
-      std::cout << "Add node at end" << std::endl;  // new first
-      last()->right = a.allocate(1);
-      last()->right = &x;
-      last()->right->parent = last();
-      resetHeader();
-      return;
+  void addNode(value_type newValue) {
+    /* ALREADY EXISTS */
+    node_ptr n = search(newValue.first, _startNode);
+    if (n != NULL) {
+      std::cout << newValue.first << " already exists - replacing old value"
+                << std::endl;
+      n->content = newValue;
     }
-    std::cout << "Somewhere else " << std::endl;
+    // if (f(x->content.first, begin()->content.first)) {
+    //   std::cout << "Add node at beginning" << std::endl;  // new first
+    //   (begin())->left = a.allocate(1);
+    //   begin()->left = &x;
+    //   begin()->left->parent = begin();
+    //   resetHeader();
+    //   return;
+    // }
+    // /* LAST */
+
+    // if (!f((x.content).first, last()->content.first)) {
+    //   std::cout << "Add node at end" << std::endl;  // new first
+    //   last()->right = a.allocate(1);
+    //   last()->right = &x;
+    //   last()->right->parent = last();
+    //   resetHeader();
+    //   return;
+
     /* Find position */
-    iterator it = begin();
-    for (; it != last(); it++) {  // change with end
-      std::cout << it->content.first << std::endl;
-      if (f((x.content).first, it->content.first)) break;
-    }
-    std::cout << "Insert before " << it->content.first;
-    // insert
   }
 
   void resetHeader() {
     iterator it = last();
     it.node->right = header.node;
+    header.node->parent = it.node;
 
     // y'a de l'idee mais ca marche pas encore
 
@@ -506,7 +515,7 @@ class BstTree {
   Node<value_type>* getStart() { return _startNode; };
 
   /************ MEMBER VALUES ************/
-  // private: //put back when ok
+ private:  // put back when ok
   allocator_type a;
   BstTreeHeader<value_type, Allocator> header;
   Node<value_type>* _startNode;
