@@ -298,24 +298,13 @@ class BstTree {
     };
     return itb;
   }
-  const_iterator cbegin() const {
-    const_iterator itb(_startNode);
-    while (itb.node->left) {
-      itb.node = itb.node->left;
-    };
-    return itb;
-  }
   iterator end() { return header.node; }
-  const_iterator cend() const { return header.node; }
   reverse_iterator rbegin() { return reverse_iterator(end()); }
-  const_reverse_iterator crbegin() const { return reverse_iterator(end()); }
   reverse_iterator rend() { return reverse_iterator(begin()); }
-  const_reverse_iterator crend() const { return reverse_iterator(begin()); }
 
   iterator find(const key_type& k) {
     return iterator(searchToFind(k, _startNode));
   }
-
   const_iterator find(const key_type& k) const {
     return const_iterator(searchToFind(k, _startNode));
   }
@@ -484,17 +473,11 @@ insert
 erase
     Erase elements (public member function)
 
-swap`
+swap
     Swap content (public member function)
 
 clear
     Clear content (public member function)
-
-emplace
-    Construct and insert element (public member function)
-
-emplace_hint
-    Construct and insert element with hint (public member function)
 
 
 Observers:
@@ -520,4 +503,9 @@ upper_bound
 equal_range
     Get range of equal elements (public member function)
 
+
+
+NON MEMBER :
+relational op
+swap
 */
