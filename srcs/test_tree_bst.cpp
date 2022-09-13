@@ -294,5 +294,15 @@ int main(void) {
     //     ft::Node<ft::pair<int, char> >(ft::make_pair(9, 'i'));
     // t.addNode(&newNode2);
     // printWithIterators(t);
+
+    std::cout << std::endl << BOLDGREEN "Operator =" END << std::endl;
+    ft::BstTree<int, char> t_copy;
+    t_copy = t;
+    printThisTree(t_copy);
+    std::cout << "Change value 5 in copy :" << std::endl;
+    t_copy.addNode(ft::make_pair(5, '@'));
+    printThisTree(t_copy);
+    std::cout << "Check original :" << std::endl;
+    printThisTree(t);
   }
 }

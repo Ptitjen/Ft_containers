@@ -281,6 +281,32 @@ class BstTree {
             const allocator_type& alloc = allocator_type()){};
 
     BstTree(const BstTree& x){};*/
+  BstTree& operator=(const BstTree& other) {
+    if (&other == this) return *this;
+    header = BstTreeHeader<value_type, Allocator>();
+
+    _startNode = copy(other._startNode);
+    resetHeader();
+    return *this;
+  }
+  ~BstTree(){};  // dealloc
+
+  node_ptr copy(const node_ptr& originalNode) {  // NOLINT
+    if (originalNode == NULL) {
+      return NULL;
+    }
+    // not working - segfault
+    Node<value_type>* newNode;
+    newNode = a.allocate(1);
+    if (originalNode->parent == NULL) newNode->parent = NULL;
+
+    newNode->content = originalNode->content;
+    newNode->left = copy(originalNode->left);
+    if (newNode->left) newNode->left->parent = newNode;
+    newNode->right = copy(originalNode->right);
+    if (newNode->right) newNode->right->parent = newNode;
+    return newNode;
+  }
 
   /* ********* CAPACITY ********* */
 
