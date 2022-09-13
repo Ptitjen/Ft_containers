@@ -1,4 +1,6 @@
 
+#include <stdexcept>
+
 #include "bstree.hpp"
 #include "make_pair.hpp"
 #include "tests_utils.hpp"
@@ -257,13 +259,25 @@ int main(void) {
     printThisTree(t);
 
     /****** ELEMENT ACCESS *****/
-    std::cout << BOLDBLUE "[] : " END;
+    std::cout << BOLDBLUE "[]: " END;
     std::cout << t[0] << " " << t[1] << " " << t[2] << " " << t[3] << " "
               << t[4] << " " << t[5] << " " << t[6] << " " << t[7] << " "
               << t[8] << " " << t[9] << " " << t[10] << " " << t[11] << " "
-              << t[12] << " " << t[13] << " " << std::endl;
+              << t[12] << std::endl;
     printWithIterators(t);
     printThisTree(t);
+
+    try {
+      std::cout << BOLDBLUE "At: " END;
+      std::cout << t.at(0) << " " << t.at(1) << " " << t.at(2) << " " << t.at(3)
+                << " " << t.at(4) << " " << t.at(5) << " " << t.at(6) << " "
+                << t.at(7) << " " << t.at(8) << " " << t.at(9) << " "
+                << t.at(10) << " " << t.at(11) << " " << t.at(12) << " "
+                << t.at(13) << " " << std::endl;
+    } catch (std::out_of_range& e) {
+      std::cout << "Out of range" << std::endl;
+    }
+
     // ft::Node<ft::pair<int, char> > newNode =
     //     ft::Node<ft::pair<int, char> >(ft::make_pair(0, '.'));
     // t.addNode(&newNode);

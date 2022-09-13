@@ -282,8 +282,15 @@ class BstTree {
 
     BstTree(const BstTree& x){};*/
 
-  /* *************** ELEMENT ACCESS ************** */
+  /* ********* CAPACITY ********* */
 
+  bool empty() { return header.count == 0; }
+  std::size_t size() { return header.count; }
+  std::size_t max_size() { return std::numeric_limits<std::size_t>::max(); }
+
+  /* *********************************************************************** */
+  /*                             ELEMENT ACCESS                              */
+  /* *********************************************************************** */
   iterator begin() {
     iterator itb(_startNode);
     while (itb.node->left) {
@@ -298,29 +305,20 @@ class BstTree {
     };
     return itb;
   }
-
-  iterator last() {
-    iterator itl(_startNode);
-    while (itl.node->right && itl.node->right != header.node) {  //??
-      itl.node = itl.node->right;
-    };
-    return itl;
-  }  // remove if not needed anymore when it & end ok
-
-  const_iterator last() const {
-    const_iterator itl(_startNode);
-    while (itl.node->right && itl.node->right != header.node) {  // /
-      itl.node = itl.node->right;
-    };
-    return itl;
-  }  // remove when it & end ok
-
   iterator end() { return header.node; }
   const_iterator cend() const { return header.node; }
   reverse_iterator rbegin() { return reverse_iterator(end()); }
   const_reverse_iterator crbegin() const { return reverse_iterator(end()); }
   reverse_iterator rend() { return reverse_iterator(begin()); }
   const_reverse_iterator crend() const { return reverse_iterator(begin()); }
+
+  iterator find(const key_type& k) {
+    return iterator(searchToFind(k, _startNode));
+  }
+
+  const_iterator find(const key_type& k) const {
+    return const_iterator(searchToFind(k, _startNode));
+  }
 
   mapped_type& operator[](const key_type& k) {  // inserts element if not found
     node_ptr n = searchToAdd(k, _startNode);
@@ -361,23 +359,16 @@ class BstTree {
     throw std::out_of_range("");
   };
 
-  /* ********* CAPACITY ********* */
+  /* *********************************************************************** */
+  /*                                  OTHER                                  */
+  /* *********************************************************************** */
+  Allocator get_allocator() { return a; }
 
-  bool empty() { return header.count == 0; }
-  std::size_t size() { return header.count; }
-  std::size_t max_size() { return std::numeric_limits<std::size_t>::max(); }
+  /* *********************************************************************** */
+  /*                                  UTILS                                  */
+  /* *********************************************************************** */
 
-  iterator find(const key_type& k) {
-    return iterator(searchToFind(k, _startNode));
-  }
-
-  const_iterator find(const key_type& k) const {
-    return const_iterator(searchToFind(k, _startNode));
-  }
-
-  /************ UTILS ************/
-
-  /*** Utils : put these in private when finished ***/
+  /*** Utils : put all in private when finished ***/
   Node<value_type>* getStart() { return _startNode; };
 
   void addNode(value_type newValue) {
@@ -419,6 +410,22 @@ class BstTree {
   bool f(A a, B b, std::less<Key> u = std::less<Key>()) {
     return u(a, b);
   }
+
+  iterator last() {
+    iterator itl(_startNode);
+    while (itl.node->right && itl.node->right != header.node) {  //??
+      itl.node = itl.node->right;
+    };
+    return itl;
+  }  // remove if not needed anymore when it & end ok
+
+  const_iterator last() const {
+    const_iterator itl(_startNode);
+    while (itl.node->right && itl.node->right != header.node) {  // /
+      itl.node = itl.node->right;
+    };
+    return itl;
+  }  // remove when it & end ok
   node_ptr searchToFind(const key_type& key, node_ptr root) {
     if (root == NULL) return header.node;
     if (root->content.first == key) return root;
@@ -446,7 +453,9 @@ class BstTree {
     return searchToAdd(key, root->left);
   }
 
-  /************ MEMBER VALUES ************/
+  /* *********************************************************************** */
+  /*                               MEMBER VALUES                             */
+  /* *********************************************************************** */
   allocator_type a;
   BstTreeHeader<value_type, Allocator> header;
   Node<value_type>* _startNode;
@@ -465,15 +474,6 @@ class BstTree {
 
 operator=
     Copy container content (public member function)
-
-
-Element access:
-
-operator[]
-    Access element (public member function)
-
-at
-    Access element (public member function)
 
 
 Modifiers:
@@ -508,9 +508,6 @@ value_comp
 
 Operations:
 
-find
-    Get iterator to element (public member function)
-
 count
     Count elements with a specific key (public member function)
 
@@ -523,8 +520,4 @@ upper_bound
 equal_range
     Get range of equal elements (public member function)
 
-
-Allocator:
-
-get_allocator
-    Get allocator (public member function)*/
+*/
