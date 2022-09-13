@@ -150,8 +150,8 @@ class vector {
     }
 
     /* deref */
-    reference operator*() { return *ptr_; }
-    pointer operator->() { return ptr_; }
+    reference operator*() const { return *ptr_; }
+    pointer operator->() const { return ptr_; }
 
     /* add and substract */
     const_iterator operator+(difference_type n) const {
