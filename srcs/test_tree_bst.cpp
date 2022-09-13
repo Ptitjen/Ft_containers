@@ -3,7 +3,69 @@
 #include "make_pair.hpp"
 #include "tests_utils.hpp"
 
+template <class Key, class T>
+void printNode(const ft::Node<ft::pair<Key, T> >* node) {
+  if (node) {
+    if (node->content.first < 0 ||
+        node->content.first > 20)  // remove when add ok
+      std::cout << "END";
+    else
+      std::cout << node->content.first << "" << node->content.second;
+  } else
+    std::cout << "  ";
+}
+
+void printThisTree(ft::BstTree<int, char>& t) {
+  std::cout << "            ";
+  /* Start*/
+  printNode(t.getStart());
+  std::cout << std::endl << "    ";
+  /*Etage 1*/
+  printNode(t.getStart()->left);
+  std::cout << "      |      ";
+  printNode(t.getStart()->right);
+  std::cout << std::endl;
+  /* Etage 2 */
+  if (t.getStart()->left != NULL) {
+    printNode(t.getStart()->left->left);
+    std::cout << "     ";
+    printNode(t.getStart()->left->right);
+    std::cout << "   |  ";
+  }
+  if (t.getStart()->right != NULL) {
+    printNode(t.getStart()->right->left);
+    std::cout << "    ";
+    printNode(t.getStart()->right->right);
+    std::cout << std::endl;
+  }
+  /* Etage 3 */
+  if (t.getStart()->left != NULL && t.getStart()->left->left != NULL) {
+    printNode(t.getStart()->left->left->left);
+    printNode(t.getStart()->left->left->right);
+  }
+  std::cout << "| ";
+  if (t.getStart()->left != NULL && t.getStart()->left->right != NULL) {
+    printNode(t.getStart()->left->right->left);
+    std::cout << " ";
+    printNode(t.getStart()->left->right->right);
+  }
+  if (t.getStart()->right != NULL && t.getStart()->right->left != NULL) {
+    std::cout << " | ";
+    printNode(t.getStart()->right->left->left);
+    std::cout << " ";
+    printNode(t.getStart()->right->left->right);
+    std::cout << "|";
+  }
+  if (t.getStart()->right != NULL && t.getStart()->right->right != NULL) {
+    printNode(t.getStart()->right->right->left);
+    std::cout << " ";
+    printNode(t.getStart()->right->right->right);
+  }
+  std::cout << std::endl;
+}
+
 void printWithIterators(ft::BstTree<int, char>& t) {
+  std::cout << std::endl << " --- " << std::endl;
   for (ft::BstTree<int, char>::iterator it = t.begin(); it != t.end(); it++) {
     std::cout << "|";
     std::cout << it.node->content.first << " " << it.node->content.second << "|"
@@ -118,21 +180,24 @@ int main(void) {
     ft::BstTree<int, char> t = ft::BstTree<int, char>(&n6);
     t.resetHeader();
     printWithIterators(t);
-    /*** SEARCH ***/
-    std::cout << (t.search(0, t.getStart())) << std::endl;
-    std::cout << (t.search(1, t.getStart()))->content.second << std::endl;
-    std::cout << (t.search(2, t.getStart()))->content.second << std::endl;
-    std::cout << (t.search(3, t.getStart()))->content.second << std::endl;
-    std::cout << (t.search(4, t.getStart()))->content.second << std::endl;
-    std::cout << (t.search(5, t.getStart()))->content.second << std::endl;
-    std::cout << (t.search(6, t.getStart()))->content.second << std::endl;
-    std::cout << (t.search(7, t.getStart()))->content.second << std::endl;
-    std::cout << (t.search(8, t.getStart()))->content.second << std::endl;
-    std::cout << (t.search(9, t.getStart())) << std::endl;
-    std::cout << (t.search(10, t.getStart()))->content.second << std::endl;
-    std::cout << (t.search(11, t.getStart())) << std::endl;
+    printThisTree(t);
+
+    /*** SEARCH ***/  // OK
+    // std::cout << (t.search(0, t.getStart()))->content.second << std::endl;
+    // std::cout << (t.search(1, t.getStart()))->content.second << std::endl;
+    // std::cout << (t.search(2, t.getStart()))->content.second << std::endl;
+    // std::cout << (t.search(3, t.getStart()))->content.second << std::endl;
+    // std::cout << (t.search(4, t.getStart()))->content.second << std::endl;
+    // std::cout << (t.search(5, t.getStart()))->content.second << std::endl;
+    // std::cout << (t.search(6, t.getStart()))->content.second << std::endl;
+    // std::cout << (t.search(7, t.getStart()))->content.second << std::endl;
+    // std::cout << (t.search(8, t.getStart()))->content.second << std::endl;
+    // std::cout << (t.search(9, t.getStart()))->content.second << std::endl;
+    // std::cout << (t.search(10, t.getStart()))->content.second << std::endl;
+    // std::cout << (t.search(11, t.getStart()))->content.second << std::endl;
 
     /*** ADD ***/
+    t.addNode(ft::make_pair(0, '.'));
     t.addNode(ft::make_pair(1, 'A'));
     t.addNode(ft::make_pair(2, 'B'));
     t.addNode(ft::make_pair(3, 'C'));
@@ -143,8 +208,11 @@ int main(void) {
     t.addNode(ft::make_pair(8, 'H'));
     t.addNode(ft::make_pair(9, 'I'));
     t.addNode(ft::make_pair(10, 'J'));
-
+    t.addNode(ft::make_pair(11, 'K'));
     printWithIterators(t);
+    printThisTree(t);
+    std::cout << "                         ";
+    printNode(t.getStart()->right->right->right->right);
 
     // ft::Node<ft::pair<int, char> > newNode =
     //     ft::Node<ft::pair<int, char> >(ft::make_pair(0, '.'));

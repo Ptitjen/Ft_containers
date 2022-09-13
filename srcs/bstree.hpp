@@ -455,48 +455,50 @@ class BstTree {
 
   node_ptr search(const key_type& key, node_ptr root) {
     if (root == NULL) {
-      std::cout << key << " not found" << std::endl;
+      std::cout << key << " NULL - ERROR" << std::endl;
       return NULL;
     }
     if (root->content.first == key) return root;  // found
     if (f(root->content.first, key)) {
-      if (root->right == header.node) {
-        std::cout << key << " not found - bigger"
-                  << std::endl;  // bigger then last
-        return NULL;
-      }
+      if (root->right == header.node) return header.node->parent;
+      if (root->right == NULL)  //  does not exist but not biggest
+        return root;
       return search(key, root->right);
     }
+    if (root->left == NULL)  //  does not exist
+      return root;
     return search(key, root->left);
   }
 
   void addNode(value_type newValue) {
-    /* ALREADY EXISTS */
     node_ptr n = search(newValue.first, _startNode);
-    if (n != NULL) {
-      std::cout << newValue.first << " already exists - replacing old value"
-                << std::endl;
+    if (n->content.first == newValue.first) {  // replace
+      // std::cout << newValue.first << " already exists - replacing old value"
+      //           << std::endl;
       n->content = newValue;
+    } else {
+      Node<value_type>* newNode;
+      newNode = a.allocate(1);
+      newNode->content = newValue;
+      newNode->left = NULL;
+      newNode->right = NULL;
+      if (f(newValue.first, n->content.first)) {
+        n->left = newNode;
+        newNode->parent = n;
+
+      } else {
+        if (n->right == header.node) {
+          newNode->right = header.node;
+          header.node->parent = newNode;
+          n->right = newNode;
+          newNode->parent = n;
+          return;
+        }
+        n->right = newNode;
+        newNode->parent = n;
+      }
     }
-    // if (f(x->content.first, begin()->content.first)) {
-    //   std::cout << "Add node at beginning" << std::endl;  // new first
-    //   (begin())->left = a.allocate(1);
-    //   begin()->left = &x;
-    //   begin()->left->parent = begin();
-    //   resetHeader();
-    //   return;
-    // }
-    // /* LAST */
-
-    // if (!f((x.content).first, last()->content.first)) {
-    //   std::cout << "Add node at end" << std::endl;  // new first
-    //   last()->right = a.allocate(1);
-    //   last()->right = &x;
-    //   last()->right->parent = last();
-    //   resetHeader();
-    //   return;
-
-    /* Find position */
+    resetHeader();
   }
 
   void resetHeader() {
