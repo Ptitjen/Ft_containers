@@ -19,7 +19,9 @@ void printWithIterators(ft::BstTree<int, char>& t) {
   //   std::cout << "|" << std::endl;
 
   //   std::cout << " --- " << std::endl;
-
+  // std::cout << "Header : " << t.header.node << std::endl;
+  // std::cout << "Last: " << t.last().node << std::endl;
+  // std::cout << "End: " << t.end().node << std::endl;
   for (ft::BstTree<int, char>::iterator it = t.begin(); it != t.end(); it++) {
     std::cout << "|";
     std::cout << it.node->content.first << " " << it.node->content.second << "|"

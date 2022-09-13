@@ -300,17 +300,25 @@ class BstTree {
     pointer operator->() { return node; }
 
     /* comparison */
-    bool operator==(const iterator& rhs) { return node == rhs.node; }
+    bool operator==(const iterator& rhs) {
+      return node == rhs.node;
+    }  // check this
     bool operator!=(const iterator& rhs) { return !(node == rhs.node); }
 
     void increment() {
-      // if (node->parent == NULL) {  // START NODE
+      // std::cout << node << std::endl
+      //           << node->left << std::endl
+      //           << node->right << std::endl
+      //           << node->parent << std::endl
+      //           << std::endl;  // if (node->parent == NULL) {  // START NODE
       //   node = node->right;
       //   while (node->left != NULL) node = node->left;
+      // }
       // } else
       // remove when end ok
       if (node->right != NULL) {
         node = node->right;
+        if (node->left == node) return;  // headernode
         while (node->left != NULL) node = node->left;
 
       } else if (node == node->parent->left) {  // LEFT NODE
@@ -420,7 +428,7 @@ class BstTree {
     while (itl.node->right && itl.node->right != header.node) {  // /
       itl.node = itl.node->right;
     };
-    // itl.node->right = &header.node;
+
     return itl;
   }  // remove when it & end ok
 
@@ -485,10 +493,9 @@ class BstTree {
 
   void resetHeader() {
     iterator it = last();
-    std::cout << header.node << std::endl;
-    std::cout << it->content.first << " " << it->right;
-    last()->right = header.node;  // y'a de l'idee mais ca marche pas encore
-    // std::cout <<  << std::endl;
+    it.node->right = header.node;
+
+    // y'a de l'idee mais ca marche pas encore
 
     // while (it.node->right) it.node = it.node->right;
     // it.node->right = header.node;
@@ -499,7 +506,7 @@ class BstTree {
   Node<value_type>* getStart() { return _startNode; };
 
   /************ MEMBER VALUES ************/
- private:
+  // private: //put back when ok
   allocator_type a;
   BstTreeHeader<value_type, Allocator> header;
   Node<value_type>* _startNode;
