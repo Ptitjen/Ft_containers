@@ -188,7 +188,7 @@ class BstTree {
       return *this;
     }
     const_iterator operator++(int) {
-      iterator it = *this;
+      const_iterator it = *this;
       increment();
       return it;
     }
@@ -298,38 +298,30 @@ class BstTree {
   template <class InputIterator>
   BstTree(InputIterator first, InputIterator last,
           const key_compare& comp = key_compare(),
-          const allocator_type& alloc = allocator_type());
+          const allocator_type& alloc = allocator_type()){
+      // TODO
+  };
 
-  // BstTree(value_type startNodeValue) {  // tree from value
-  //   _startNode = a.allocate(1);
-  //   _startNode->content = startNodeValue;
-  //   header = BstTreeHeader<value_type, Allocator, Key, Value>();
-  //   header.count++;
-  //   resetHeader();
-  // }  // Not needed in map
-
-  // BstTree(node_ptr startNode) {  // tree from node
-  //   _startNode = a.allocate(1);
-  //   _startNode = startNode;
-  //   header = BstTreeHeader<value_type, Allocator, Key, Value>();
-  //   resetHeader();
-  //   for (iterator itcount = begin(); itcount != end(); itcount++) {
-  //     header.count++;
-  //   }
-  // }  // Not needed in map
-
-  BstTree(const BstTree<Key, Value, Compare, Allocator>& x){};  // TODO
+  BstTree(const BstTree<Key, Value, Compare, Allocator>& x) {
+    clear();
+    for (const_iterator it = x.begin(); it != x.end(); it++) {
+      insert(it->content);
+    }
+  };  // TODO
 
   BstTree& operator=(const BstTree& other) {
     if (&other == this) return *this;
-    header = BstTreeHeader<value_type, Allocator, Key, Value>();
-
-    _startNode = copy(other._startNode);
-    resetHeader();
+    clear();
+    for (const_iterator it = other.begin(); it != other.end(); it++) {
+      insert(it->content);
+    }
     return *this;
   }  // TODO
 
-  ~BstTree(){};  // dealloc
+  ~BstTree() {
+    if (header.count == 0) a.deallocate(_startNode, 1);
+    clear();
+  };  // dealloc
 
   // put this in private when ok
   node_ptr copy(const node_ptr& originalNode) {  // NOLINT
@@ -525,34 +517,44 @@ class BstTree {
     }
   };
 
+  /* ***************** TODO ****************** */
   void erase(iterator position);
   size_type erase(const key_type& x);
   void erase(iterator first, iterator last);
-  void swap(BstTree<Key, Value, Compare, Allocator>&);
+  /* ***************************************** */
+
+  void swap(BstTree<Key, Value, Compare, Allocator>& other) {
+    try {
+      BstTree<Key, Value, Compare, Allocator> tmp = *this;
+      *this = other;
+      other = tmp;
+    } catch (std::exception& e) {
+      return;
+    }
+  };  // TODO : test
+
   void clear() {
+    if (header.count == 0) return;
     recursiveDealloc(_startNode->left);
     recursiveDealloc(_startNode->right);
     _startNode->left = NULL;
     _startNode->right = NULL;
-    // a.destroy(_startNode);  // check how to reinit this + count -1
+    header.count--;
+    // a.destroy(_startNode);  // check how to reinit this
     resetHeader();
   };
 
-  /* ***********************************************************************
-   */
-  /*                                  OBSERVERS */
-  /* ***********************************************************************
-   */
+  /* *********************************************************************  */
+  /*                                  OBSERVERS                             */
+  /* *********************************************************************  */
 
   value_compare value_comp() const { return value_compare(); }
   key_compare key_comp() const { return key_compare(); };
   Allocator get_allocator() { return a; }
 
-  /* ***********************************************************************
-   */
-  /*                                 OPERATIONS */
-  /* ***********************************************************************
-   */
+  /* ********************************************************************  */
+  /*                                 OPERATIONS                            */
+  /* ********************************************************************  */
   iterator find(const key_type& k) {
     return iterator(searchToFind(k, _startNode));
   }
@@ -653,13 +655,12 @@ class BstTree {
     resetHeader();
   }
 
+ private:
   void resetHeader() {
     iterator it = last();
     it.node->right = header.node;
     header.node->parent = it.node;
   };
-
- private:
   template <typename A, typename B>
   bool f(A a, B b, std::less<Key> u = std::less<Key>()) {
     return u(a, b);
@@ -675,7 +676,7 @@ class BstTree {
       itl.node = itl.node->right;
     };
     return itl;
-  }  // remove if not needed anymore when it & end ok
+  }
 
   const_iterator last() const {
     const_iterator itl(_startNode);
@@ -683,7 +684,8 @@ class BstTree {
       itl.node = itl.node->right;
     };
     return itl;
-  }  // remove when it & end ok
+  }
+
   node_ptr searchToFind(const key_type& key, node_ptr root) const {
     if (root == NULL) return header.node;
     if (root->content.first == key) return root;
@@ -720,11 +722,9 @@ class BstTree {
     return searchToAdd(key, root->left);
   }
 
-  /* ***********************************************************************
-   */
-  /*                               MEMBER VALUES */
-  /* ***********************************************************************
-   */
+  /* ********************************************************************** */
+  /*                               MEMBER VALUES                            */
+  /* ********************************************************************** */
   node_allocator a;
   BstTreeHeader<value_type, Allocator, Key, Value> header;
   Node<value_type>* _startNode;

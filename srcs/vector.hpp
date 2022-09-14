@@ -721,3 +721,5 @@ void swap(vector<T, Allocator>& x, vector<T, Allocator>& y) throw() {
 };
 }  // namespace ft
 #endif
+
+// TODO : test with throwing constructors

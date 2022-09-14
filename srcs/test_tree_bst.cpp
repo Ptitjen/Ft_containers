@@ -176,6 +176,7 @@ int main(void) {
     std::cout << " " << std::endl;
 
     std::cout << BOLDBLUE "Insert: " END << std::endl;
+
     /* BAsic insert */
     // std::cout << (t.insert(ft::make_pair(0, '.')).second ? "Insert 0"
     //                                                      : "0 already
@@ -303,21 +304,39 @@ int main(void) {
     /**** clear ***/
     printWithIterators(t_insert);
 
+    std::cout << BOLDBLUE "Clear:" << std::endl;
     t_insert.clear();
     printWithIterators(t_insert);
-
     t.clear();
     printWithIterators(t);
     std::cout << BOLDMAGENTA "Size: " << t.size() << END << std::endl;
 
-    // std::cout << std::endl << BOLDGREEN "Operator =" END << std::endl;
-    // ft::BstTree<int, char> t_copy;
-    // t_copy = t;
-    // printThisTree(t_copy);
-    // std::cout << "Change value 5 in copy :" << std::endl;
-    // t_copy.addNode(ft::make_pair(5, '@'));
-    // printThisTree(t_copy);
-    // std::cout << "Check original :" << std::endl;
-    // printThisTree(t);
+    std::cout << BOLDBLUE "Reinsert after Clear:" << std::endl;
+    t.insert(ft::pair<int, char>(ft::make_pair(7, 'g')));
+    t.insert(ft::pair<int, char>(ft::make_pair(2, 'b')));
+    t.insert(ft::pair<int, char>(ft::make_pair(4, 'd')));
+    printWithIterators(t);
+    std::cout << BOLDMAGENTA "Size: " << t.size() << END << std::endl;
+
+    ft::BstTree<int, char> t_op_equal;
+    t_op_equal = t;
+    std::cout << "Operator = : ";
+    printWithIterators(t_op_equal);
+    std::cout << "Modifying copy : ";
+    t_op_equal.insert(ft::pair<int, char>(ft::make_pair(18, '%')));
+    printWithIterators(t_op_equal);
+    std::cout << "Verify original : ";
+    printWithIterators(t);
+
+    std::cout << BOLDGREEN "Copy constructor and assignment operator :" END
+              << std::endl;
+    ft::BstTree<int, char> t_op_copy(t);
+    std::cout << "Copy constructor : ";
+    printWithIterators(t_op_copy);
+    std::cout << "Modifying copy : ";
+    t_op_copy.insert(ft::pair<int, char>(ft::make_pair(5, '@')));
+    printWithIterators(t_op_copy);
+    std::cout << "Verify original : ";
+    printWithIterators(t);
   }
 }
