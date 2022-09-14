@@ -8,7 +8,7 @@
 template <class Key, class T>
 void printNode(const ft::Node<ft::pair<Key, T> >* node) {
   if (node) {
-    if (node->content.first < 0 || node->content.first > 20)
+    if (node->content.first < -20 || node->content.first > 20)
       std::cout << "END";
     else
       std::cout << node->content.first << "" << node->content.second;
@@ -84,98 +84,38 @@ void printWithIterators(ft::BstTree<int, char>& t) {
 }
 
 int main(void) {
-  // {
-  //   std::cout << BOLDGREEN "***** SIMPLE TREE *****" END << std::endl;
-  //   // ft::pair<int, char> startpair = ft::make_pair(2, 'b');
-  //   ft::Node<ft::pair<int, char> > n2 =
-  //       ft::Node<ft::pair<int, char> >(ft::make_pair(2, 'b'));
-
-  //   ft::Node<ft::pair<int, char> > n3 =
-  //       ft::Node<ft::pair<int, char> >(ft::make_pair(3, 'c'));
-
-  //   ft::Node<ft::pair<int, char> > n1 =
-  //       ft::Node<ft::pair<int, char> >(ft::make_pair(1, 'a'));
-  //   ft::Node<ft::pair<int, char> > n4 =
-  //       ft::Node<ft::pair<int, char> >(ft::make_pair(4, 'd'));
-
-  //   // ft::BstTree<int, char> t(startpair); //tree from value
-  //   n2.left = &n1;
-  //   n2.right = &n4;
-
-  //   n1.parent = &n2;
-  //   n4.parent = &n2;
-
-  //   n4.left = &n3;
-  //   n3.parent = &n4;
-  //   ft::BstTree<int, char> t(&n2);  // tree from node
-
-  //   std::cout << BOLDWHITE << "          " << t.getStart()->content.first <<
-  //   " "
-  //             << t.getStart()->content.second << std::endl;
-
-  //   std::cout << "   " << t.getStart()->left->content.first << " "
-  //             << t.getStart()->left->content.second << "          "
-  //             << t.getStart()->right->content.first << " "
-  //             << t.getStart()->right->content.second << std::endl;
-  //   ;
-
-  //   std::cout << t.getStart()->left->left << "  " <<
-  //   t.getStart()->left->right;
-
-  //   std::cout << "     " << t.getStart()->right->left->content.first << " "
-  //             << t.getStart()->right->left->content.second;
-  //   std::cout << "    " << t.getStart()->right->right << std::endl;
-  //   std::cout << "           " << t.getStart()->right->left->left << " "
-  //             << t.getStart()->right->left->right << END << std::endl
-  //             << std::endl;
-  //   printWithIterators(t);
-  // }
   {
-    std::cout << BOLDGREEN "***** BIGGER TREE *****" END << std::endl;
-    ft::Node<ft::pair<int, char> > n1 =
-        ft::Node<ft::pair<int, char> >(ft::make_pair(1, 'a'));
-    ft::Node<ft::pair<int, char> > n2 =
-        ft::Node<ft::pair<int, char> >(ft::make_pair(2, 'b'));
-    ft::Node<ft::pair<int, char> > n3 =
-        ft::Node<ft::pair<int, char> >(ft::make_pair(3, 'c'));
-    ft::Node<ft::pair<int, char> > n4 =
-        ft::Node<ft::pair<int, char> >(ft::make_pair(4, 'd'));
-    ft::Node<ft::pair<int, char> > n5 =
-        ft::Node<ft::pair<int, char> >(ft::make_pair(5, 'e'));
+    std::cout << BOLDGREEN "***** TREE *****" END << std::endl;
+
     ft::Node<ft::pair<int, char> > n6 =
         ft::Node<ft::pair<int, char> >(ft::make_pair(6, 'f'));
-    ft::Node<ft::pair<int, char> > n7 =
-        ft::Node<ft::pair<int, char> >(ft::make_pair(7, 'g'));
-    ft::Node<ft::pair<int, char> > n8 =
-        ft::Node<ft::pair<int, char> >(ft::make_pair(8, 'h'));
-    ft::Node<ft::pair<int, char> > n9 =
-        ft::Node<ft::pair<int, char> >(ft::make_pair(10, 'j'));
-
-    n6.right = &n8;
-    n8.parent = &n6;
-
-    n6.left = &n2;
-    n2.parent = &n6;
-
-    n2.left = &n1;
-    n1.parent = &n2;
-
-    n2.right = &n4;
-    n4.parent = &n2;
-
-    n4.left = &n3;
-    n3.parent = &n4;
-
-    n4.right = &n5;
-    n5.parent = &n4;
-
-    n8.right = &n9;
-    n9.parent = &n8;
-
-    n8.left = &n7;
-    n7.parent = &n8;
 
     ft::BstTree<int, char> t = ft::BstTree<int, char>(&n6);
+    std::cout << BOLDMAGENTA "Size: " << t.size() << END << std::endl;
+    t.insert(ft::pair<int, char>(ft::make_pair(1, 'a')));
+    std::cout << BOLDMAGENTA "Size: " << t.size() << END << std::endl;
+
+    t.insert(ft::pair<int, char>(ft::make_pair(10, 'j')));
+    std::cout << BOLDMAGENTA "Size: " << t.size() << END << std::endl;
+
+    t.insert(ft::pair<int, char>(ft::make_pair(7, 'g')));
+    std::cout << BOLDMAGENTA "Size: " << t.size() << END << std::endl;
+
+    t.insert(ft::pair<int, char>(ft::make_pair(2, 'b')));
+    std::cout << BOLDMAGENTA "Size: " << t.size() << END << std::endl;
+
+    t.insert(ft::pair<int, char>(ft::make_pair(4, 'd')));
+    std::cout << BOLDMAGENTA "Size: " << t.size() << END << std::endl;
+
+    t.insert(ft::pair<int, char>(ft::make_pair(5, 'e')));
+    std::cout << BOLDMAGENTA "Size: " << t.size() << END << std::endl;
+
+    t.insert(ft::pair<int, char>(ft::make_pair(6, 'f')));
+    std::cout << BOLDMAGENTA "Size: " << t.size() << END << std::endl;
+
+    t.insert(ft::pair<int, char>(ft::make_pair(3, 'c')));
+    std::cout << BOLDMAGENTA "Size: " << t.size() << END << std::endl;
+
     printThisTree(t);
     printWithIterators(t);
 
@@ -234,36 +174,71 @@ int main(void) {
     printNode(t.find(12).node);
     std::cout << " " << std::endl;
 
-    /*** ADD ***/
-    std::cout << BOLDWHITE;
-    // t.addNode(ft::make_pair(0, '.'));
-    // t.addNode(ft::make_pair(1, 'A'));
-    // t.addNode(ft::make_pair(2, 'B'));
-    // t.addNode(ft::make_pair(3, 'C'));
-    // t.addNode(ft::make_pair(4, 'D'));
-    // t.addNode(ft::make_pair(5, 'E'));
-    // t.addNode(ft::make_pair(6, 'F'));
-    // t.addNode(ft::make_pair(7, 'G'));
-    // t.addNode(ft::make_pair(8, 'H'));
-    // t.addNode(ft::make_pair(9, 'I'));
-    // t.addNode(ft::make_pair(10, 'J'));
-    // t.addNode(ft::make_pair(12, 'K'));
-    t.insert(ft::make_pair(0, '.'));
-    t.insert(ft::make_pair(1, 'A'));
-    t.insert(ft::make_pair(2, 'B'));
-    t.insert(ft::make_pair(3, 'C'));
-    t.insert(ft::make_pair(4, 'D'));
-    t.insert(ft::make_pair(5, 'E'));
-    t.insert(ft::make_pair(6, 'F'));
-    t.insert(ft::make_pair(7, 'G'));
-    t.insert(ft::make_pair(8, 'H'));
-    t.insert(ft::make_pair(9, 'I'));
-    t.insert(ft::make_pair(10, 'J'));
-    t.insert(ft::make_pair(12, 'K'));
+    std::cout << BOLDBLUE "Insert: " END << std::endl;
+    /* BAsic insert */
+    // std::cout << (t.insert(ft::make_pair(0, '.')).second ? "Insert 0"
+    //                                                      : "0 already
+    //                                                      exists")
+    //           << std::endl;
+    // std::cout << (t.insert(ft::make_pair(1, 'A')).second ? "Insert 1"
+    //                                                      : "1 already
+    //                                                      exists")
+    //           << std::endl;
+    // std::cout << (t.insert(ft::make_pair(5, 'E')).second ? "Insert 5"
+    //                                                      : "5 already
+    //                                                      exists")
+    //           << std::endl;
+    // std::cout << (t.insert(ft::make_pair(9, 'I')).second ? "Insert 9"
+    //                                                      : "9 already
+    //                                                      exists")
+    //           << std::endl;
+    // std::cout << (t.insert(ft::make_pair(10, 'J')).second ? "Insert 10"
+    //                                                       : "10 already
+    //                                                       exists")
+    //           << std::endl;
+    // std::cout << (t.insert(ft::make_pair(12, 'K')).second ? "Insert 12"
+    //                                                       : "12 already
+    //                                                       exists")
+    //           << std::endl;
+
+    /* With hint insert */
+    t.insert(t.begin(), ft::make_pair(-1, '='));
+    t.insert(t.begin(), ft::make_pair(5, '#'));
+
+    /*With iterators insert */
+    std::cout << BOLDBLUE "Insert this tree" END << std::endl;
+    ft::Node<ft::pair<int, char> > ni2 =
+        ft::Node<ft::pair<int, char> >(ft::make_pair(1, '*'));
+    ft::BstTree<int, char> t_insert(&ni2);  // tree from node
+    t_insert.insert(ft::pair<int, char>(ft::make_pair(9, 'i')));
+    t_insert.insert(ft::pair<int, char>(ft::make_pair(-2, '/')));
+    t_insert.insert(ft::pair<int, char>(ft::make_pair(18, '%')));
+
+    std::cout << BOLDWHITE << "          ";
+    printNode(t_insert.getStart());
+    std::cout << std::endl;
+
+    std::cout << "   ";
+    printNode(t_insert.getStart()->left);
+    std::cout << "     |    ";
+    printNode(t_insert.getStart()->right);
+    std::cout << std::endl;
+
+    std::cout << "           |  ";
+    printNode(t_insert.getStart()->right->left);
+    std::cout << "  ";
+    printNode(t_insert.getStart()->right->right);
+    std::cout << std::endl;
+
+    t.insert(t_insert.begin(), t_insert.end());
+
     printWithIterators(t);
     printThisTree(t);
     std::cout << "                         ";
+    std::cout << BOLDWHITE;
+
     printNode(t.getStart()->right->right->right->right);
+    std::cout << END;
 
     std::cout << std::endl;
     std::cout << std::endl << BOLDBLUE "Find 0-12: " END;
@@ -295,6 +270,7 @@ int main(void) {
     std::cout << std::endl;
     printWithIterators(t);
     printThisTree(t);
+    std::cout << BOLDMAGENTA "Size: " << t.size() << END << std::endl;
 
     /****** ELEMENT ACCESS *****/
     std::cout << BOLDBLUE "[]: " END;
@@ -315,12 +291,23 @@ int main(void) {
     } catch (std::out_of_range& e) {
       std::cout << "Out of range" << std::endl;
     }
+    std::cout << BOLDMAGENTA "Size: " << t.size() << END << std::endl;
 
     std::cout << std::endl << BOLDBLUE "Count: " END;
 
     std::cout << "1: " << t.count(1) << " "
               << "15: " << t.count(15) << " "
               << "-5: " << t.count(-5) << std::endl;
+
+    /**** clear ***/
+    printWithIterators(t_insert);
+
+    t_insert.clear();
+    printWithIterators(t_insert);
+
+    t.clear();
+    printWithIterators(t);
+    std::cout << BOLDMAGENTA "Size: " << t.size() << END << std::endl;
 
     // std::cout << std::endl << BOLDGREEN "Operator =" END << std::endl;
     // ft::BstTree<int, char> t_copy;

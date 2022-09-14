@@ -1,6 +1,6 @@
 #ifndef PAIR_HPP
 #define PAIR_HPP
-
+// TODO : check constructor and functions
 namespace ft {
 template <class T1, class T2>
 struct pair {
@@ -11,7 +11,14 @@ struct pair {
   T2 second;
 
   pair(){};
-  pair(T1 f, T2 s) : first(f), second(s){};
+
+  template <class U, class V>
+  pair(const pair<U, V>& other) {
+    first = other.first;
+    second = other.second;
+  };
+
+  pair(const first_type& a, const second_type& b) : first(a), second(b){};
 
   pair& operator=(const pair& other) {
     if (&other == this) return *this;
