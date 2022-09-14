@@ -59,10 +59,10 @@ class BstTreeHeader {  // left : begin, self : end
   BstTreeHeader() {
     node_allocator a;
     node = a.allocate(1);
-    resetHeader();
+    resetTreeHeader();
   };
 
-  void resetHeader() {
+  void resetTreeHeader() {
     count = 0;
     node->left = node;
     node->right = node;
@@ -289,32 +289,36 @@ class BstTree {
 
   explicit BstTree(const key_compare& comp = key_compare(),
                    const allocator_type& alloc = allocator_type())
-      : a(alloc){};  // TODO
-
-  BstTree(value_type startNodeValue) {  // tree from value
+      : a(alloc) {
     _startNode = a.allocate(1);
-    _startNode->content = startNodeValue;
     header = BstTreeHeader<value_type, Allocator, Key, Value>();
-    header.count++;
-    resetHeader();
-  }  // Not needed in map
-
-  BstTree(node_ptr startNode) {  // tree from node
-    _startNode = a.allocate(1);
-    _startNode = startNode;
-    header = BstTreeHeader<value_type, Allocator, Key, Value>();
-    resetHeader();
-    for (iterator itcount = begin(); itcount != end(); itcount++) {
-      header.count++;
-    }
-  }  // Not needed in map
-
-  BstTree(const BstTree<Key, Value, Compare, Allocator>& x);  // TODO
+    // resetHeader();
+  };  // TODO
 
   template <class InputIterator>
   BstTree(InputIterator first, InputIterator last,
           const key_compare& comp = key_compare(),
-          const allocator_type& alloc = allocator_type()){};  // TODO
+          const allocator_type& alloc = allocator_type());
+
+  // BstTree(value_type startNodeValue) {  // tree from value
+  //   _startNode = a.allocate(1);
+  //   _startNode->content = startNodeValue;
+  //   header = BstTreeHeader<value_type, Allocator, Key, Value>();
+  //   header.count++;
+  //   resetHeader();
+  // }  // Not needed in map
+
+  // BstTree(node_ptr startNode) {  // tree from node
+  //   _startNode = a.allocate(1);
+  //   _startNode = startNode;
+  //   header = BstTreeHeader<value_type, Allocator, Key, Value>();
+  //   resetHeader();
+  //   for (iterator itcount = begin(); itcount != end(); itcount++) {
+  //     header.count++;
+  //   }
+  // }  // Not needed in map
+
+  BstTree(const BstTree<Key, Value, Compare, Allocator>& x){};  // TODO
 
   BstTree& operator=(const BstTree& other) {
     if (&other == this) return *this;
@@ -436,6 +440,14 @@ class BstTree {
   /* *********************************************************************** */
 
   pair<iterator, bool> insert(const value_type& x) {
+    if (header.count == 0) {
+      _startNode->content = x;
+      _startNode->left = NULL;
+      _startNode->right = NULL;
+      _startNode->parent = NULL;
+      header.count++;
+      return ft::pair<iterator, bool>(iterator(_startNode), true);
+    }
     iterator it = iterator(searchToAdd(x.first, _startNode));
     if (it->content.first == x.first)  // maybe change == with !< && !>
       return (ft::pair<iterator, bool>(it, false));
@@ -461,6 +473,14 @@ class BstTree {
   };
 
   iterator insert(iterator position, const value_type& x) {
+    if (header.count == 0) {
+      _startNode->content = x;
+      _startNode->left = NULL;
+      _startNode->right = NULL;
+      _startNode->parent = NULL;
+      header.count++;
+      return iterator(_startNode);
+    }
     if (position->content.first == x.first)
       return position;                           // position = new value
     if (!f(position->content.first, x.first)) {  // position == good hint
@@ -489,11 +509,19 @@ class BstTree {
 
   template <class InputIterator>
   void insert(InputIterator first, InputIterator last) {
-    iterator it = first;
+    if (header.count == 0) {
+      _startNode->content = first->content;
+      _startNode->left = first->left;
+      _startNode->right = first->right;
+      _startNode->parent = NULL;
+      header.count++;
+
+      first++;
+    }
     iterator hint = begin();
-    while (it != last) {
-      hint = insert(hint, it->content);
-      it++;
+    while (first != last) {
+      hint = insert(hint, first->content);
+      first++;
     }
   };
 

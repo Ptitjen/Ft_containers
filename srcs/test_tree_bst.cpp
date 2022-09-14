@@ -87,11 +87,12 @@ int main(void) {
   {
     std::cout << BOLDGREEN "***** TREE *****" END << std::endl;
 
-    ft::Node<ft::pair<int, char> > n6 =
-        ft::Node<ft::pair<int, char> >(ft::make_pair(6, 'f'));
+    ft::BstTree<int, char> t = ft::BstTree<int, char>();
 
-    ft::BstTree<int, char> t = ft::BstTree<int, char>(&n6);
     std::cout << BOLDMAGENTA "Size: " << t.size() << END << std::endl;
+    t.insert(ft::pair<int, char>(ft::make_pair(6, 'f')));
+    std::cout << BOLDMAGENTA "Size: " << t.size() << END << std::endl;
+
     t.insert(ft::pair<int, char>(ft::make_pair(1, 'a')));
     std::cout << BOLDMAGENTA "Size: " << t.size() << END << std::endl;
 
@@ -207,9 +208,9 @@ int main(void) {
 
     /*With iterators insert */
     std::cout << BOLDBLUE "Insert this tree" END << std::endl;
-    ft::Node<ft::pair<int, char> > ni2 =
-        ft::Node<ft::pair<int, char> >(ft::make_pair(1, '*'));
-    ft::BstTree<int, char> t_insert(&ni2);  // tree from node
+
+    ft::BstTree<int, char> t_insert = ft::BstTree<int, char>();
+    t_insert.insert(ft::pair<int, char>(ft::make_pair(1, '*')));
     t_insert.insert(ft::pair<int, char>(ft::make_pair(9, 'i')));
     t_insert.insert(ft::pair<int, char>(ft::make_pair(-2, '/')));
     t_insert.insert(ft::pair<int, char>(ft::make_pair(18, '%')));
