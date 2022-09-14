@@ -11,7 +11,9 @@
 
 namespace ft {
 
-/* ******************* NODE ****************** */
+/* *********************************************************************** */
+/*                             NODE                                        */
+/* *********************************************************************** */
 
 template <class Content>
 class Node {
@@ -44,7 +46,9 @@ class Node {
   Content const* content_ptr() const { return &content; }
 };
 
-/* ****************** TREEHEADER ****************** */
+/* *********************************************************************** */
+/*                             TREE HEADER                                 */
+/* *********************************************************************** */
 template <class Content, class Allocator>
 class BstTreeHeader {  // left : begin, self : end
  public:
@@ -66,11 +70,16 @@ class BstTreeHeader {  // left : begin, self : end
   }
 };
 
-/* ******************* BST TREE ****************** */
+/* *********************************************************************** */
+/*                                TREE                                     */
+/* *********************************************************************** */
 template <class Key, class Value, class Compare = std::less<Key>,
           class Allocator = std::allocator<Node<pair<Key, Value> > > >
 
 class BstTree {
+  /* *********************************************************************** */
+  /*                                ITERATOR                                 */
+  /* *********************************************************************** */
   class iterator {
    public:
     typedef Node<pair<Key, Value> > value_type;
@@ -135,7 +144,7 @@ class BstTree {
 
     void decrement() {
       if (node->left == node)
-        node = node->parent;  // end
+        node = node->parent;  // NOLINT
       else if (node->left != NULL) {
         node = node->left;
         while (node->right != NULL) node = node->right;
@@ -150,8 +159,9 @@ class BstTree {
     pointer node;
   };
 
-  /* **************** const iterator *************** */
-
+  /* *********************************************************************** */
+  /*                            CONST ITERATOR                               */
+  /* *********************************************************************** */
   class const_iterator {
    public:
     typedef Node<pair<Key, Value> > value_type;
@@ -216,7 +226,7 @@ class BstTree {
 
     void decrement() {
       if (node->left == node)
-        node = node->parent;  // end
+        node = node->parent;  // NOLINT
       else if (node->left != NULL) {
         node = node->left;
         while (node->right != NULL) node = node->right;
@@ -231,6 +241,10 @@ class BstTree {
     pointer node;
   };
 
+  /* *********************************************************************** */
+  /*                                CLASS                                    */
+  /* *********************************************************************** */
+
  public:
   typedef Key key_type;
   typedef Value mapped_type;
@@ -238,11 +252,11 @@ class BstTree {
   typedef Compare key_compare;
 
   typedef Allocator allocator_type;
-  // typedef typename allocator_type::reference reference;
+  typedef typename allocator_type::reference reference;
   typedef typename allocator_type::const_reference const_reference;
   typedef typename allocator_type::size_type size_type;
-  // typedef typename allocator_type::difference_type difference_type;
-  // typedef typename allocator_type::pointer pointer;
+  typedef typename allocator_type::difference_type difference_type;
+  typedef typename allocator_type::pointer pointer;
   typedef typename allocator_type::const_pointer const_pointer;
 
   typedef Node<value_type>* node_ptr;
@@ -251,36 +265,53 @@ class BstTree {
   typedef const_iterator const_iterator;
   typedef ft::reverse_iterator<iterator> reverse_iterator;
   typedef ft::reverse_iterator<const_iterator> const_reverse_iterator;
+  class value_compare
+      : public std::binary_function<value_type, value_type, bool> {
+    friend class map;
 
-  class value_compare {
-  };  // check what is this - nested function class to compare values
+   protected:
+    Compare comp;
+    value_compare(Compare c) : comp(c) {}
 
-  /************* CONSTRUCTORS **************/
+   public:
+    bool operator()(const value_type& x, const value_type& y) const {
+      return comp(x.first, y.first);
+    }
+  };
+
+  /* *********************************************************************** */
+  /*                      CONSTRUCTORS & DESTRUCTOR                          */
+  /* *********************************************************************** */
 
   explicit BstTree(const key_compare& comp = key_compare(),
                    const allocator_type& alloc = allocator_type())
-      : a(alloc){};
+      : a(alloc){};  // TODO
 
   BstTree(value_type startNodeValue) {  // tree from value
     _startNode = a.allocate(1);
     _startNode->content = startNodeValue;
     header = BstTreeHeader<value_type, Allocator>();
+    header.count++;
     resetHeader();
-  }
+  }  // Not needed in map
 
   BstTree(node_ptr startNode) {  // tree from node
     _startNode = a.allocate(1);
     _startNode = startNode;
     header = BstTreeHeader<value_type, Allocator>();
     resetHeader();
-  }
-  /*
-    template <class InputIterator>
-    BstTree(InputIterator first, InputIterator last,
-            const key_compare& comp = key_compare(),
-            const allocator_type& alloc = allocator_type()){};
+    for (iterator itcount = begin(); itcount != end(); itcount++) {
+      header.count++;
+    }
+  }  // Not needed in map
 
-    BstTree(const BstTree& x){};*/
+  BstTree(const BstTree<Key, Value, Compare, Allocator>& x);  // TODO
+
+  template <class InputIterator>
+  BstTree(InputIterator first, InputIterator last,
+          const key_compare& comp = key_compare(),
+          const allocator_type& alloc = allocator_type()){};  // TODO
+
   BstTree& operator=(const BstTree& other) {
     if (&other == this) return *this;
     header = BstTreeHeader<value_type, Allocator>();
@@ -288,9 +319,11 @@ class BstTree {
     _startNode = copy(other._startNode);
     resetHeader();
     return *this;
-  }
+  }  // TODO
+
   ~BstTree(){};  // dealloc
 
+  // put this in private when ok
   node_ptr copy(const node_ptr& originalNode) {  // NOLINT
     if (originalNode == NULL) {
       return NULL;
@@ -308,14 +341,8 @@ class BstTree {
     return newNode;
   }
 
-  /* ********* CAPACITY ********* */
-
-  bool empty() { return header.count == 0; }
-  std::size_t size() { return header.count; }
-  std::size_t max_size() { return std::numeric_limits<std::size_t>::max(); }
-
   /* *********************************************************************** */
-  /*                             ELEMENT ACCESS                              */
+  /*                             ITERATORS                                   */
   /* *********************************************************************** */
   iterator begin() {
     iterator itb(_startNode);
@@ -324,16 +351,38 @@ class BstTree {
     };
     return itb;
   }
-  iterator end() { return header.node; }
-  reverse_iterator rbegin() { return reverse_iterator(end()); }
-  reverse_iterator rend() { return reverse_iterator(begin()); }
+  const_iterator begin() const {
+    const_iterator itb(_startNode);
+    while (itb.node->left) {
+      itb.node = itb.node->left;
+    };
+    return itb;
+  }
 
-  iterator find(const key_type& k) {
-    return iterator(searchToFind(k, _startNode));
+  iterator end() { return header.node; }
+  const_iterator end() const { return header.node; }
+
+  reverse_iterator rbegin() { return reverse_iterator(end()); }
+  const_reverse_iterator rbegin() const {
+    return const_reverse_iterator(end());
   }
-  const_iterator find(const key_type& k) const {
-    return const_iterator(searchToFind(k, _startNode));
+
+  reverse_iterator rend() { return reverse_iterator(begin()); }
+  const_reverse_iterator rend() const {
+    return const_reverse_iterator(begin());
   }
+
+  /* *********************************************************************** */
+  /*                             CAPACITY                                    */
+  /* *********************************************************************** */
+
+  bool empty() { return header.count == 0; }
+  std::size_t size() { return header.count; }
+  std::size_t max_size() { return std::numeric_limits<std::size_t>::max(); }
+
+  /* *********************************************************************** */
+  /*                             ELEMENT ACCESS                              */
+  /* *********************************************************************** */
 
   mapped_type& operator[](const key_type& k) {  // inserts element if not found
     node_ptr n = searchToAdd(k, _startNode);
@@ -356,6 +405,7 @@ class BstTree {
       newNode->parent = n;
     }
     resetHeader();
+    header.count++;
     return newNode->content.second;
   };
 
@@ -375,9 +425,102 @@ class BstTree {
   };
 
   /* *********************************************************************** */
-  /*                                  OTHER                                  */
+  /*                               MOFIFIERS                                 */
   /* *********************************************************************** */
+  // TODO
+  pair<iterator, bool> insert(const value_type& x) {
+    iterator it = iterator(searchToAdd(x.first, _startNode));
+    if (it->content.first == x.first)  // maybe change == with !< && !>
+      return (ft::pair<iterator, bool>(it, false));
+    Node<value_type>* newNode;
+    newNode = a.allocate(1);
+    newNode->content = x;
+    newNode->left = NULL;
+    newNode->right = NULL;
+    if (f(x.first, it->content.first)) {
+      it->left = newNode;
+      newNode->parent = it.node;
+    } else {
+      if (it->right == header.node) {
+        newNode->right = header.node;
+        header.node->parent = newNode;
+      }
+      it->right = newNode;
+      newNode->parent = it.node;
+    }
+    header.count++;
+    resetHeader();
+    return (ft::pair<iterator, bool>(iterator(newNode), true));
+  };
+
+  iterator insert(iterator position, const value_type& x);
+  template <class InputIterator>
+  void insert(InputIterator first, InputIterator last);
+  void erase(iterator position);
+  size_type erase(const key_type& x);
+  void erase(iterator first, iterator last);
+  void swap(BstTree<Key, Value, Compare, Allocator>&);
+  void clear();
+
+  /* *********************************************************************** */
+  /*                                  OBSERVERS                              */
+  /* *********************************************************************** */
+
+  value_compare value_comp() const { return value_compare(); }
+  key_compare key_comp() const { return key_compare(); };
   Allocator get_allocator() { return a; }
+
+  /* *********************************************************************** */
+  /*                                 OPERATIONS                              */
+  /* *********************************************************************** */
+  iterator find(const key_type& k) {
+    return iterator(searchToFind(k, _startNode));
+  }
+  const_iterator find(const key_type& k) const {
+    return const_iterator(searchToFind(k, _startNode));
+  }
+  size_type count(const key_type& k) const {
+    return (searchToFind(k, _startNode) == header.node ? 0 : 1);
+  };
+  iterator lower_bound(const key_type& k) {
+    iterator it = begin();
+    while (f(it.node->content.first, k) && it != end()) {
+      it++;
+    }
+    return it;
+  };
+  const_iterator lower_bound(const key_type& k) const {
+    iterator it = begin();
+    while (f(it.node->content.first, k) && it != end()) {
+      it++;
+    }
+    return it;
+  };
+  iterator upper_bound(const key_type& k) {
+    iterator it = begin();
+    while (f(it.node->content.first, k) && it != end()) {
+      it++;
+    }
+    if (it.node->content.first == k && it != end()) it++;
+    return it;
+  };
+
+  const_iterator upper_bound(const key_type& k) const {
+    iterator it = begin();
+    while (f(it.node->content.first, k) && it != end()) {
+      it++;
+    }
+    if (it.node->content.first == k && it != end()) it++;
+    return it;
+  };
+
+  pair<const_iterator, const_iterator> equal_range(const key_type& k) const {
+    return ft::pair<const_iterator, const_iterator>(lower_bound(k),
+                                                    upper_bound(k));
+  };
+  pair<iterator, iterator> equal_range(const key_type& k) {
+    return ft::pair<iterator, iterator>(lower_bound(k), upper_bound(k));
+  };
 
   /* *********************************************************************** */
   /*                                  UTILS                                  */
@@ -411,6 +554,7 @@ class BstTree {
         newNode->parent = n;
       }
     }
+    header.count++;
     resetHeader();
   }
 
@@ -423,6 +567,10 @@ class BstTree {
  private:
   template <typename A, typename B>
   bool f(A a, B b, std::less<Key> u = std::less<Key>()) {
+    return u(a, b);
+  }
+  template <typename A, typename B>
+  bool f(A a, B b, std::less<Key> u = std::less<Key>()) const {
     return u(a, b);
   }
 
@@ -441,6 +589,15 @@ class BstTree {
     };
     return itl;
   }  // remove when it & end ok
+  node_ptr searchToFind(const key_type& key, node_ptr root) const {
+    if (root == NULL) return header.node;
+    if (root->content.first == key) return root;
+    if (f(root->content.first, key)) {
+      if (root->right == header.node) return header.node;
+      return searchToFind(key, root->right);
+    }
+    return searchToFind(key, root->left);
+  }
   node_ptr searchToFind(const key_type& key, node_ptr root) {
     if (root == NULL) return header.node;
     if (root->content.first == key) return root;
@@ -476,6 +633,36 @@ class BstTree {
   Node<value_type>* _startNode;
   Node<value_type>* endNode;
 };
+
+/* *********************************************************************** */
+/*                               NON MEMBER FUNCTIONS                      */
+/* *********************************************************************** */
+// TODO
+template <class Key, class T, class Compare, class Allocator>
+bool operator==(const BstTree<Key, T, Compare, Allocator>& x,
+                const BstTree<Key, T, Compare, Allocator>& y);
+template <class Key, class T, class Compare, class Allocator>
+bool operator<(const BstTree<Key, T, Compare, Allocator>& x,
+               const BstTree<Key, T, Compare, Allocator>& y);
+template <class Key, class T, class Compare, class Allocator>
+bool operator!=(const BstTree<Key, T, Compare, Allocator>& x,
+                const BstTree<Key, T, Compare, Allocator>& y);
+template <class Key, class T, class Compare, class Allocator>
+bool operator>(const BstTree<Key, T, Compare, Allocator>& x,
+               const BstTree<Key, T, Compare, Allocator>& y);
+template <class Key, class T, class Compare, class Allocator>
+bool operator>=(const BstTree<Key, T, Compare, Allocator>& x,
+                const BstTree<Key, T, Compare, Allocator>& y);
+template <class Key, class T, class Compare, class Allocator>
+bool operator<=(const BstTree<Key, T, Compare, Allocator>& x,
+                const BstTree<Key, T, Compare, Allocator>& y);
+
+template <class Key, class T, class Compare, class Allocator>
+void swap(BstTree<Key, T, Compare, Allocator>& x,
+          BstTree<Key, T, Compare, Allocator>& y) {
+  x.swap(y);
+};
+
 }  // namespace ft
 
 #endif
@@ -486,9 +673,6 @@ class BstTree {
 
 (destructor)
     Map destructor (public member function)
-
-operator=
-    Copy container content (public member function)
 
 
 Modifiers:
@@ -504,34 +688,4 @@ swap
 
 clear
     Clear content (public member function)
-
-
-Observers:
-
-key_comp
-    Return key comparison object (public member function)
-
-value_comp
-    Return value comparison object (public member function)
-
-
-Operations:
-
-count
-    Count elements with a specific key (public member function)
-
-lower_bound
-    Return iterator to lower bound (public member function)
-
-upper_bound
-    Return iterator to upper bound (public member function)
-
-equal_range
-    Get range of equal elements (public member function)
-
-
-
-NON MEMBER :
-relational op
-swap
 */

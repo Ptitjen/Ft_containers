@@ -179,6 +179,32 @@ int main(void) {
     printThisTree(t);
     printWithIterators(t);
 
+    std::cout << std::endl << BOLDBLUE "Lower and upper bounds: " END;
+
+    std::cout << "-1: lower:" << t.lower_bound(-1)->content.first
+              << " upper: " << t.upper_bound(-1)->content.first << std::endl;
+    std::cout << "1: lower:" << t.lower_bound(1)->content.first
+              << " upper: " << t.upper_bound(1)->content.first << std::endl;
+    std::cout << "5: lower:" << t.lower_bound(5)->content.first
+              << " upper: " << t.upper_bound(5)->content.first << std::endl;
+    std::cout << "9: lower:" << t.lower_bound(9)->content.first
+              << " upper: " << t.upper_bound(9)->content.first << std::endl;
+    std::cout << "15: lower:" << t.lower_bound(15)->content.first
+              << " upper: " << t.upper_bound(15)->content.first << std::endl;
+
+    std::cout << std::endl << BOLDBLUE "Equal range: " END;
+
+    std::cout << "-1: " << t.equal_range(-1).first->content.first << " "
+              << t.equal_range(-1).second->content.first << std::endl;
+    std::cout << "1: " << t.equal_range(1).first->content.first << " "
+              << t.equal_range(1).second->content.first << std::endl;
+    std::cout << "5: " << t.equal_range(5).first->content.first << " "
+              << t.equal_range(5).second->content.first << std::endl;
+    std::cout << "9: " << t.equal_range(9).first->content.first << " "
+              << t.equal_range(9).second->content.first << std::endl;
+    std::cout << "15: " << t.equal_range(15).first->content.first << " "
+              << t.equal_range(15).second->content.first << std::endl;
+
     /*** SEARCH ***/  // OK
     std::cout << std::endl << BOLDBLUE "Find 0-12: " END;
     printNode(t.find(0).node);
@@ -210,18 +236,30 @@ int main(void) {
 
     /*** ADD ***/
     std::cout << BOLDWHITE;
-    t.addNode(ft::make_pair(0, '.'));
-    t.addNode(ft::make_pair(1, 'A'));
-    t.addNode(ft::make_pair(2, 'B'));
-    t.addNode(ft::make_pair(3, 'C'));
-    t.addNode(ft::make_pair(4, 'D'));
-    t.addNode(ft::make_pair(5, 'E'));
-    t.addNode(ft::make_pair(6, 'F'));
-    t.addNode(ft::make_pair(7, 'G'));
-    t.addNode(ft::make_pair(8, 'H'));
-    t.addNode(ft::make_pair(9, 'I'));
-    t.addNode(ft::make_pair(10, 'J'));
-    t.addNode(ft::make_pair(12, 'K'));
+    // t.addNode(ft::make_pair(0, '.'));
+    // t.addNode(ft::make_pair(1, 'A'));
+    // t.addNode(ft::make_pair(2, 'B'));
+    // t.addNode(ft::make_pair(3, 'C'));
+    // t.addNode(ft::make_pair(4, 'D'));
+    // t.addNode(ft::make_pair(5, 'E'));
+    // t.addNode(ft::make_pair(6, 'F'));
+    // t.addNode(ft::make_pair(7, 'G'));
+    // t.addNode(ft::make_pair(8, 'H'));
+    // t.addNode(ft::make_pair(9, 'I'));
+    // t.addNode(ft::make_pair(10, 'J'));
+    // t.addNode(ft::make_pair(12, 'K'));
+    t.insert(ft::make_pair(0, '.'));
+    t.insert(ft::make_pair(1, 'A'));
+    t.insert(ft::make_pair(2, 'B'));
+    t.insert(ft::make_pair(3, 'C'));
+    t.insert(ft::make_pair(4, 'D'));
+    t.insert(ft::make_pair(5, 'E'));
+    t.insert(ft::make_pair(6, 'F'));
+    t.insert(ft::make_pair(7, 'G'));
+    t.insert(ft::make_pair(8, 'H'));
+    t.insert(ft::make_pair(9, 'I'));
+    t.insert(ft::make_pair(10, 'J'));
+    t.insert(ft::make_pair(12, 'K'));
     printWithIterators(t);
     printThisTree(t);
     std::cout << "                         ";
@@ -278,31 +316,20 @@ int main(void) {
       std::cout << "Out of range" << std::endl;
     }
 
-    // ft::Node<ft::pair<int, char> > newNode =
-    //     ft::Node<ft::pair<int, char> >(ft::make_pair(0, '.'));
-    // t.addNode(&newNode);
-    // printWithIterators(t);
+    std::cout << std::endl << BOLDBLUE "Count: " END;
 
-    // // printWithIterators(t);
-    // // printWithDecrementIterators(t);
+    std::cout << "1: " << t.count(1) << " "
+              << "15: " << t.count(15) << " "
+              << "-5: " << t.count(-5) << std::endl;
 
-    // ft::Node<ft::pair<int, char> > newNodel =
-    //     ft::Node<ft::pair<int, char> >(ft::make_pair(11, 'k'));
-    // t.addNode(&newNodel);
-    // printWithIterators(t);
-    // ft::Node<ft::pair<int, char> > newNode2 =
-    //     ft::Node<ft::pair<int, char> >(ft::make_pair(9, 'i'));
-    // t.addNode(&newNode2);
-    // printWithIterators(t);
-
-    std::cout << std::endl << BOLDGREEN "Operator =" END << std::endl;
-    ft::BstTree<int, char> t_copy;
-    t_copy = t;
-    printThisTree(t_copy);
-    std::cout << "Change value 5 in copy :" << std::endl;
-    t_copy.addNode(ft::make_pair(5, '@'));
-    printThisTree(t_copy);
-    std::cout << "Check original :" << std::endl;
-    printThisTree(t);
+    // std::cout << std::endl << BOLDGREEN "Operator =" END << std::endl;
+    // ft::BstTree<int, char> t_copy;
+    // t_copy = t;
+    // printThisTree(t_copy);
+    // std::cout << "Change value 5 in copy :" << std::endl;
+    // t_copy.addNode(ft::make_pair(5, '@'));
+    // printThisTree(t_copy);
+    // std::cout << "Check original :" << std::endl;
+    // printThisTree(t);
   }
 }
