@@ -156,7 +156,6 @@ class BstTree {
         node = node->parent;
       }
     }
-
     pointer node;
   };
 
@@ -292,22 +291,29 @@ class BstTree {
       : a(alloc) {
     _startNode = a.allocate(1);
     header = BstTreeHeader<value_type, Allocator, Key, Value>();
-    // resetHeader();
-  };  // TODO
+  };
 
   template <class InputIterator>
   BstTree(InputIterator first, InputIterator last,
           const key_compare& comp = key_compare(),
-          const allocator_type& alloc = allocator_type()){
-      // TODO
+          const allocator_type& alloc = allocator_type()) {
+    _startNode = a.allocate(1);
+    header = BstTreeHeader<value_type, Allocator, Key, Value>();
+    while (first != last) {
+      insert(first->content);
+      first++;
+    }
+    resetHeader();
   };
 
   BstTree(const BstTree<Key, Value, Compare, Allocator>& x) {
-    clear();
+    _startNode = a.allocate(1);
+    header = BstTreeHeader<value_type, Allocator, Key, Value>();
     for (const_iterator it = x.begin(); it != x.end(); it++) {
       insert(it->content);
     }
-  };  // TODO
+    resetHeader();
+  };
 
   BstTree& operator=(const BstTree& other) {
     if (&other == this) return *this;
@@ -315,31 +321,14 @@ class BstTree {
     for (const_iterator it = other.begin(); it != other.end(); it++) {
       insert(it->content);
     }
+    resetHeader();
     return *this;
-  }  // TODO
+  }
 
   ~BstTree() {
     if (header.count == 0) a.deallocate(_startNode, 1);
     clear();
-  };  // dealloc
-
-  // put this in private when ok
-  node_ptr copy(const node_ptr& originalNode) {  // NOLINT
-    if (originalNode == NULL) {
-      return NULL;
-    }
-    // not working - segfault
-    Node<value_type>* newNode;
-    newNode = a.allocate(1);
-    if (originalNode->parent == NULL) newNode->parent = NULL;
-
-    newNode->content = originalNode->content;
-    newNode->left = copy(originalNode->left);
-    if (newNode->left) newNode->left->parent = newNode;
-    newNode->right = copy(originalNode->right);
-    if (newNode->right) newNode->right->parent = newNode;
-    return newNode;
-  }
+  };  // destroy object if not done in clear
 
   /* *********************************************************************** */
   /*                             ITERATORS                                   */
@@ -766,18 +755,9 @@ void swap(BstTree<Key, T, Compare, Allocator>& x,
 
 /*
 
-
-Modifiers:
-
-
 erase
     Erase elements (public member function)
 
-swap
-    Swap content (public member function)
-
-clear
-    Clear content (public member function)
 */
 
 // TODO : change -> iterator to directly content (it->first & it->second)
