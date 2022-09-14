@@ -42,8 +42,10 @@ class Node {
   Node* left;
   Node* right;
 
-  Content* content_ptr() { return &content; }
-  Content const* content_ptr() const { return &content; }
+  Content* content_ptr() {
+    return &content;
+  }  // not sure if useful - in iterator * and -> to solve actual pb?
+  Content const* content_ptr() const { return &content; }  // not sure if useful
 };
 
 /* *********************************************************************** */
@@ -121,8 +123,10 @@ class BstTree {
       return it;
     }
 
-    reference operator*() { return *node(); }  // see this
-    pointer operator->() { return node; }      // and this
+    // reference operator*() { return *(node); }
+    //  pointer operator->(){return node}                  // see this
+    ft::pair<Key, Value>& operator*() { return *(node->content); }
+    ft::pair<Key, Value>* operator->() { return &node->content; }  // and this
 
     /* comparison */
     bool operator==(const iterator& rhs) {
@@ -300,7 +304,7 @@ class BstTree {
     _startNode = a.allocate(1);
     header = BstTreeHeader<value_type, Allocator, Key, Value>();
     while (first != last) {
-      insert(first->content);
+      insert(first.node->content);
       first++;
     }
     resetHeader();
@@ -430,22 +434,22 @@ class BstTree {
       return ft::pair<iterator, bool>(iterator(_startNode), true);
     }
     iterator it = iterator(searchToAdd(x.first, _startNode));
-    if (it->content.first == x.first)  // maybe change == with !< && !>
+    if (it->first == x.first)  // maybe change == with !< && !>
       return (ft::pair<iterator, bool>(it, false));
     Node<value_type>* newNode;
     newNode = a.allocate(1);
     newNode->content = x;
     newNode->left = NULL;
     newNode->right = NULL;
-    if (f(x.first, it->content.first)) {
-      it->left = newNode;
+    if (f(x.first, it->first)) {
+      it.node->left = newNode;
       newNode->parent = it.node;
     } else {
-      if (it->right == header.node) {
+      if (it.node->right == header.node) {
         newNode->right = header.node;
         header.node->parent = newNode;
       }
-      it->right = newNode;
+      it.node->right = newNode;
       newNode->parent = it.node;
     }
     header.count++;
@@ -462,11 +466,10 @@ class BstTree {
       header.count++;
       return iterator(_startNode);
     }
-    if (position->content.first == x.first)
-      return position;                           // position = new value
-    if (!f(position->content.first, x.first)) {  // position == good hint
-      position++;                                // limit if end
-      if (f(position->content.first, x.first)) {
+    if (position->first == x.first) return position;  // position = new value
+    if (!f(position->first, x.first)) {               // position == good hint
+      position++;                                     // limit if end
+      if (f(position->first, x.first)) {
         position--;
         Node<value_type>* newNode;
         newNode = a.allocate(1);
@@ -474,11 +477,11 @@ class BstTree {
         newNode->left = NULL;
         newNode->right = NULL;
 
-        if (position->right == header.node) {
+        if (position.node->right == header.node) {
           newNode->right = header.node;
           header.node->parent = newNode;
         }
-        position->right = newNode;
+        position.node->right = newNode;
         newNode->parent = position.node;
         header.count++;
         resetHeader();
@@ -491,9 +494,9 @@ class BstTree {
   template <class InputIterator>
   void insert(InputIterator first, InputIterator last) {
     if (header.count == 0) {
-      _startNode->content = first->content;
-      _startNode->left = first->left;
-      _startNode->right = first->right;
+      _startNode->content = first.node->content;
+      _startNode->left = first.node->left;
+      _startNode->right = first.node->right;
       _startNode->parent = NULL;
       header.count++;
 
@@ -501,7 +504,7 @@ class BstTree {
     }
     iterator hint = begin();
     while (first != last) {
-      hint = insert(hint, first->content);
+      hint = insert(hint, first.node->content);
       first++;
     }
   };
@@ -753,12 +756,14 @@ void swap(BstTree<Key, T, Compare, Allocator>& x,
 
 #endif
 
+/* TO DO LEFT */
 /*
-
 erase
     Erase elements (public member function)
-
+non member functions
+try catch
 */
 
-// TODO : change -> iterator to directly content (it->first & it->second)
+// TODO : change -> iterator to directly content (it->first & it->second) see in
+// node
 // TODO: construct

@@ -79,8 +79,12 @@ void printWithIterators(ft::BstTree<int, char>& t) {
   }
   for (ft::BstTree<int, char>::iterator it = t.begin(); it != t.end(); it++) {
     std::cout << "|";
-    std::cout << it.node->content.first << " " << it.node->content.second;
+    std::cout << it->first << " " << it->second;
   }
+  //   for (ft::BstTree<int, char>::iterator it = t.begin(); it != t.end();
+  //   it++) { std::cout << "|"; std::cout << *(it->first) << " " <<
+  //   it.node->content.second;
+  // }
   std::cout << "|" << std::endl << std::endl;
 }
 
@@ -112,29 +116,29 @@ int main(void) {
 
     std::cout << std::endl << BOLDBLUE "Lower and upper bounds: " END;
 
-    std::cout << "-1: lower:" << t.lower_bound(-1)->content.first
-              << " upper: " << t.upper_bound(-1)->content.first << std::endl;
-    std::cout << "1: lower:" << t.lower_bound(1)->content.first
-              << " upper: " << t.upper_bound(1)->content.first << std::endl;
-    std::cout << "5: lower:" << t.lower_bound(5)->content.first
-              << " upper: " << t.upper_bound(5)->content.first << std::endl;
-    std::cout << "9: lower:" << t.lower_bound(9)->content.first
-              << " upper: " << t.upper_bound(9)->content.first << std::endl;
-    std::cout << "15: lower:" << t.lower_bound(15)->content.first
-              << " upper: " << t.upper_bound(15)->content.first << std::endl;
+    std::cout << "-1: lower:" << t.lower_bound(-1)->first
+              << " upper: " << t.upper_bound(-1)->first << std::endl;
+    std::cout << "1: lower:" << t.lower_bound(1)->first
+              << " upper: " << t.upper_bound(1)->first << std::endl;
+    std::cout << "5: lower:" << t.lower_bound(5)->first
+              << " upper: " << t.upper_bound(5)->first << std::endl;
+    std::cout << "9: lower:" << t.lower_bound(9)->first
+              << " upper: " << t.upper_bound(9)->first << std::endl;
+    std::cout << "15: lower:" << t.lower_bound(15)->first
+              << " upper: " << t.upper_bound(15)->first << std::endl;
 
     std::cout << std::endl << BOLDBLUE "Equal range: " END;
 
-    std::cout << "-1: " << t.equal_range(-1).first->content.first << " "
-              << t.equal_range(-1).second->content.first << std::endl;
-    std::cout << "1: " << t.equal_range(1).first->content.first << " "
-              << t.equal_range(1).second->content.first << std::endl;
-    std::cout << "5: " << t.equal_range(5).first->content.first << " "
-              << t.equal_range(5).second->content.first << std::endl;
-    std::cout << "9: " << t.equal_range(9).first->content.first << " "
-              << t.equal_range(9).second->content.first << std::endl;
-    std::cout << "15: " << t.equal_range(15).first->content.first << " "
-              << t.equal_range(15).second->content.first << std::endl;
+    std::cout << "-1: " << t.equal_range(-1).first->first << " "
+              << t.equal_range(-1).second->first << std::endl;
+    std::cout << "1: " << t.equal_range(1).first->first << " "
+              << t.equal_range(1).second->first << std::endl;
+    std::cout << "5: " << t.equal_range(5).first->first << " "
+              << t.equal_range(5).second->first << std::endl;
+    std::cout << "9: " << t.equal_range(9).first->first << " "
+              << t.equal_range(9).second->first << std::endl;
+    std::cout << "15: " << t.equal_range(15).first->first << " "
+              << t.equal_range(15).second->first << std::endl;
 
     /*** SEARCH ***/  // OK
     std::cout << std::endl << BOLDBLUE "Find 0-12: " END;
@@ -304,11 +308,13 @@ int main(void) {
     t.insert(ft::pair<int, char>(ft::make_pair(4, 'd')));
     printWithIterators(t);
 
-    /* ***********************************************************************
-     */
+    /*
+    ***********************************************************************
+    */
     /*                           OTHER CONSTRUCTORS */
-    /* ***********************************************************************
-     */
+    /*
+    ***********************************************************************
+    */
     std::cout << BOLDBLUE "*** Operator = *** : " END << std::endl << std::endl;
     ft::BstTree<int, char> t_op_equal;
     t_op_equal = t;
