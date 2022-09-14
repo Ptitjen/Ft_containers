@@ -52,7 +52,7 @@ class Node {
 /*                             TREE HEADER                                 */
 /* *********************************************************************** */
 template <class Content, class Allocator, class Key, class Value>
-class BstTreeHeader {  // left : begin, self : end
+class BstTreeHeader {
  public:
   Node<Content>* node;
   std::size_t count;
@@ -86,14 +86,16 @@ class BstTree {
   class iterator {
    public:
     typedef Node<pair<Key, Value> > value_type;
-    typedef Node<pair<Key, Value> >& reference;
-    typedef Node<pair<Key, Value> >* pointer;
+    typedef Node<pair<Key, Value> >& node_reference;
+    typedef Node<pair<Key, Value> >* node_pointer;
+    typedef ft::pair<Key, Value>& reference;
+    typedef ft::pair<Key, Value>* pointer;
     typedef std::bidirectional_iterator_tag iterator_category;
     typedef std::ptrdiff_t difference_type;
 
     /* Constructors and destructor */
     iterator() throw() : node(NULL){};
-    iterator(pointer ptr) throw() : node(ptr) {}
+    iterator(node_pointer ptr) throw() : node(ptr) {}
     iterator(iterator const& it) throw() : node(it.node){};
     iterator& operator=(iterator const& it) {
       if (&it == this) return (*this);
@@ -125,8 +127,8 @@ class BstTree {
 
     // reference operator*() { return *(node); }
     //  pointer operator->(){return node}                  // see this
-    ft::pair<Key, Value>& operator*() { return *(node->content); }
-    ft::pair<Key, Value>* operator->() { return &node->content; }  // and this
+    reference operator*() { return *(node->content); }
+    pointer operator->() { return &node->content; }
 
     /* comparison */
     bool operator==(const iterator& rhs) {
@@ -160,7 +162,7 @@ class BstTree {
         node = node->parent;
       }
     }
-    pointer node;
+    node_pointer node;
   };
 
   /* *********************************************************************** */
@@ -169,14 +171,16 @@ class BstTree {
   class const_iterator {
    public:
     typedef Node<pair<Key, Value> > value_type;
-    typedef Node<pair<Key, Value> >& reference;
-    typedef Node<pair<Key, Value> >* pointer;
+    typedef Node<pair<Key, Value> >& node_reference;
+    typedef Node<pair<Key, Value> >* node_pointer;
+    typedef ft::pair<Key, Value>& reference;
+    typedef ft::pair<Key, Value>* pointer;
     typedef std::bidirectional_iterator_tag iterator_category;
     typedef std::ptrdiff_t difference_type;
 
     /* Constructors and destructor */
     const_iterator() throw() : node(NULL){};
-    const_iterator(pointer ptr) throw() : node(ptr) {}
+    const_iterator(node_pointer ptr) throw() : node(ptr) {}
     const_iterator(const_iterator const& it) throw() : node(it.node){};
     const_iterator& operator=(const_iterator const& it) {
       if (&it == this) return (*this);
@@ -205,9 +209,8 @@ class BstTree {
       decrement();
       return it;
     }
-
-    reference operator*() const { return *node(); }  // see this
-    pointer operator->() const { return node; }      // and this
+    reference operator*() const { return *(node->content); }
+    pointer operator->() const { return &node->content; }
 
     /* comparison */
     bool operator==(const const_iterator& rhs) {
@@ -242,7 +245,7 @@ class BstTree {
       }
     }
 
-    pointer node;
+    node_pointer node;
   };
 
   /* *********************************************************************** */
@@ -314,7 +317,7 @@ class BstTree {
     _startNode = a.allocate(1);
     header = BstTreeHeader<value_type, Allocator, Key, Value>();
     for (const_iterator it = x.begin(); it != x.end(); it++) {
-      insert(it->content);
+      insert(it.node->content);
     }
     resetHeader();
   };
@@ -323,7 +326,7 @@ class BstTree {
     if (&other == this) return *this;
     clear();
     for (const_iterator it = other.begin(); it != other.end(); it++) {
-      insert(it->content);
+      insert(it.node->content);
     }
     resetHeader();
     return *this;
@@ -603,6 +606,7 @@ class BstTree {
   /*** Utils : put all in private when finished ***/
   Node<value_type>* getStart() { return _startNode; };
 
+ private:
   void recursiveDealloc(node_ptr n) {
     if (n == NULL || n == header.node) return;
     recursiveDealloc(n->left);
@@ -646,8 +650,6 @@ class BstTree {
     header.count++;
     resetHeader();
   }
-
- private:
   void resetHeader() {
     iterator it = last();
     it.node->right = header.node;
@@ -759,11 +761,7 @@ void swap(BstTree<Key, T, Compare, Allocator>& x,
 /* TO DO LEFT */
 /*
 erase
-    Erase elements (public member function)
 non member functions
 try catch
+construct
 */
-
-// TODO : change -> iterator to directly content (it->first & it->second) see in
-// node
-// TODO: construct
