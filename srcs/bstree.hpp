@@ -6,6 +6,7 @@
 #include <limits>
 #include <stdexcept>
 
+#include "lexicographical_compare.hpp"
 #include "pair.hpp"
 #include "reverse_iterator.hpp"
 
@@ -83,6 +84,7 @@ class BstTree {
   /* *********************************************************************** */
   /*                                ITERATOR                                 */
   /* *********************************************************************** */
+ public:
   class iterator {
    public:
     typedef Node<pair<Key, Value> > value_type;
@@ -252,7 +254,7 @@ class BstTree {
   /*                                CLASS                                    */
   /* *********************************************************************** */
 
- public:
+  // public:
   typedef Key key_type;
   typedef Value mapped_type;
   typedef pair<Key, Value> value_type;
@@ -268,8 +270,8 @@ class BstTree {
 
   typedef Node<value_type>* node_ptr;
 
-  typedef iterator iterator;
-  typedef const_iterator const_iterator;
+  typedef BstTree::iterator iterator;
+  typedef BstTree::const_iterator const_iterator;
   typedef ft::reverse_iterator<iterator> reverse_iterator;
   typedef ft::reverse_iterator<const_iterator> const_reverse_iterator;
   class value_compare
@@ -374,9 +376,11 @@ class BstTree {
   /*                             CAPACITY                                    */
   /* *********************************************************************** */
 
-  bool empty() { return header.count == 0; }
-  std::size_t size() { return header.count; }
-  std::size_t max_size() { return std::numeric_limits<std::size_t>::max(); }
+  bool empty() const { return header.count == 0; }
+  std::size_t size() const { return header.count; }
+  std::size_t max_size() const {
+    return std::numeric_limits<std::size_t>::max();
+  }
 
   /* *********************************************************************** */
   /*                             ELEMENT ACCESS                              */
@@ -815,22 +819,59 @@ class BstTree {
 // TODO
 template <class Key, class T, class Compare, class Allocator>
 bool operator==(const BstTree<Key, T, Compare, Allocator>& x,
-                const BstTree<Key, T, Compare, Allocator>& y);
+                const BstTree<Key, T, Compare, Allocator>& y) {
+  if (x.size() != y.size()) return false;
+  typename ft::BstTree<Key, T, Compare, Allocator>::const_iterator itx =
+      x.begin();
+  typename ft::BstTree<Key, T, Compare, Allocator>::const_iterator ity =
+      y.begin();
+  while (itx != x.end()) {
+    if (itx->first != ity->first || itx->second != ity->second) return false;
+    itx++;
+    ity++;
+  }
+  return true;
+};
 template <class Key, class T, class Compare, class Allocator>
 bool operator<(const BstTree<Key, T, Compare, Allocator>& x,
-               const BstTree<Key, T, Compare, Allocator>& y);
+               const BstTree<Key, T, Compare, Allocator>& y) {
+  typename ft::BstTree<Key, T, Compare, Allocator>::const_iterator itx =
+      x.begin();
+  typename ft::BstTree<Key, T, Compare, Allocator>::const_iterator ity =
+      y.begin();
+  while (itx != x.end() && ity != y.end()) {
+    if (!Compare(itx->first, ity->first) && !Compare(ity->first, itx->first))
+      if (Compare(ity->second, itx->second)) return false;
+    if (Compare(ity->first, itx->first)) return false;
+    itx++;
+    ity++;
+  }
+  // check this : length + with begin equal
+  return true;
+};
+
 template <class Key, class T, class Compare, class Allocator>
 bool operator!=(const BstTree<Key, T, Compare, Allocator>& x,
-                const BstTree<Key, T, Compare, Allocator>& y);
+                const BstTree<Key, T, Compare, Allocator>& y) {
+  return !(x == y);
+}
 template <class Key, class T, class Compare, class Allocator>
 bool operator>(const BstTree<Key, T, Compare, Allocator>& x,
-               const BstTree<Key, T, Compare, Allocator>& y);
+               const BstTree<Key, T, Compare, Allocator>& y) {
+  return (y < x);
+}
+
 template <class Key, class T, class Compare, class Allocator>
 bool operator>=(const BstTree<Key, T, Compare, Allocator>& x,
-                const BstTree<Key, T, Compare, Allocator>& y);
+                const BstTree<Key, T, Compare, Allocator>& y) {
+  return (!(x < y));
+};
+
 template <class Key, class T, class Compare, class Allocator>
 bool operator<=(const BstTree<Key, T, Compare, Allocator>& x,
-                const BstTree<Key, T, Compare, Allocator>& y);
+                const BstTree<Key, T, Compare, Allocator>& y) {
+  return (!(y < x));
+};
 
 template <class Key, class T, class Compare, class Allocator>
 void swap(BstTree<Key, T, Compare, Allocator>& x,
@@ -849,3 +890,4 @@ non member functions
 try catch
 construct
 */
+// if perfo not ok : rebalance as AVL tree ??

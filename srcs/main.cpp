@@ -14,6 +14,12 @@ int main(void) {
   /* ********************** VECTOR *********************** */
   std::cout << BOLDMAGENTA "*********** VECTOR **********" END << std::endl;
   {
+    /********** OK RESOLU **************/
+    ft::vector<int> ft;
+    ft::vector<int>::const_iterator it = ft.begin();  // TODO : check this
+    std::vector<int> ft1;
+    std::vector<int>::const_iterator it1 = ft1.begin();  // TODO : check this
+
     /* *************** PERFORMANCE TESTS **************** */  // OK
     {
       std::cout << BOLDBLUE "Performance test : " END << std::endl;

@@ -384,5 +384,9 @@ int main(void) {
     std::cout << BOLDRED "Erase begin:" END << std::endl;
     t.erase(t.begin());
     printWithIterators(t);
+
+    ft::BstTree<int, char> t_equal = t;
+    std::cout << (t_equal == t ? "Equal" : "Not equal") << std::endl;
+    std::cout << (t_equal == t_it ? "Equal" : "Not equal") << std::endl;
   }
 }

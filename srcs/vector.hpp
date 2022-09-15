@@ -120,6 +120,9 @@ class vector {
     /* Constructors and destructor */
     const_iterator() throw() : ptr_(NULL){};
     const_iterator(pointer ptr) throw() : ptr_(ptr) {}
+    const_iterator(iterator const& it) throw()
+        : ptr_(it.ptr_){};  // remove is useless
+
     const_iterator(const_iterator const& it) throw() : ptr_(it.ptr_){};
     const_iterator& operator=(const_iterator const& it) throw() {
       if (&it == this) return (*this);
