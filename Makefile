@@ -8,7 +8,8 @@ RM	= @rm -f
 
 CFLAGS = -Wall -Wextra -Werror
 
-CC = clang++ -std=c++98 -fsanitize=address
+CC = clang++ -std=c++98 
+#-fsanitize=address -g
 
 
 all:	${NAME}		

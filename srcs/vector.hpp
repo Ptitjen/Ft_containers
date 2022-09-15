@@ -103,7 +103,6 @@ class vector {
     bool operator<=(const iterator& rhs) { return ptr_ <= rhs.ptr_; }
     bool operator>=(const iterator& rhs) { return ptr_ >= rhs.ptr_; }
 
-   private:
     pointer ptr_;
   };
 
@@ -120,8 +119,7 @@ class vector {
     /* Constructors and destructor */
     const_iterator() throw() : ptr_(NULL){};
     const_iterator(pointer ptr) throw() : ptr_(ptr) {}
-    const_iterator(iterator const& it) throw()
-        : ptr_(it.ptr_){};  // remove is useless
+    const_iterator(iterator const& it) throw() : ptr_(it.ptr_){};
 
     const_iterator(const_iterator const& it) throw() : ptr_(it.ptr_){};
     const_iterator& operator=(const_iterator const& it) throw() {
@@ -198,7 +196,6 @@ class vector {
     bool operator<=(const const_iterator& rhs) { return ptr_ <= rhs.ptr_; }
     bool operator>=(const const_iterator& rhs) { return ptr_ >= rhs.ptr_; }
 
-   private:
     pointer ptr_;
   };
 
@@ -651,6 +648,7 @@ class vector {
     for (size_type i = 0; i < _size; i++) {
       a.destroy(_array + i);
     }
+    // a.deallocate(_array + 1, _capacity - 1);
     _size = 0;
   };
 
@@ -666,8 +664,13 @@ class vector {
       if (n >= _max_size) throw(std::length_error(""));
       T* tmp = a.allocate(n);
       std::uninitialized_copy(_array, _array + _size, tmp);
-      _array = tmp;
+      _array = tmp;  // deep copy?
       _capacity = n;
+      for (size_type i = 0; i < _size; i++) {
+        a.destroy(&tmp[i]);  // better but not suffisant
+
+      }  // check
+         // a.deallocate(tmp, n);  // really better but pb
     } catch (std::exception& e) {
       throw(e);
     }
@@ -726,3 +729,4 @@ void swap(vector<T, Allocator>& x, vector<T, Allocator>& y) throw() {
 #endif
 
 // TODO : test with throwing constructors
+// TODO:check invalid reads

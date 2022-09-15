@@ -15,47 +15,47 @@ int main(void) {
   std::cout << BOLDMAGENTA "*********** VECTOR **********" END << std::endl;
   {
     /********** OK RESOLU **************/
-    ft::vector<int> ft;
-    ft::vector<int>::const_iterator it = ft.begin();  // TODO : check this
-    std::vector<int> ft1;
-    std::vector<int>::const_iterator it1 = ft1.begin();  // TODO : check this
+    // ft::vector<int> ft;
+    // ft::vector<int>::const_iterator it = ft.begin();
+    // std::vector<int> ft1;
+    // std::vector<int>::const_iterator it1 = ft1.begin();
 
     /* *************** PERFORMANCE TESTS **************** */  // OK
     {
-      std::cout << BOLDBLUE "Performance test : " END << std::endl;
-      // "Vector of 10 000 000 - Push - Pop - Insert - Erase - Swap"
-      Chrono chrono = Chrono("My vector", "Std vector");
-      chrono.begin();
-      ft::vector<int> my_large_v = ft::vector<int>(10000000, 42);
-      ft::vector<int> my_large_v2 = ft::vector<int>(10000000, 41);
+        // std::cout << BOLDBLUE "Performance test : " END << std::endl;
+        // // "Vector of 10 000 000 - Push - Pop - Insert - Erase - Swap"
+        // Chrono chrono = Chrono("My vector", "Std vector");
+        // chrono.begin();
+        // ft::vector<int> my_large_v = ft::vector<int>(10000000, 42);
+        // ft::vector<int> my_large_v2 = ft::vector<int>(10000000, 41);
 
-      my_large_v.push_back(1);
-      my_large_v.pop_back();
-      my_large_v.insert(my_large_v.begin() + 500000, 43);
-      my_large_v.erase(my_large_v.begin() + 500000);
-      my_large_v.insert(my_large_v.begin() + 400000, 100000, 43);
-      my_large_v.insert(my_large_v.begin() + 5000000, my_large_v2.begin(),
-                        my_large_v2.end());
+        // my_large_v.push_back(1);
+        // my_large_v.pop_back();
+        // my_large_v.insert(my_large_v.begin() + 500000, 43);
+        // my_large_v.erase(my_large_v.begin() + 500000);
+        // my_large_v.insert(my_large_v.begin() + 400000, 100000, 43);
+        // my_large_v.insert(my_large_v.begin() + 5000000, my_large_v2.begin(),
+        //                   my_large_v2.end());
 
-      my_large_v.erase(my_large_v.begin() + 400000,
-                       my_large_v.begin() + 500000);
-      ft::vector<int> my_large_v_swap = ft::vector<int>(999999, 41);
-      my_large_v.swap(my_large_v_swap);
-      chrono.stop();
-      std::vector<int> large_v = std::vector<int>(10000000, 42);
-      std::vector<int> large_v2 = std::vector<int>(10000000, 41);
-      large_v.push_back(1);
-      large_v.pop_back();
-      large_v.insert(large_v.begin() + 500000, 43);
-      large_v.erase(large_v.begin() + 500000);
-      large_v.insert(large_v.begin() + 400000, 100000, 43);
-      large_v.insert(large_v.begin() + 5000000, large_v2.begin(),
-                     large_v2.end());
-      large_v.erase(large_v.begin() + 400000, large_v.begin() + 500000);
-      std::vector<int> large_v_swap = std::vector<int>(999999, 41);
-      large_v.swap(large_v_swap);
-      chrono.stop();
-      printDiffVector(my_large_v, large_v);
+        // my_large_v.erase(my_large_v.begin() + 400000,
+        //                  my_large_v.begin() + 500000);
+        // ft::vector<int> my_large_v_swap = ft::vector<int>(999999, 41);
+        // my_large_v.swap(my_large_v_swap);
+        // chrono.stop();
+        // std::vector<int> large_v = std::vector<int>(10000000, 42);
+        // std::vector<int> large_v2 = std::vector<int>(10000000, 41);
+        // large_v.push_back(1);
+        // large_v.pop_back();
+        // large_v.insert(large_v.begin() + 500000, 43);
+        // large_v.erase(large_v.begin() + 500000);
+        // large_v.insert(large_v.begin() + 400000, 100000, 43);
+        // large_v.insert(large_v.begin() + 5000000, large_v2.begin(),
+        //                large_v2.end());
+        // large_v.erase(large_v.begin() + 400000, large_v.begin() + 500000);
+        // std::vector<int> large_v_swap = std::vector<int>(999999, 41);
+        // large_v.swap(large_v_swap);
+        // chrono.stop();
+        // printDiffVector(my_large_v, large_v);
     }
 
     /* *************** CONSTRUCTOR AND ASSIGNMENT TESTS **************** */
@@ -101,15 +101,15 @@ int main(void) {
     /* *************** CUSTOM CLASS **************** */
 
     {
-      std::cout << std::endl
-                << std::endl
-                << BOLDBLUE "Custom complex type : " END << std::endl;
-      bli test_complex = bli();
-      ft::vector<bli> my_v_complex = ft::vector<bli>(3, test_complex);
-      my_v_complex.push_back(test_complex);
-      std::vector<bli> v_complex = std::vector<bli>(3, test_complex);
-      v_complex.push_back(test_complex);
-      printDiffVector(my_v_complex, v_complex);
+        // std::cout << std::endl
+        //           << std::endl
+        //           << BOLDBLUE "Custom complex type : " END << std::endl;
+        // bli test_complex = bli();
+        // ft::vector<bli> my_v_complex = ft::vector<bli>(3, test_complex);
+        // my_v_complex.push_back(test_complex);
+        // std::vector<bli> v_complex = std::vector<bli>(3, test_complex);
+        // v_complex.push_back(test_complex);
+        // printDiffVector(my_v_complex, v_complex);
     }
 
     /* *************** ITERATORS **************** */
@@ -640,23 +640,23 @@ int main(void) {
   {
     /* *************** PERFORMANCE TESTS **************** */  // OK
     {
-      // PB
-      std::cout << BOLDBLUE "Performance test : " END << std::endl;
-      Chrono chrono = Chrono("My stack", "Std stack");
-      chrono.begin();
-      ft::stack<int> my_large_s = ft::stack<int>();
-      for (unsigned long long int i = 0; i < 10000000; i++) my_large_s.push(42);
-      for (unsigned long long int i = 0; i < 50000; i++) my_large_s.pop();
+        // PB
+        // std::cout << BOLDBLUE "Performance test : " END << std::endl;
+        // Chrono chrono = Chrono("My stack", "Std stack");
+        // chrono.begin();
+        // ft::stack<int> my_large_s = ft::stack<int>();
+        // for (unsigned long long int i = 0; i < 10000000; i++)
+        // my_large_s.push(42); for (unsigned long long int i = 0; i < 50000;
+        // i++) my_large_s.pop();
 
-      chrono.stop();
-      std::stack<int> large_s = std::stack<int>();
-      for (unsigned long long int i = 0; i < 10000000; i++) large_s.push(42);
-      for (unsigned long long int i = 0; i < 50000; i++) large_s.pop();
-      chrono.stop();
+        // chrono.stop();
+        // std::stack<int> large_s = std::stack<int>();
+        // for (unsigned long long int i = 0; i < 10000000; i++)
+        // large_s.push(42); for (unsigned long long int i = 0; i < 50000; i++)
+        // large_s.pop(); chrono.stop();
 
-      printDiffStack(my_large_s, large_s);
-    }
-    {
+        // printDiffStack(my_large_s, large_s);
+    } {
       std::cout << std::endl
                 << std::endl
                 << BOLDBLUE "Empty : " END << std::endl;
