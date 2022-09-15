@@ -513,10 +513,9 @@ class BstTree {
   };
 
   /* ***************** TODO ****************** */
-  void erase(iterator position) {
+  void erase(iterator position) {  // NOLINT
     if (position.node->left == NULL &&
         position.node->right == NULL) {  // Leaf - OK?
-      std::cout << "Leaf" << std::endl;
       if (position.node == _startNode) {
         clear();
         return;
@@ -528,7 +527,6 @@ class BstTree {
     } else if (position.node->left != NULL &&
                (position.node->right == NULL ||
                 position.node->right == header.node)) {
-      std::cout << "Has a left child only" << std::endl;
       if (position.node->parent->left == position.node) {
         position.node->parent->left = position.node->left;
         position.node->left->parent = position.node->parent;
@@ -539,9 +537,8 @@ class BstTree {
         _startNode = position.node->left;
         position.node->left->parent = NULL;
       }
-      if (position.node->right == header.node) resetHeader();
+
     } else if (position.node->left == NULL && position.node->right != NULL) {
-      std::cout << "Has a right child only" << std::endl;
       if (position.node->parent->left == position.node) {
         position.node->parent->left = position.node->right;
         position.node->right->parent = position.node->parent;
@@ -552,15 +549,12 @@ class BstTree {
         _startNode = position.node->right;
         position.node->right->parent = NULL;
       }
-
     }
     // 2 childs
     else {
-      std::cout << "Has two children" << std::endl;  // NOT OK AT ALL
       position++;
       iterator next = position;
       position--;
-
       if (position.node == _startNode) {
         next.node->right->parent = next.node->parent;
         next.node->parent->left = next.node->right;
@@ -570,31 +564,41 @@ class BstTree {
         next.node->left->parent = next.node;
         next.node->right->parent = next.node;
         _startNode = next.node;
-
       } else if (position.node->parent->right ==
                  position.node) {  // right child - ok
-        std::cout << "Right node" << std::endl;
         next.node->left = position.node->left;
         position.node->left->parent = next.node;
         next.node->parent = position.node->parent;
         position.node->parent->right = next.node;
-      }
-
-      else if (position.node->parent->left == position.node) {  // left child
-        std::cout << "Left node" << std::endl;
-
-        // next.node->left = position.node->left;
-        // position.node->left->parent = next.node;
-        // next.node->parent = position.node->parent;
-        // position.node->parent->right = next.node;
+      } else if (position.node->parent->left == position.node) {  // left child
+        next--;
+        next--;
+        next.node->right = position.node->right;
+        position.node->right->parent = next.node;
+        next.node->parent = position.node->parent;
+        position.node->parent->left = next.node;
       }
     }
     dealloc(position.node);
     resetHeader();
   }
 
-  size_type erase(const key_type& x);
-  void erase(iterator first, iterator last);
+  size_type erase(const key_type& x) {
+    iterator it = find(x);
+    if (it != header.node) {
+      erase(x);
+      return 1;
+    }
+    return 0;
+  };
+
+  void erase(iterator first, iterator last) {
+    iterator it = first;
+    while (it != last) {
+      it++;
+      erase(first);
+    }
+  };  // TO DO :test
   /* ***************************************** */
 
   void swap(BstTree<Key, Value, Compare, Allocator>& other) {
@@ -840,7 +844,7 @@ void swap(BstTree<Key, T, Compare, Allocator>& x,
 
 /* TO DO LEFT */
 /*
-erase
+
 non member functions
 try catch
 construct

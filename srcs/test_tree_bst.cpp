@@ -268,119 +268,121 @@ int main(void) {
     printWithIterators(t);
     printThisTree(t);
     std::cout << BOLDMAGENTA "Size: " END << t.size() << std::endl;
-    // std::cout << BOLDRED "Erase begin:" END << std::endl;
-    // t.erase(t.begin());
-    // printWithIterators(t);
-    // std::cout << BOLDRED "Erase 5:" END << std::endl;
-    // t.erase(t.find(5));
-    // printWithIterators(t);
+
     std::cout << BOLDRED "Erase :" END << std::endl;
-    t.erase(t.find(10));  // NOT OK
-    printThisTree(t);
-    printWithIterators(t);
-    t.erase(t.find(6));
-    printThisTree(t);
-    printWithIterators(t);
-
-    // /****** ELEMENT ACCESS *****/
-    // std::cout << BOLDBLUE "[]: " END;
-    // std::cout << t[0] << " " << t[1] << " " << t[2] << " " << t[3] << " "
-    //           << t[4] << " " << t[5] << " " << t[6] << " " << t[7] << " "
-    //           << t[8] << " " << t[9] << " " << t[10] << " " << t[11] << " "
-    //           << t[12] << std::endl;
-    // printWithIterators(t);
-    // printThisTree(t);
-
-    // try {
-    //   std::cout << BOLDBLUE "At: " END;
-    //   std::cout << t.at(0) << " " << t.at(1) << " " << t.at(2) << " " <<
-    //   t.at(3)
-    //             << " " << t.at(4) << " " << t.at(5) << " " << t.at(6) << " "
-    //             << t.at(7) << " " << t.at(8) << " " << t.at(9) << " "
-    //             << t.at(10) << " " << t.at(11) << " " << t.at(12) << " "
-    //             << t.at(13) << " " << std::endl;
-    // } catch (std::out_of_range& e) {
-    //   std::cout << "Out of range" << std::endl;
-    // }
-    // std::cout << std::endl << BOLDBLUE "Count: " END;
-
-    // std::cout << "1: " << t.count(1) << " "
-    //           << "15: " << t.count(15) << " "
-    //           << "-5: " << t.count(-5) << std::endl;
-
-    // /**** clear ***/
-    // printWithIterators(t_insert);
-
-    // std::cout << BOLDBLUE "Clear:" END << std::endl;
-    // t_insert.clear();
-    // printWithIterators(t_insert);
-    // t.clear();
-    // printWithIterators(t);
-
-    // std::cout << BOLDBLUE "Reinsert after Clear:" END << std::endl;
-    // t.insert(ft::pair<int, char>(ft::make_pair(7, 'g')));
-    // t.insert(ft::pair<int, char>(ft::make_pair(2, 'b')));
-    // t.insert(ft::pair<int, char>(ft::make_pair(4, 'd')));
-    // printWithIterators(t);
-
-    // /*
-    // ***********************************************************************
-    // */
-    // /*                           OTHER CONSTRUCTORS */
-    // /*
-    // ***********************************************************************
-    // */
-    // std::cout << BOLDBLUE "*** Operator = *** : " END << std::endl <<
-    // std::endl; ft::BstTree<int, char> t_op_equal; t_op_equal = t; std::cout
-    // << "Copy : "; printWithIterators(t_op_equal); std::cout << "Modifying
-    // copy : "; t_op_equal.insert(ft::pair<int, char>(ft::make_pair(18, '%')));
-    // printWithIterators(t_op_equal);
-    // std::cout << "Verify original : ";
-    // printWithIterators(t);
-
-    // std::cout << BOLDBLUE "*** Operator = on not empty tree *** : " END
-    //           << std::endl
-    //           << std::endl;
-    // ft::BstTree<int, char> t_op_equal2;
-    // t_op_equal2.insert(ft::pair<int, char>(ft::make_pair(1, 'a')));
-    // t_op_equal2.insert(ft::pair<int, char>(ft::make_pair(0, '$')));
-    // t_op_equal2.insert(ft::pair<int, char>(ft::make_pair(19, 'y')));
-    // t_op_equal2.insert(ft::pair<int, char>(ft::make_pair(9, '-')));
-    // std::cout << "Not empty tree : ";
-    // printWithIterators(t_op_equal2);
-    // t_op_equal2 = t;
-    // std::cout << "After assignment : ";
-    // printWithIterators(t_op_equal2);
-    // std::cout << "Modifying copy : ";
-    // t_op_equal2.insert(ft::pair<int, char>(ft::make_pair(18, '%')));
-    // printWithIterators(t_op_equal);
-    // std::cout << "Verify original : ";
-    // printWithIterators(t);
-
-    // ft::BstTree<int, char> t_op_copy(t);
-    // std::cout << BOLDBLUE "*** Copy constructor *** : " END << std::endl
-    //           << std::endl;
-    // std::cout << "Copy : ";
-    // printWithIterators(t_op_copy);
-    // std::cout << "Modifying copy : ";
-    // t_op_copy.insert(ft::pair<int, char>(ft::make_pair(5, '@')));
-    // printWithIterators(t_op_copy);
-    // std::cout << "Verify original : ";
-    // printWithIterators(t);
-
-    // ft::BstTree<int, char> t_it(t.begin(), t.end());
-    // std::cout << BOLDBLUE "*** Constructor from iterators *** : " END
-    //           << std::endl
-    //           << std::endl;
-    // std::cout << "Newly constructed tree : ";
-    // printWithIterators(t_it);
-    // std::cout << "Modifying tree : ";
-    // t_it.insert(ft::pair<int, char>(ft::make_pair(5, '@')));
-    // printWithIterators(t_it);
-    // std::cout << "Verify original : ";
-    // printWithIterators(t);
-    // std::cout << BOLDRED "Erase begin:" END << std::endl;
     // t.erase(t.begin());
     // printWithIterators(t);
+    // t.erase(t.find(10));  // right node 2 children
+    // printThisTree(t);
+    // printWithIterators(t);
+    t.erase(t.find(6));  // root
+    printThisTree(t);
+    printWithIterators(t);
+    // t.erase(t.find(1));  // left node 2 childre
+    // printThisTree(t);
+    // printWithIterators(t);
+
+    /****** ELEMENT ACCESS *****/
+    std::cout << BOLDBLUE "[]: " END;
+    std::cout << t[0] << " " << t[1] << " " << t[2] << " " << t[3] << " "
+              << t[4] << " " << t[5] << " " << t[6] << " " << t[7] << " "
+              << t[8] << " " << t[9] << " " << t[10] << " " << t[11] << " "
+              << t[12] << std::endl;
+    printWithIterators(t);
+    printThisTree(t);
+
+    try {
+      std::cout << BOLDBLUE "At: " END;
+      std::cout << t.at(0) << " " << t.at(1) << " " << t.at(2) << " " << t.at(3)
+                << " " << t.at(4) << " " << t.at(5) << " " << t.at(6) << " "
+                << t.at(7) << " " << t.at(8) << " " << t.at(9) << " "
+                << t.at(10) << " " << t.at(11) << " " << t.at(12) << " "
+                << t.at(13) << " " << std::endl;
+    } catch (std::out_of_range& e) {
+      std::cout << "Out of range" << std::endl;
+    }
+    std::cout << std::endl << BOLDBLUE "Count: " END;
+
+    std::cout << "1: " << t.count(1) << " "
+              << "15: " << t.count(15) << " "
+              << "-5: " << t.count(-5) << std::endl;
+
+    /**** clear ***/
+    printWithIterators(t_insert);
+
+    std::cout << BOLDBLUE "Clear:" END << std::endl;
+    t_insert.clear();
+    printWithIterators(t_insert);
+    t.clear();
+    printWithIterators(t);
+
+    std::cout << BOLDBLUE "Reinsert after Clear:" END << std::endl;
+    t.insert(ft::pair<int, char>(ft::make_pair(7, 'g')));
+    t.insert(ft::pair<int, char>(ft::make_pair(2, 'b')));
+    t.insert(ft::pair<int, char>(ft::make_pair(4, 'd')));
+    printWithIterators(t);
+
+    /*
+    ***********************************************************************
+    */
+    /*                           OTHER CONSTRUCTORS */
+    /*
+    ***********************************************************************
+    */
+    std::cout << BOLDBLUE "*** Operator = *** : " END << std::endl << std::endl;
+    ft::BstTree<int, char> t_op_equal;
+    t_op_equal = t;
+    std::cout << "Copy : ";
+    printWithIterators(t_op_equal);
+    std::cout << "Modifying copy : ";
+    t_op_equal.insert(ft::pair<int, char>(ft::make_pair(18, '%')));
+    printWithIterators(t_op_equal);
+    std::cout << "Verify original : ";
+    printWithIterators(t);
+
+    std::cout << BOLDBLUE "*** Operator = on not empty tree *** : " END
+              << std::endl
+              << std::endl;
+    ft::BstTree<int, char> t_op_equal2;
+    t_op_equal2.insert(ft::pair<int, char>(ft::make_pair(1, 'a')));
+    t_op_equal2.insert(ft::pair<int, char>(ft::make_pair(0, '$')));
+    t_op_equal2.insert(ft::pair<int, char>(ft::make_pair(19, 'y')));
+    t_op_equal2.insert(ft::pair<int, char>(ft::make_pair(9, '-')));
+    std::cout << "Not empty tree : ";
+    printWithIterators(t_op_equal2);
+    t_op_equal2 = t;
+    std::cout << "After assignment : ";
+    printWithIterators(t_op_equal2);
+    std::cout << "Modifying copy : ";
+    t_op_equal2.insert(ft::pair<int, char>(ft::make_pair(18, '%')));
+    printWithIterators(t_op_equal);
+    std::cout << "Verify original : ";
+    printWithIterators(t);
+
+    ft::BstTree<int, char> t_op_copy(t);
+    std::cout << BOLDBLUE "*** Copy constructor *** : " END << std::endl
+              << std::endl;
+    std::cout << "Copy : ";
+    printWithIterators(t_op_copy);
+    std::cout << "Modifying copy : ";
+    t_op_copy.insert(ft::pair<int, char>(ft::make_pair(5, '@')));
+    printWithIterators(t_op_copy);
+    std::cout << "Verify original : ";
+    printWithIterators(t);
+
+    ft::BstTree<int, char> t_it(t.begin(), t.end());
+    std::cout << BOLDBLUE "*** Constructor from iterators *** : " END
+              << std::endl
+              << std::endl;
+    std::cout << "Newly constructed tree : ";
+    printWithIterators(t_it);
+    std::cout << "Modifying tree : ";
+    t_it.insert(ft::pair<int, char>(ft::make_pair(5, '@')));
+    printWithIterators(t_it);
+    std::cout << "Verify original : ";
+    printWithIterators(t);
+    std::cout << BOLDRED "Erase begin:" END << std::endl;
+    t.erase(t.begin());
+    printWithIterators(t);
   }
 }
