@@ -654,7 +654,7 @@ class BstTree {
     return it;
   };
   const_iterator lower_bound(const key_type& k) const {
-    iterator it = begin();
+    const_iterator it = begin();
     while (f(it.node->content.first, k) && it != end()) {
       it++;
     }
@@ -670,7 +670,7 @@ class BstTree {
   };
 
   const_iterator upper_bound(const key_type& k) const {
-    iterator it = begin();
+    const_iterator it = begin();
     while (f(it.node->content.first, k) && it != end()) {
       it++;
     }
