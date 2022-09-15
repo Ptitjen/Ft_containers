@@ -513,7 +513,86 @@ class BstTree {
   };
 
   /* ***************** TODO ****************** */
-  void erase(iterator position);
+  void erase(iterator position) {
+    if (position.node->left == NULL &&
+        position.node->right == NULL) {  // Leaf - OK?
+      std::cout << "Leaf" << std::endl;
+      if (position.node == _startNode) {
+        clear();
+        return;
+      }
+      if (position.node->parent->left == position.node)  // left child
+        position.node->parent->left = NULL;
+      else
+        position.node->parent->right = NULL;  // right child
+    } else if (position.node->left != NULL &&
+               (position.node->right == NULL ||
+                position.node->right == header.node)) {
+      std::cout << "Has a left child only" << std::endl;
+      if (position.node->parent->left == position.node) {
+        position.node->parent->left = position.node->left;
+        position.node->left->parent = position.node->parent;
+      } else if (position.node->parent->right == position.node) {
+        position.node->parent->right = position.node->left;
+        position.node->left->parent = position.node->parent;
+      } else if (position.node == _startNode) {
+        _startNode = position.node->left;
+        position.node->left->parent = NULL;
+      }
+      if (position.node->right == header.node) resetHeader();
+    } else if (position.node->left == NULL && position.node->right != NULL) {
+      std::cout << "Has a right child only" << std::endl;
+      if (position.node->parent->left == position.node) {
+        position.node->parent->left = position.node->right;
+        position.node->right->parent = position.node->parent;
+      } else if (position.node->parent->right == position.node) {
+        position.node->parent->right = position.node->right;
+        position.node->right->parent = position.node->parent;
+      } else if (position.node == _startNode) {
+        _startNode = position.node->right;
+        position.node->right->parent = NULL;
+      }
+
+    }
+    // 2 childs
+    else {
+      std::cout << "Has two children" << std::endl;  // NOT OK AT ALL
+      position++;
+      iterator next = position;
+      position--;
+
+      if (position.node == _startNode) {
+        next.node->right->parent = next.node->parent;
+        next.node->parent->left = next.node->right;
+        next.node->left = _startNode->left;
+        next.node->right = _startNode->right;
+        next.node->parent = NULL;
+        next.node->left->parent = next.node;
+        next.node->right->parent = next.node;
+        _startNode = next.node;
+
+      } else if (position.node->parent->right ==
+                 position.node) {  // right child - ok
+        std::cout << "Right node" << std::endl;
+        next.node->left = position.node->left;
+        position.node->left->parent = next.node;
+        next.node->parent = position.node->parent;
+        position.node->parent->right = next.node;
+      }
+
+      else if (position.node->parent->left == position.node) {  // left child
+        std::cout << "Left node" << std::endl;
+
+        // next.node->left = position.node->left;
+        // position.node->left->parent = next.node;
+        // next.node->parent = position.node->parent;
+        // position.node->parent->right = next.node;
+      }
+    }
+    dealloc(position.node);
+    resetHeader();
+  }
+
   size_type erase(const key_type& x);
   void erase(iterator first, iterator last);
   /* ***************************************** */
@@ -617,6 +696,7 @@ class BstTree {
   }
 
   void dealloc(node_ptr n) {
+    n = NULL;
     a.destroy(n);
     a.deallocate(n, 1);
     header.count--;
