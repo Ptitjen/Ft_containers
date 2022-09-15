@@ -290,6 +290,10 @@ int main(void) {
               << t[12] << std::endl;
     printWithIterators(t);
     printThisTree(t);
+    /*** Modifying with accessors ***/  // OK
+    t[0] = '@';
+    t.at(3) = '#';
+    printWithIterators(t);
 
     try {
       std::cout << BOLDBLUE "At: " END;
