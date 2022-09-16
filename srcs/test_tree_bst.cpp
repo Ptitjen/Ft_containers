@@ -104,7 +104,8 @@ int main(void) {
     ft::BstTree<int, char> t;
     ft::pair<int, char> p = ft::make_pair(6, 'f');
     t.insert(p);
-    t.insert(ft::pair<int, char>(ft::make_pair(1, 'a')));
+    ft::pair<int, char> p1 = ft::make_pair(1, 'a');
+    t.insert(p1);
     t.insert(ft::pair<int, char>(ft::make_pair(10, 'j')));
     t.insert(ft::pair<int, char>(ft::make_pair(7, 'g')));
     t.insert(ft::pair<int, char>(ft::make_pair(2, 'b')));

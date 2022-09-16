@@ -53,31 +53,17 @@ class BstTreeHeader {
   typedef typename Allocator::template rebind<Node<pair<Key, Value> > >::other
       node_allocator;
   BstTreeHeader() {
-    // node = a.allocate(1);
-    // a.construct(node, Node<pair<Key, Value> >());
     count = 0;
     hnode.left = &hnode;
     hnode.right = &hnode;
     hnode.parent = NULL;
-    std::cout << "Header node address : " << &hnode << std::endl;
   };
 
-  ~BstTreeHeader(){
+  ~BstTreeHeader(){};
 
-      // a.destroy(node);
-      // a.deallocate(node, 1);
-  };
+  // void resetTreeHeader() {
 
-  void resetTreeHeader() {
-    // a.destroy(node);
-    // a.deallocate(node, 1);
-    // node = a.allocate(1);
-    // a.construct(node, Node<pair<Key, Value> >());
-    // count = 0;
-    // node->left = node;
-    // node->right = node;
-    // node->parent = NULL;
-  }
+  // }
 
   node_allocator a;
   Node<Content> hnode;
@@ -193,7 +179,6 @@ class BstTree {
     /* Constructors and destructor */
     const_iterator() throw() : node(NULL){};
     const_iterator(value_type node) throw() : node(&node) {}
-
     const_iterator(node_pointer ptr) throw() : node(ptr) {}
     const_iterator(const_iterator const& it) throw() : node(it.node){};
     const_iterator& operator=(const_iterator const& it) {
@@ -789,9 +774,9 @@ class BstTree {
   }
 
   void dealloc(node_ptr n) {
-    n = NULL;
     a.destroy(n);
     a.deallocate(n, 1);
+    n = NULL;
     header.count--;
   }
 
