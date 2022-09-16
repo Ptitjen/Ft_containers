@@ -297,7 +297,6 @@ class BstTree {
                    const allocator_type& alloc = allocator_type())
       : a(alloc) {
     try {
-      // header = BstTreeHeader<value_type, Allocator, Key, Value>();
     } catch (std::exception& e) {
     }
   };
@@ -307,7 +306,7 @@ class BstTree {
           const key_compare& comp = key_compare(),
           const allocator_type& alloc = allocator_type()) {
     try {
-      // header = BstTreeHeader<value_type, Allocator, Key, Value>();
+      a = alloc;  // ?
       while (first != last) {
         insert(first.node->content);
         first++;
@@ -320,8 +319,8 @@ class BstTree {
   };
 
   BstTree(const BstTree<Key, Value, Compare, Allocator>& x) {
+    a = node_allocator();  // ???
     try {
-      // header = BstTreeHeader<value_type, Allocator, Key, Value>();
       if (x.size() != 0) {
         for (const_iterator it = x.begin(); it != x.end(); it++)
           insert(it.node->content);
@@ -344,12 +343,7 @@ class BstTree {
     return *this;
   }
 
-  ~BstTree() throw() {
-    clear();
-    // a.destroy(header.hnode);
-    // a.deallocate(header.hnode, 1);
-    //  header.~BstTreeHeader();  // ?
-  };
+  ~BstTree() throw() { clear(); };
 
   /* ***********************************************************************
    */
@@ -473,7 +467,7 @@ class BstTree {
         _startNode->right = NULL;
         _startNode->parent = NULL;
         header.count++;
-        //  save.~BstTree();
+        // save.~BstTree();
         return ft::pair<iterator, bool>(iterator(_startNode), true);
       }
       iterator it = iterator(searchToAdd(x.first, _startNode));
@@ -501,8 +495,8 @@ class BstTree {
       // save.~BstTree();
       return (ft::pair<iterator, bool>(iterator(newNode), true));
     } catch (std::exception& e) {
-      //  swap(save);
-      //  save.~BstTree();
+      // swap(save);
+      // save.~BstTree();
       throw e;
     }
   };
@@ -540,15 +534,15 @@ class BstTree {
           newNode->parent = position.node;
           header.count++;
           resetHeader();
-          //  save.~BstTree();
+          // save.~BstTree();
           return iterator(newNode);
         }
       }
-      //  save.~BstTree();
+      // save.~BstTree();
       return insert(x).first;  // position == bad hint
     } catch (std::exception& e) {
       // swap(save);
-      //  save.~BstTree();
+      // save.~BstTree();
       throw e;
     }
   };
@@ -823,16 +817,6 @@ class BstTree {
     return searchToFind(key, root->left);
   }
 
-  // node_ptr searchToFind(const key_type& key, node_ptr root) {
-  //   if (root == NULL) return &header.hnode;
-  //   if (root->content.first == key) return root;
-  //   if (f(root->content.first, key)) {
-  //     if (root->right == &header.hnode) return &header.hnode;
-  //     return searchToFind(key, root->right);
-  //   }
-  //   return searchToFind(key, root->left);
-  // }
-
   node_ptr searchToAdd(const key_type& key, node_ptr root) {
     if (root == NULL) return NULL;
     if (root->content.first == key) return root;
@@ -922,14 +906,8 @@ void swap(BstTree<Key, T, Compare, Allocator>& x,
 
 #endif
 
-/* TO DO LEFT
-construct
-*/
-
-// if perfo not ok : rebalance as AVL tree
-// Leaks :
-/*
-Tree header - pb detruit tout
-Insert
-
-*/
+/* TO DO LEFT */
+// perf : if not ok : rebalance as AVL tree
+// transform to map
+// check iterator print shit
+// copy if empty or 1 element

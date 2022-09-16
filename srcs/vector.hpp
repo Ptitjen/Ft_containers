@@ -1,6 +1,7 @@
 #ifndef VECTOR_HPP
 #define VECTOR_HPP
 
+#include <cstdlib>
 #include <exception>
 #include <iterator>
 #include <limits>
@@ -9,9 +10,7 @@
 #include <stdexcept>
 #include <type_traits>
 
-#include "enable_if.hpp"
 #include "equal.hpp"
-#include "is_integral.hpp"
 #include "lexicographical_compare.hpp"
 #include "reverse_iterator.hpp"
 
@@ -217,7 +216,7 @@ class vector {
   /************ CONSTRUCTORS AND DESTRUCTOR ************/
   explicit vector(const Allocator& = Allocator()) {
     try {
-      _array = a.allocate(1);
+      //_array = a.allocate(1);
       _size = 0;
       _capacity = 0;
       _max_size = std::numeric_limits<long long unsigned>::max();
@@ -479,7 +478,7 @@ class vector {
   iterator insert(iterator position, const T& x) {
     ft::vector<T> save(*this);
     if (_size == 0) {
-      if (_capacity != 0) try {
+      if (_capacity == 0) try {
           realloc(1);
         } catch (std::exception& e) {
           swap(save);
@@ -512,6 +511,7 @@ class vector {
     try {
       if (_size == 0) {
         try {
+          if (_capacity == 0) realloc(n);
           if (n > _capacity) realloc(_capacity * 2);
         } catch (std::bad_alloc& e) {
           throw e;
@@ -646,9 +646,8 @@ class vector {
 
   void clear() throw() {
     for (size_type i = 0; i < _size; i++) {
-      a.destroy(_array + i);
+      a.destroy(&_array[i]);
     }
-    a.deallocate(_array, _capacity);  // TODO : test
     _size = 0;
   };
 
@@ -660,14 +659,16 @@ class vector {
   std::allocator<T> a;
 
   void realloc(size_type n) {
+    std::cout << "Called" << std::endl;
     try {
       if (n >= _max_size) throw(std::length_error(""));
       T* tmp = a.allocate(n);
       std::uninitialized_copy(_array, _array + _size, tmp);
-      a.deallocate(_array, _capacity);  // TODO:test
+      std::uninitialized_fill(tmp + _size, tmp + n, T());
       for (size_type i = 0; i < _size; i++) {
         a.destroy(&_array[i]);
       }
+      a.deallocate(_array, _capacity);  // TODO:test
       _array = tmp;
       _capacity = n;
 
