@@ -648,7 +648,7 @@ class vector {
     for (size_type i = 0; i < _size; i++) {
       a.destroy(_array + i);
     }
-    // a.deallocate(_array + 1, _capacity - 1);
+    a.deallocate(_array, _capacity);  // TODO : test
     _size = 0;
   };
 
@@ -664,13 +664,13 @@ class vector {
       if (n >= _max_size) throw(std::length_error(""));
       T* tmp = a.allocate(n);
       std::uninitialized_copy(_array, _array + _size, tmp);
-      _array = tmp;  // deep copy?
-      _capacity = n;
+      a.deallocate(_array, _capacity);  // TODO:test
       for (size_type i = 0; i < _size; i++) {
-        a.destroy(&tmp[i]);  // better but not suffisant
+        a.destroy(&_array[i]);
+      }
+      _array = tmp;
+      _capacity = n;
 
-      }  // check
-         // a.deallocate(tmp, n);  // really better but pb
     } catch (std::exception& e) {
       throw(e);
     }
