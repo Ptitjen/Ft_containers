@@ -101,8 +101,9 @@ int main(void) {
                  "**** */" END
               << std::endl;
 
-    ft::BstTree<int, char> t = ft::BstTree<int, char>();
-    t.insert(ft::pair<int, char>(ft::make_pair(6, 'f')));
+    ft::BstTree<int, char> t;
+    ft::pair<int, char> p = ft::make_pair(6, 'f');
+    t.insert(p);
     t.insert(ft::pair<int, char>(ft::make_pair(1, 'a')));
     t.insert(ft::pair<int, char>(ft::make_pair(10, 'j')));
     t.insert(ft::pair<int, char>(ft::make_pair(7, 'g')));
@@ -112,6 +113,8 @@ int main(void) {
     t.insert(ft::pair<int, char>(ft::make_pair(6, 'f')));
     t.insert(ft::pair<int, char>(ft::make_pair(3, 'c')));
     printThisTree(t);
+    // std::cout << "Begin : " << t.begin().node;
+    std::cout << "End address : " << t.end().node << std::endl;
     printWithIterators(t);
 
     std::cout << std::endl << BOLDBLUE "Lower and upper bounds: " END;
@@ -204,7 +207,7 @@ int main(void) {
     /*With iterators insert */
     std::cout << BOLDBLUE "Insert this tree" END << std::endl;
 
-    ft::BstTree<int, char> t_insert = ft::BstTree<int, char>();
+    ft::BstTree<int, char> t_insert;
     t_insert.insert(ft::pair<int, char>(ft::make_pair(1, '*')));
     t_insert.insert(ft::pair<int, char>(ft::make_pair(9, 'i')));
     t_insert.insert(ft::pair<int, char>(ft::make_pair(-2, '/')));
@@ -334,11 +337,10 @@ int main(void) {
     ***********************************************************************
     */
     std::cout << BOLDBLUE "*** Operator = *** : " END << std::endl << std::endl;
-    ft::BstTree<int, char> t_op_equal;
-    t_op_equal = t;
+    ft::BstTree<int, char> t_op_equal = t;
     std::cout << "Copy : ";
     printWithIterators(t_op_equal);
-    std::cout << "Modifying copy : ";
+    std::cout << " Modifying copy  : ";
     t_op_equal.insert(ft::pair<int, char>(ft::make_pair(18, '%')));
     printWithIterators(t_op_equal);
     std::cout << "Verify original : ";

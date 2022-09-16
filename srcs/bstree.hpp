@@ -36,7 +36,7 @@ class Node {
     return (*this);
   }
 
-  ~Node(){};
+  ~Node() { content.~Content(); };
 
   Content content;
   Node* parent;
@@ -50,25 +50,38 @@ class Node {
 template <class Content, class Allocator, class Key, class Value>
 class BstTreeHeader {
  public:
-  std::size_t count;
   typedef typename Allocator::template rebind<Node<pair<Key, Value> > >::other
       node_allocator;
   BstTreeHeader() {
-    node = a.allocate(1);
-    a.construct(node, Node<pair<Key, Value> >());
-    resetTreeHeader();
+    // node = a.allocate(1);
+    // a.construct(node, Node<pair<Key, Value> >());
+    count = 0;
+    hnode.left = &hnode;
+    hnode.right = &hnode;
+    hnode.parent = NULL;
+    std::cout << "Header node address : " << &hnode << std::endl;
   };
-  ~BstTreeHeader(){/*a.deallocate(node, 1); */};
+
+  ~BstTreeHeader(){
+
+      // a.destroy(node);
+      // a.deallocate(node, 1);
+  };
 
   void resetTreeHeader() {
-    count = 0;
-    node->left = node;
-    node->right = node;
-    node->parent = NULL;
+    // a.destroy(node);
+    // a.deallocate(node, 1);
+    // node = a.allocate(1);
+    // a.construct(node, Node<pair<Key, Value> >());
+    // count = 0;
+    // node->left = node;
+    // node->right = node;
+    // node->parent = NULL;
   }
 
   node_allocator a;
-  Node<Content>* node;
+  Node<Content> hnode;
+  std::size_t count;
 };
 
 /* *********************************************************************** */
@@ -94,6 +107,7 @@ class BstTree {
 
     /* Constructors and destructor */
     iterator() throw() : node(NULL){};
+    iterator(value_type node) : node(&node){};
     iterator(node_pointer ptr) throw() : node(ptr) {}
     iterator(iterator const& it) throw() : node(it.node){};
     iterator& operator=(iterator const& it) {
@@ -168,21 +182,24 @@ class BstTree {
   /* *********************************************************************** */
   class const_iterator {
    public:
-    typedef Node<pair<Key, Value> > value_type;
-    typedef Node<pair<Key, Value> >& node_reference;
-    typedef Node<pair<Key, Value> >* node_pointer;
-    typedef ft::pair<Key, Value>& reference;
-    typedef ft::pair<Key, Value>* pointer;
+    typedef const Node<pair<Key, Value> > value_type;
+    typedef const Node<pair<Key, Value> >& node_reference;
+    typedef const Node<pair<Key, Value> >* node_pointer;
+    typedef const ft::pair<Key, Value>& reference;
+    typedef const ft::pair<Key, Value>* pointer;
     typedef std::bidirectional_iterator_tag iterator_category;
     typedef std::ptrdiff_t difference_type;
 
     /* Constructors and destructor */
     const_iterator() throw() : node(NULL){};
+    const_iterator(value_type node) throw() : node(&node) {}
+
     const_iterator(node_pointer ptr) throw() : node(ptr) {}
     const_iterator(const_iterator const& it) throw() : node(it.node){};
     const_iterator& operator=(const_iterator const& it) {
       if (&it == this) return (*this);
       node = it.node;
+
       return (*this);
     };
     ~const_iterator() throw(){};
@@ -295,8 +312,7 @@ class BstTree {
                    const allocator_type& alloc = allocator_type())
       : a(alloc) {
     try {
-      //_startNode = a.allocate(1);
-      header = BstTreeHeader<value_type, Allocator, Key, Value>();
+      // header = BstTreeHeader<value_type, Allocator, Key, Value>();
     } catch (std::exception& e) {
     }
   };
@@ -305,9 +321,8 @@ class BstTree {
   BstTree(InputIterator first, InputIterator last,
           const key_compare& comp = key_compare(),
           const allocator_type& alloc = allocator_type()) {
-    //_startNode = a.allocate(1);
     try {
-      header = BstTreeHeader<value_type, Allocator, Key, Value>();
+      // header = BstTreeHeader<value_type, Allocator, Key, Value>();
       while (first != last) {
         insert(first.node->content);
         first++;
@@ -321,12 +336,10 @@ class BstTree {
 
   BstTree(const BstTree<Key, Value, Compare, Allocator>& x) {
     try {
-      //_startNode = a.allocate(1);
-      header = BstTreeHeader<value_type, Allocator, Key, Value>();
+      // header = BstTreeHeader<value_type, Allocator, Key, Value>();
       if (x.size() != 0) {
-        for (const_iterator it = x.begin(); it != x.end(); it++) {
+        for (const_iterator it = x.begin(); it != x.end(); it++)
           insert(it.node->content);
-        }
         resetHeader();
       }
     } catch (std::exception& e) {
@@ -335,22 +348,22 @@ class BstTree {
     }
   };
 
-  BstTree& operator=(const BstTree& other) {
+  BstTree& operator=(const BstTree<Key, Value, Compare, Allocator>& other) {
     if (&other == this) return *this;
     clear();
     if (other.size() != 0) {
-      for (const_iterator it = other.begin(); it != other.end(); it++) {
+      for (const_iterator it = other.begin(); it != other.end(); it++)
         insert(it.node->content);
-      }
       resetHeader();
     }
     return *this;
   }
 
   ~BstTree() throw() {
-    // if (header.count == 0) a.deallocate(_startNode, 1);
     clear();
-    header.~BstTreeHeader();  // ?
+    // a.destroy(header.hnode);
+    // a.deallocate(header.hnode, 1);
+    //  header.~BstTreeHeader();  // ?
   };
 
   /* ***********************************************************************
@@ -375,8 +388,10 @@ class BstTree {
     return itb;
   }
 
-  iterator end() throw() { return header.node; }
-  const_iterator end() const throw() { return header.node; }
+  iterator end() throw() { return iterator(&header.hnode).node; }
+  const_iterator end() const throw() {
+    return (const_iterator(&header.hnode).node);
+  }
 
   reverse_iterator rbegin() throw() { return reverse_iterator(end()); }  // test
   const_reverse_iterator rbegin() const throw() {
@@ -422,9 +437,9 @@ class BstTree {
         n->left = newNode;
         newNode->parent = n;
       } else {
-        if (n->right == header.node) {
-          newNode->right = header.node;
-          header.node->parent = newNode;
+        if (n->right == &header.hnode) {
+          newNode->right = &header.hnode;
+          header.hnode.parent = newNode;
         }
         n->right = newNode;
         newNode->parent = n;
@@ -482,7 +497,6 @@ class BstTree {
       Node<value_type>* newNode;
       newNode = a.allocate(1);
       a.construct(newNode, Node<pair<Key, Value> >());
-
       newNode->content = x;
       newNode->left = NULL;
       newNode->right = NULL;
@@ -490,9 +504,9 @@ class BstTree {
         it.node->left = newNode;
         newNode->parent = it.node;
       } else {
-        if (it.node->right == header.node) {
-          newNode->right = header.node;
-          header.node->parent = newNode;
+        if (it.node->right == &header.hnode) {
+          newNode->right = &header.hnode;
+          header.hnode.parent = newNode;
         }
         it.node->right = newNode;
         newNode->parent = it.node;
@@ -514,7 +528,6 @@ class BstTree {
       if (header.count == 0) {
         _startNode = a.allocate(1);
         a.construct(_startNode, Node<pair<Key, Value> >());
-
         _startNode->content = x;
         _startNode->left = NULL;
         _startNode->right = NULL;
@@ -531,14 +544,12 @@ class BstTree {
           Node<value_type>* newNode;
           newNode = a.allocate(1);
           a.construct(newNode, Node<pair<Key, Value> >());
-
           newNode->content = x;
           newNode->left = NULL;
           newNode->right = NULL;
-
-          if (position.node->right == header.node) {
-            newNode->right = header.node;
-            header.node->parent = newNode;
+          if (position.node->right == &header.hnode) {
+            newNode->right = &header.hnode;
+            header.hnode.parent = newNode;
           }
           position.node->right = newNode;
           newNode->parent = position.node;
@@ -562,7 +573,6 @@ class BstTree {
     if (header.count == 0) {
       _startNode = a.allocate(1);
       a.construct(_startNode, Node<pair<Key, Value> >());
-
       _startNode->content = first.node->content;
       _startNode->left = first.node->left;
       _startNode->right = first.node->right;
@@ -591,7 +601,7 @@ class BstTree {
         position.node->parent->right = NULL;
     } else if (position.node->left != NULL &&
                (position.node->right == NULL ||
-                position.node->right == header.node)) {
+                position.node->right == &header.hnode)) {
       if (position.node->parent->left == position.node) {
         position.node->parent->left = position.node->left;
         position.node->left->parent = position.node->parent;
@@ -648,7 +658,7 @@ class BstTree {
     // BstTree<Key, Value, Compare, Allocator> save(*this);
     try {
       iterator it = find(x);
-      if (it != header.node) {
+      if (it != &header.hnode) {
         erase(x);
         // save.~BstTree();
         return 1;
@@ -676,11 +686,16 @@ class BstTree {
     try {
       BstTree<Key, Value, Compare, Allocator> tmp = *this;
       *this = other;
+      a = other.a;
+      _startNode = other._startNode;
+
       other = tmp;
+      other.a = tmp.a;
+
     } catch (std::exception& e) {
       return;
     }
-  };  // TODO : test
+  };  // TODO : swap allocators
 
   void clear() throw() {
     if (header.count == 0) return;
@@ -688,10 +703,10 @@ class BstTree {
     recursiveDealloc(_startNode->right);
     _startNode->left = NULL;
     _startNode->right = NULL;
-    header.count--;
     a.destroy(_startNode);  // check how to reinit this
     a.deallocate(_startNode, 1);
-
+    _startNode = NULL;
+    header.count--;
     resetHeader();
   };
 
@@ -713,7 +728,7 @@ class BstTree {
     return const_iterator(searchToFind(k, _startNode));
   }
   size_type count(const key_type& k) const {
-    return (searchToFind(k, _startNode) == header.node ? 0 : 1);
+    return (searchToFind(k, _startNode) == &header.hnode ? 0 : 1);
   };
 
   iterator lower_bound(const key_type& k) {
@@ -765,7 +780,7 @@ class BstTree {
 
  private:
   void recursiveDealloc(node_ptr n) {
-    if (n == NULL || n == header.node) return;
+    if (n == NULL || n == &header.hnode) return;
     recursiveDealloc(n->left);
     recursiveDealloc(n->right);
     n->left = NULL;
@@ -783,9 +798,10 @@ class BstTree {
   void resetHeader() {
     if (header.count == 0) return;
     iterator it = last();
-    it.node->right = header.node;
-    header.node->parent = it.node;
+    it.node->right = &header.hnode;
+    header.hnode.parent = it.node;
   };
+
   template <typename A, typename B>
   bool f(A a, B b, std::less<Key> u = std::less<Key>()) {
     return u(a, b);
@@ -797,7 +813,7 @@ class BstTree {
 
   iterator last() {
     iterator itl(_startNode);
-    while (itl.node->right && itl.node->right != header.node) {
+    while (itl.node->right && itl.node->right != &header.hnode) {
       itl.node = itl.node->right;
     };
     return itl;
@@ -805,37 +821,38 @@ class BstTree {
 
   const_iterator last() const {
     const_iterator itl(_startNode);
-    while (itl.node->right && itl.node->right != header.node) {
+    while (itl.node->right && itl.node->right != &header.hnode) {
       itl.node = itl.node->right;
     };
     return itl;
   }
 
   node_ptr searchToFind(const key_type& key, node_ptr root) const {
-    if (root == NULL) return header.node;
+    if (root == NULL) return const_cast<node_ptr>(&(header.hnode));
     if (root->content.first == key) return root;
     if (f(root->content.first, key)) {
-      if (root->right == header.node) return header.node;
+      if (root->right == &header.hnode)
+        return const_cast<node_ptr>(&(header.hnode));
       return searchToFind(key, root->right);
     }
     return searchToFind(key, root->left);
   }
 
-  node_ptr searchToFind(const key_type& key, node_ptr root) {
-    if (root == NULL) return header.node;
-    if (root->content.first == key) return root;
-    if (f(root->content.first, key)) {
-      if (root->right == header.node) return header.node;
-      return searchToFind(key, root->right);
-    }
-    return searchToFind(key, root->left);
-  }
+  // node_ptr searchToFind(const key_type& key, node_ptr root) {
+  //   if (root == NULL) return &header.hnode;
+  //   if (root->content.first == key) return root;
+  //   if (f(root->content.first, key)) {
+  //     if (root->right == &header.hnode) return &header.hnode;
+  //     return searchToFind(key, root->right);
+  //   }
+  //   return searchToFind(key, root->left);
+  // }
 
   node_ptr searchToAdd(const key_type& key, node_ptr root) {
     if (root == NULL) return NULL;
     if (root->content.first == key) return root;
     if (f(root->content.first, key)) {
-      if (root->right == header.node) return header.node->parent;
+      if (root->right == &header.hnode) return header.hnode.parent;
       if (root->right == NULL) return root;
       return searchToAdd(key, root->right);
     }
@@ -925,3 +942,9 @@ construct
 */
 
 // if perfo not ok : rebalance as AVL tree
+// Leaks :
+/*
+Tree header - pb detruit tout
+Insert
+
+*/

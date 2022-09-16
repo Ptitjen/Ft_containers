@@ -29,7 +29,10 @@ struct pair {
     second = other.second;
     return *this;
   };
-
+  ~pair() {
+    first.~T1();
+    second.~T2();
+  }
   void swap(pair& other) {
     T1 tmp1 = first;
     T2 tmp2 = second;
