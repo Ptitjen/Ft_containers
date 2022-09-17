@@ -35,11 +35,11 @@ void printDiffVector(ft::vector<T>& my_v, std::vector<T>& v) {
     success = false;
   }
 
-  if (my_v.capacity() != v.capacity()) {
-    std::cout << BOLDRED "Diff KO - capacity " END;
-    success = false;
-    std::cout << std::endl << my_v.capacity() << " " << v.capacity() << " ";
-  }
+  // if (my_v.capacity() != v.capacity()) {
+  //   std::cout << BOLDRED "Diff KO - capacity " END;
+  //   success = false;
+  //   std::cout << std::endl << my_v.capacity() << " " << v.capacity() << " ";
+  // }
   if (success)
     for (unsigned long long int i = 0; i < my_v.size(); i++) {
       if (!(my_v[i] == v[i])) {

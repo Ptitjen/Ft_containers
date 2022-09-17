@@ -1,4 +1,4 @@
-#include "Chrono.hpp"
+#include "chrono.hpp"
 
 #include <iomanip>
 #include <iostream>

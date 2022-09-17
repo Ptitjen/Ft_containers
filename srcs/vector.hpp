@@ -217,7 +217,6 @@ class vector {
   /************ CONSTRUCTORS AND DESTRUCTOR ************/
   explicit vector(const Allocator& = Allocator()) {
     try {
-      //_array = a.allocate(1);
       _size = 0;
       _capacity = 0;
       _max_size = std::numeric_limits<long long unsigned>::max();
@@ -295,7 +294,7 @@ class vector {
       _size = x._size;
       _capacity = x._capacity;
       _array = a.allocate(_capacity);
-      for (size_type i = 0; i < _size; i++) _array[i] = x._array[i];
+      std::uninitialized_copy(x.begin(), x.end(), _array);
     } catch (std::exception& e) {
       this->~vector();
       throw e;
@@ -308,10 +307,10 @@ class vector {
               typename ft::enable_if<!ft::is_integral<InputIterator>::value,
                                      InputIterator>::type last) {
     try {
-      size_type save = _capacity;
       clear();
-      reserve(save);
-      insert(begin(), first, last);
+      reserve(last - first);
+      std::uninitialized_copy(first, last, _array);
+      _size = last - first;
     } catch (std::exception& e) {
       throw e;
     }
@@ -319,10 +318,10 @@ class vector {
 
   void assign(size_type n, const T& u) {
     try {
-      size_type save = _capacity;
       clear();
-      reserve(save);
-      insert(begin(), n, u);
+      reserve(n);
+      std::uninitialized_fill(_array, _array + n, u);
+      _size = n;
     } catch (std::exception& e) {
       throw e;
     }
@@ -370,18 +369,13 @@ class vector {
         _size = n;
         return;
       }
-    } catch (std::exception& e) {
-      swap(save);
-      return;
-    }
-    try {
-      size_type save_size = _size;
       if (n > _capacity) {
+        size_type save_size = _size;
         realloc(n);
-      }
-      _size = n;
-      for (size_type i = save_size; i < _size; i++) {
-        _array[i] = c;
+        _size = n;
+        for (size_type i = save_size; i < _size; i++) {
+          _array[i] = c;
+        }
       }
     } catch (std::exception& e) {
       swap(save);
@@ -457,10 +451,9 @@ class vector {
 
     try {
       if (_capacity == 0)
-        reserve(1);
-      else if (_size == _capacity) {
-        reserve(_capacity * 2);
-      }
+        realloc(1);
+      else if (_size == _capacity)
+        realloc(_capacity * 2);
       _array[_size] = x;
       _size++;
     } catch (std::bad_alloc& e) {
@@ -512,8 +505,10 @@ class vector {
     try {
       if (_size == 0) {
         try {
-          if (_capacity == 0) realloc(n);
-          if (n > _capacity) realloc(_capacity * 2);
+          if (_capacity == 0)
+            realloc(n);
+          else if (n > _capacity)
+            realloc(_capacity * 2);
         } catch (std::bad_alloc& e) {
           throw e;
         }
@@ -528,7 +523,7 @@ class vector {
         ins++;
       };
       try {
-        if (_size + n >= _capacity) {
+        if (_size + n > _capacity) {
           realloc(_capacity * 2);
         }
       } catch (std::bad_alloc& e) {
@@ -548,16 +543,12 @@ class vector {
               typename ft::enable_if<!ft::is_integral<InputIterator>::value,
                                      InputIterator>::type last) {
     ft::vector<T> save(*this);
-    try {
+    try {  // TODO : check if right cpt if empty and position not begin
       size_type to_insert = 0;
       for (iterator it = first; it != last; it++) to_insert++;
-      size_type ins = 0;
+
       if (_size == 0) {
-        if (to_insert > _capacity) try {
-            realloc(to_insert);
-          } catch (std::bad_alloc& e) {
-            throw e;
-          }
+        if (to_insert > _capacity) realloc(to_insert);
         for (size_type i = 0; i < to_insert; i++) {
           _array[i] = *first;
           first++;
@@ -565,16 +556,11 @@ class vector {
         _size = to_insert;
         return;
       }
+      size_type ins = 0;
       for (iterator it = _array; it != position; it++) {
         ins++;
       };
-      try {
-        if (_size + to_insert >= _capacity) {
-          realloc(_capacity * 2);
-        }
-      } catch (std::bad_alloc& e) {
-        throw e;
-      }
+      if (_size + to_insert > _capacity) realloc(_capacity * 2);
       for (size_type i = _size; i >= ins; i--)
         _array[i + to_insert] = _array[i];
       _size += to_insert;
@@ -638,6 +624,7 @@ class vector {
     try {
       if (_size > other.max_size() || other.size() > _max_size) return;
       ft::vector<T> tmp = *this;
+      // TODO : swap allocators?!
       *this = other;
       other = tmp;
     } catch (std::exception& e) {
@@ -660,16 +647,14 @@ class vector {
   std::allocator<T> a;
 
   void realloc(size_type n) {
-    std::cout << "Called" << std::endl;
     try {
       if (n >= _max_size) throw(std::length_error(""));
       T* tmp = a.allocate(n);
       std::uninitialized_copy(_array, _array + _size, tmp);
-      std::uninitialized_fill(tmp + _size, tmp + n, T());
       for (size_type i = 0; i < _size; i++) {
         a.destroy(&_array[i]);
       }
-      a.deallocate(_array, _capacity);  // TODO:test
+      a.deallocate(_array, _capacity);
       _array = tmp;
       _capacity = n;
 

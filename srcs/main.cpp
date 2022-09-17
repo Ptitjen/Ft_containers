@@ -26,8 +26,8 @@ int main(void) {
         // // "Vector of 10 000 000 - Push - Pop - Insert - Erase - Swap"
         // Chrono chrono = Chrono("My vector", "Std vector");
         // chrono.begin();
-        // ft::vector<int> my_large_v = ft::vector<int>(10000000, 42);
-        // ft::vector<int> my_large_v2 = ft::vector<int>(10000000, 41);
+        // ft::vector<int> my_large_v(10000000, 42);
+        // ft::vector<int> my_large_v2(10000000, 41);
 
         // my_large_v.push_back(1);
         // my_large_v.pop_back();
@@ -39,7 +39,7 @@ int main(void) {
 
         // my_large_v.erase(my_large_v.begin() + 400000,
         //                  my_large_v.begin() + 500000);
-        // ft::vector<int> my_large_v_swap = ft::vector<int>(999999, 41);
+        // ft::vector<int> my_large_v_swap(999999, 41);
         // my_large_v.swap(my_large_v_swap);
         // chrono.stop();
         // std::vector<int> large_v = std::vector<int>(10000000, 42);
@@ -64,15 +64,15 @@ int main(void) {
                 << std::endl
                 << BOLDBLUE "Constructor tests : " END << std::endl;
       ft::vector<int> my_v1 = ft::vector<int>();
-      ft::vector<int> my_v2 = ft::vector<int>(5);
-      ft::vector<int> my_v3 = ft::vector<int>(5, 42);
-      ft::vector<std::string> my_v4 = ft::vector<std::string>(5, "bla");
-      ft::vector<int> my_v5 = ft::vector<int>(my_v3.begin(), my_v3.begin() + 2);
-      ft::vector<int> my_v6 = ft::vector<int>(my_v3);
+      ft::vector<int> my_v2(5);
+      ft::vector<int> my_v3(5, 42);
+      ft::vector<std::string> my_v4(5, "bla");
+      ft::vector<int> my_v5(my_v3.begin(), my_v3.begin() + 2);
+      ft::vector<int> my_v6(my_v3);
       ft::vector<int> my_v7 = my_v6;  // NOLINT
-      ft::vector<int> my_v8 = ft::vector<int>(10, 42);
+      ft::vector<int> my_v8(10, 42);
       my_v8.assign(my_v3.begin(), my_v3.begin() + 2);
-      ft::vector<int> my_v9 = ft::vector<int>(10, 42);
+      ft::vector<int> my_v9(10, 42);
       my_v9.assign(5, 43);
 
       std::vector<int> v1 = std::vector<int>();
