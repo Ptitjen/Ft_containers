@@ -8,6 +8,7 @@ class enable_if {};
 
 template <typename T>
 class enable_if<true, T> {
+ public:
   typedef T type;
 };
 };  // namespace ft

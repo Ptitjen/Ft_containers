@@ -8,9 +8,10 @@
 #include <memory>
 #include <new>
 #include <stdexcept>
-#include <type_traits>
 
+#include "enable_if.hpp"
 #include "equal.hpp"
+#include "is_integral.hpp"
 #include "lexicographical_compare.hpp"
 #include "reverse_iterator.hpp"
 
@@ -244,8 +245,8 @@ class vector {
 
   template <typename InputIterator>
   vector(InputIterator first,
-         typename std::enable_if<!std::is_integral<InputIterator>::value,
-                                 InputIterator>::type last,
+         typename ft::enable_if<!ft::is_integral<InputIterator>::value,
+                                InputIterator>::type last,
          const Allocator& = Allocator()) {
     size_type to_insert = 0;
     try {
@@ -304,8 +305,8 @@ class vector {
 
   template <class InputIterator>
   void assign(InputIterator first,
-              typename std::enable_if<!std::is_integral<InputIterator>::value,
-                                      InputIterator>::type last) {
+              typename ft::enable_if<!ft::is_integral<InputIterator>::value,
+                                     InputIterator>::type last) {
     try {
       size_type save = _capacity;
       clear();
@@ -544,8 +545,8 @@ class vector {
 
   template <class InputIterator>
   void insert(iterator position, InputIterator first,
-              typename std::enable_if<!std::is_integral<InputIterator>::value,
-                                      InputIterator>::type last) {
+              typename ft::enable_if<!ft::is_integral<InputIterator>::value,
+                                     InputIterator>::type last) {
     ft::vector<T> save(*this);
     try {
       size_type to_insert = 0;

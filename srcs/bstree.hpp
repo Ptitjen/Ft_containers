@@ -669,17 +669,15 @@ class BstTree {
   void swap(BstTree<Key, Value, Compare, Allocator>& other) throw() {
     try {
       BstTree<Key, Value, Compare, Allocator> tmp = *this;
+      tmp.a = a;
       *this = other;
       a = other.a;
-      _startNode = other._startNode;
-
       other = tmp;
       other.a = tmp.a;
-
     } catch (std::exception& e) {
       return;
     }
-  };  // TODO : swap allocators
+  };  // TODO : test
 
   void clear() throw() {
     if (header.count == 0) return;
@@ -916,4 +914,4 @@ void swap(BstTree<Key, T, Compare, Allocator>& x,
 // perf : if not ok : rebalance as AVL tree
 // transform to map
 // check iterator print shit
-// copy if empty or 1 element
+// swap allocators

@@ -413,5 +413,22 @@ int main(void) {
     ft::BstTree<int, char> t_equal = t;
     std::cout << (t_equal == t ? "Equal" : "Not equal") << std::endl;
     std::cout << (t_equal == t_it ? "Equal" : "Not equal") << std::endl;
+
+    std::cout << "Swap:" << std::endl;
+    std::cout << "t1 : ";
+    printWithIterators(t_equal);
+    std::cout << "t2 : ";
+    printWithIterators(t_it);
+    t_equal.swap(t_it);
+    std::cout << "SWAP" << std::endl << "t1 : ";
+    printWithIterators(t_equal);
+    std::cout << "t2 : ";
+    printWithIterators(t_it);
+    std::cout << "Modif after Swap:" << std::endl;
+    t_equal.insert(ft::pair<int, char>(ft::make_pair(0, '$')));
+    std::cout << "t1 : ";
+    printWithIterators(t_equal);
+    std::cout << "t2 : ";
+    printWithIterators(t_it);
   }
 }
