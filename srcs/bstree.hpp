@@ -401,7 +401,7 @@ class BstTree {
    */
 
   mapped_type& operator[](const key_type& k) {  // inserts element if not found
-    // BstTree<Key, Value, Compare, Allocator> save(*this);
+    BstTree<Key, Value, Compare, Allocator> save(*this);
     try {
       node_ptr n = searchToAdd(k, _startNode);
       if (n->content.first == k) return n->content.second;
@@ -425,11 +425,11 @@ class BstTree {
       }
       resetHeader();
       header.count++;
-      // save.~BstTree();
+      save.~BstTree();
       return newNode->content.second;
     } catch (std::exception& e) {
-      // swap(save);
-      // save.~BstTree();
+      swap(save);
+      save.~BstTree();
       throw e;
     }
   };
@@ -457,7 +457,7 @@ class BstTree {
    */
 
   pair<iterator, bool> insert(const value_type& x) {
-    // BstTree<Key, Value, Compare, Allocator> save(*this);
+    BstTree<Key, Value, Compare, Allocator> save(*this);
     try {
       if (header.count == 0) {
         _startNode = a.allocate(1);
@@ -467,7 +467,8 @@ class BstTree {
         _startNode->right = NULL;
         _startNode->parent = NULL;
         header.count++;
-        // save.~BstTree();
+        resetHeader();
+        save.~BstTree();
         return ft::pair<iterator, bool>(iterator(_startNode), true);
       }
       iterator it = iterator(searchToAdd(x.first, _startNode));
@@ -492,17 +493,17 @@ class BstTree {
       }
       header.count++;
       resetHeader();
-      // save.~BstTree();
+      save.~BstTree();
       return (ft::pair<iterator, bool>(iterator(newNode), true));
     } catch (std::exception& e) {
-      // swap(save);
-      // save.~BstTree();
+      swap(save);
+      save.~BstTree();
       throw e;
     }
   };
 
   iterator insert(iterator position, const value_type& x) {
-    // BstTree<Key, Value, Compare, Allocator> save(*this);
+    BstTree<Key, Value, Compare, Allocator> save(*this);
     try {
       if (header.count == 0) {
         _startNode = a.allocate(1);
@@ -512,7 +513,9 @@ class BstTree {
         _startNode->right = NULL;
         _startNode->parent = NULL;
         header.count++;
-        // save.~BstTree();
+        resetHeader();
+
+        save.~BstTree();
         return iterator(_startNode);
       }
       if (position->first == x.first) return position;  // position = new value
@@ -534,15 +537,15 @@ class BstTree {
           newNode->parent = position.node;
           header.count++;
           resetHeader();
-          // save.~BstTree();
+          save.~BstTree();
           return iterator(newNode);
         }
       }
-      // save.~BstTree();
+      save.~BstTree();
       return insert(x).first;  // position == bad hint
     } catch (std::exception& e) {
-      // swap(save);
-      // save.~BstTree();
+      swap(save);
+      save.~BstTree();
       throw e;
     }
   };
@@ -557,6 +560,8 @@ class BstTree {
       _startNode->right = first.node->right;
       _startNode->parent = NULL;
       header.count++;
+      resetHeader();
+
       first++;
     }
     iterator hint = begin();
@@ -790,6 +795,7 @@ class BstTree {
     return u(a, b);
   }
 
+ public:  // TODO:remove when fixed
   iterator last() {
     iterator itl(_startNode);
     while (itl.node->right && itl.node->right != &header.hnode) {

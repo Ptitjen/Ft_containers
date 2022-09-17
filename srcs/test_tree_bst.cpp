@@ -102,11 +102,29 @@ int main(void) {
               << std::endl;
 
     ft::BstTree<int, char> t;
+    ft::BstTree<int, char> tc;
+    tc = t;
+    printWithIterators(t);
+    printWithIterators(tc);
     ft::pair<int, char> p = ft::make_pair(6, 'f');
     t.insert(p);
+    // std::cout << t.begin()->first;
+    // std::cout << t.last()->first;
+    // std::cout << t.size();
+    // std::cout << t.end().node;
+
+    // tc = t;
+    // printWithIterators(t);
+    // printWithIterators(tc);
     ft::pair<int, char> p1 = ft::make_pair(1, 'a');
     t.insert(p1);
+    // tc = t;
+    // printWithIterators(t);
+    // printWithIterators(tc);
     t.insert(ft::pair<int, char>(ft::make_pair(10, 'j')));
+    // tc = t;
+    // printWithIterators(t);
+    // printWithIterators(tc);
     t.insert(ft::pair<int, char>(ft::make_pair(7, 'g')));
     t.insert(ft::pair<int, char>(ft::make_pair(2, 'b')));
     t.insert(ft::pair<int, char>(ft::make_pair(4, 'd')));
