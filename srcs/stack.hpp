@@ -14,7 +14,7 @@ class stack {
   Container c;
 
  public:
-  explicit stack(const Container& other = Container()) { c = other; };
+  explicit stack(const Container& other = Container()) : c(other){};
   bool empty() const { return c.empty(); }
 
   size_type size() { return c.size(); }

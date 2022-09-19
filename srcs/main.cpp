@@ -63,7 +63,7 @@ int main(void) {
       std::cout << std::endl
                 << std::endl
                 << BOLDBLUE "Constructor tests : " END << std::endl;
-      ft::vector<int> my_v1 = ft::vector<int>();
+      ft::vector<int> my_v1;
       ft::vector<int> my_v2(5);
       ft::vector<int> my_v3(5, 42);
       ft::vector<std::string> my_v4(5, "bla");
@@ -97,19 +97,32 @@ int main(void) {
       printDiffVector(my_v8, v8);
       printDiffVector(my_v9, v9);
     }
+    /* *************** THROWING CONSTRUCTOR **************** */
+
+    {
+      try {
+        std::cout << std::endl
+                  << std::endl
+                  << BOLDBLUE "Throwing constructor : " END << std::endl;
+        ft::vector<ThrowingConstructor> my_v(42);
+
+      } catch (std::exception& e) {
+        std::cout << BOLDGREEN "OK" END << std::endl;
+      }
+    }
 
     /* *************** CUSTOM CLASS **************** */
 
     {
-        // std::cout << std::endl
-        //           << std::endl
-        //           << BOLDBLUE "Custom complex type : " END << std::endl;
-        // bli test_complex = bli();
-        // ft::vector<bli> my_v_complex = ft::vector<bli>(3, test_complex);
-        // my_v_complex.push_back(test_complex);
-        // std::vector<bli> v_complex = std::vector<bli>(3, test_complex);
-        // v_complex.push_back(test_complex);
-        // printDiffVector(my_v_complex, v_complex);
+      std::cout << std::endl
+                << std::endl
+                << BOLDBLUE "Custom complex type : " END << std::endl;
+      bli test_complex = bli();
+      ft::vector<bli> my_v_complex = ft::vector<bli>(3, test_complex);
+      my_v_complex.push_back(test_complex);
+      std::vector<bli> v_complex = std::vector<bli>(3, test_complex);
+      v_complex.push_back(test_complex);
+      printDiffVector(my_v_complex, v_complex);
     }
 
     /* *************** ITERATORS **************** */
@@ -474,7 +487,6 @@ int main(void) {
       my_v_insert.push_back(1);
       my_v_insert.push_back(2);
       my_v_insert.push_back(3);
-
       my_v_insert.push_back(1);
       my_v_insert.push_back(2);
       my_v_insert.push_back(3);
@@ -640,7 +652,6 @@ int main(void) {
   {
     /* *************** PERFORMANCE TESTS **************** */  // OK
     {
-        // PB
         // std::cout << BOLDBLUE "Performance test : " END << std::endl;
         // Chrono chrono = Chrono("My stack", "Std stack");
         // chrono.begin();
@@ -810,69 +821,69 @@ int main(void) {
             << BOLDMAGENTA "*********** PAIR & MAKEPAIR **********" END
             << std::endl;
   {
-      // std::cout << BOLDBLUE "Performance test : " END << std::endl;
+    // std::cout << BOLDBLUE "Performance test : " END << std::endl;
 
-      // Chrono chrono = Chrono("My pair", "Std pair");
-      // chrono.begin();
-      // for (int i = 0; i < 10000000; i++) {
-      //   ft::pair<int, int> my_p1 = ft::make_pair(1, 2);
-      //   ft::pair<int, int> my_p2 = ft::make_pair(3, 4);
-      //   swap(my_p1, my_p2);
-      // }
-      // chrono.stop();
-      // for (int i = 0; i < 10000000; i++) {
-      //   std::pair<int, int> p1 = std::make_pair(1, 2);
-      //   std::pair<int, int> p2 = std::make_pair(3, 4);
-      //   swap(p1, p2);
-      // }
-      // chrono.stop();
+    // Chrono chrono = Chrono("My pair", "Std pair");
+    // chrono.begin();
+    // for (int i = 0; i < 10000000; i++) {
+    //   ft::pair<int, int> my_p1 = ft::make_pair(1, 2);
+    //   ft::pair<int, int> my_p2 = ft::make_pair(3, 4);
+    //   swap(my_p1, my_p2);
+    // }
+    // chrono.stop();
+    // for (int i = 0; i < 10000000; i++) {
+    //   std::pair<int, int> p1 = std::make_pair(1, 2);
+    //   std::pair<int, int> p2 = std::make_pair(3, 4);
+    //   swap(p1, p2);
+    // }
+    // chrono.stop();
 
-      // std::cout << BOLDBLUE "Make pair : " END << std::endl;
+    std::cout << BOLDBLUE "Make pair : " END << std::endl;
 
-      // ft::pair<int, int> my_p1 = ft::make_pair(1, 2);
-      // std::pair<int, int> p1 = std::make_pair(1, 2);
+    ft::pair<int, int> my_p1 = ft::make_pair(1, 2);
+    std::pair<int, int> p1 = std::make_pair(1, 2);
 
-      // ft::pair<int, int> my_p2 = ft::make_pair(3, 4);
-      // std::pair<int, int> p2 = std::make_pair(3, 4);
-      // printDiffPair(my_p1, p1);
-      // printDiffPair(my_p2, p2);
-      // std::cout << std::endl << BOLDBLUE "Swap : " END << std::endl;
+    ft::pair<int, int> my_p2 = ft::make_pair(3, 4);
+    std::pair<int, int> p2 = std::make_pair(3, 4);
+    printDiffPair(my_p1, p1);
+    printDiffPair(my_p2, p2);
+    std::cout << std::endl << BOLDBLUE "Swap : " END << std::endl;
 
-      // swap(my_p1, my_p2);
-      // swap(p1, p2);
-      // printDiffPair(my_p1, p1);
-      // printDiffPair(my_p2, p2);
-      // my_p1.swap(my_p2);
-      // p1.swap(p2);
-      // printDiffPair(my_p1, p1);
-      // printDiffPair(my_p2, p2);
-      // std::cout << std::endl
-      //           << BOLDBLUE "Comparison operators : " END << std::endl;
-      // if ((my_p1 == my_p2) == (p1 == p2))
-      //   std::cout << BOLDGREEN "OK " END;
-      // else
-      //   std::cout << BOLDRED "KO " END;
-      // if ((my_p1 != my_p2) == (p1 != p2))
-      //   std::cout << BOLDGREEN "OK " END;
-      // else
-      //   std::cout << BOLDRED "KO " END;
-      // if ((my_p1 < my_p2) == (p1 < p2))
-      //   std::cout << BOLDGREEN "OK " END;
-      // else
-      //   std::cout << BOLDRED "KO " END;
-      // if ((my_p1 <= my_p2) == (p1 <= p2))
-      //   std::cout << BOLDGREEN "OK " END;
-      // else
-      //   std::cout << BOLDRED "KO " END;
-      // if ((my_p1 > my_p2) == (p1 > p2))
-      //   std::cout << BOLDGREEN "OK " END;
-      // else
-      //   std::cout << BOLDRED "KO " END;
-      // if ((my_p1 >= my_p2) == (p1 >= p2))
-      //   std::cout << BOLDGREEN "OK " END;
-      // else
-      //   std::cout << BOLDRED "KO " END;
-  } {}
+    swap(my_p1, my_p2);
+    swap(p1, p2);
+    printDiffPair(my_p1, p1);
+    printDiffPair(my_p2, p2);
+    // my_p1.swap(my_p2);
+    // p1.swap(p2);
+    printDiffPair(my_p1, p1);
+    printDiffPair(my_p2, p2);
+    std::cout << std::endl
+              << BOLDBLUE "Comparison operators : " END << std::endl;
+    if ((my_p1 == my_p2) == (p1 == p2))
+      std::cout << BOLDGREEN "OK " END;
+    else
+      std::cout << BOLDRED "KO " END;
+    if ((my_p1 != my_p2) == (p1 != p2))
+      std::cout << BOLDGREEN "OK " END;
+    else
+      std::cout << BOLDRED "KO " END;
+    if ((my_p1 < my_p2) == (p1 < p2))
+      std::cout << BOLDGREEN "OK " END;
+    else
+      std::cout << BOLDRED "KO " END;
+    if ((my_p1 <= my_p2) == (p1 <= p2))
+      std::cout << BOLDGREEN "OK " END;
+    else
+      std::cout << BOLDRED "KO " END;
+    if ((my_p1 > my_p2) == (p1 > p2))
+      std::cout << BOLDGREEN "OK " END;
+    else
+      std::cout << BOLDRED "KO " END;
+    if ((my_p1 >= my_p2) == (p1 >= p2))
+      std::cout << BOLDGREEN "OK " END;
+    else
+      std::cout << BOLDRED "KO " END;
+  }
 }
 
 // to test guarantee : create class which throws in constructor / destructor /

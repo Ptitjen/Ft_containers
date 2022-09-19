@@ -105,16 +105,19 @@ void printSimpleStdVector(std::vector<T>& v) {
 
 class bli {
  public:
-  bli() : int_(1), char_('a'), string_("bla") {}
-  bli(const int& i, const char& c, const std::string& s)  // NOLINT
-      : int_(i), char_(c), string_(s) {}
+  bli() : int_(1), char_('a') {}
+  bli(const int& i, const char& c)  // NOLINT
+      : int_(i), char_(c) {}
   ~bli(){};
   int int_;
   char char_;
-  std::string string_;
 };
 
 bool operator==(const bli& x, const bli& y);
 void print_Ftbli(ft::vector<bli> v);
 
+class ThrowingConstructor {
+ public:
+  ThrowingConstructor() { throw std::exception(); }
+};
 #endif

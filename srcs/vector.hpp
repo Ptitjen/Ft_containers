@@ -215,8 +215,9 @@ class vector {
   typedef ft::const_reverse_iterator<const_iterator> const_reverse_iterator;
 
   /************ CONSTRUCTORS AND DESTRUCTOR ************/
-  explicit vector(const Allocator& = Allocator()) {
+  explicit vector(allocator_type const& alloc = Allocator()) {
     try {
+      a = alloc;
       _size = 0;
       _capacity = 0;
       _max_size = std::numeric_limits<long long unsigned>::max();
@@ -227,12 +228,15 @@ class vector {
   };
 
   explicit vector(size_type n, const T& value = T(),
-                  const Allocator& = Allocator()) {
+                  const Allocator& alloc = Allocator()) {
     if (n > std::numeric_limits<long long unsigned>::max())
       throw(std::length_error(""));
     try {
-      _array = a.allocate(n);
-      std::uninitialized_fill(_array, _array + n, value);
+      a = alloc;
+      if (n != 0) {
+        _array = a.allocate(n);
+        std::uninitialized_fill(_array, _array + n, value);
+      }
       _size = n;
       _capacity = n;
       _max_size = std::numeric_limits<long long unsigned>::max();
@@ -246,21 +250,19 @@ class vector {
   vector(InputIterator first,
          typename ft::enable_if<!ft::is_integral<InputIterator>::value,
                                 InputIterator>::type last,
-         const Allocator& = Allocator()) {
-    size_type to_insert = 0;
-    try {
-      for (iterator it = first; it != last; it++) to_insert++;
-    } catch (std::exception& e) {
-      throw e;
-    }
+         const Allocator& alloc = Allocator()) {
+    size_type to_insert = last - first;
     if (to_insert > std::numeric_limits<long long unsigned>::max())
       throw(std::length_error(""));
     try {
-      _array = a.allocate(to_insert);
+      a = alloc;
+      if (to_insert != 0) {
+        _array = a.allocate(to_insert);
+        std::uninitialized_copy(first, last, _array);
+      }
       _size = to_insert;
       _capacity = to_insert;
       _max_size = std::numeric_limits<long long unsigned>::max();
-      std::uninitialized_copy(first, last, _array);
     } catch (std::exception& e) {
       this->~vector();
       throw e;
@@ -272,8 +274,8 @@ class vector {
       _max_size = x._max_size;
       _size = x._size;
       _capacity = x._capacity;
-      _array = a.allocate(_capacity);
-      std::uninitialized_copy(x.begin(), x.end(), _array);
+      if (_capacity != 0) _array = a.allocate(_capacity);
+      if (x._size != 0) std::uninitialized_copy(x.begin(), x.end(), _array);
     } catch (std::exception& e) {
       this->~vector();
       throw e;
@@ -281,10 +283,10 @@ class vector {
   };
 
   ~vector() throw() {
-    for (size_type i = 0; i < _capacity; i++) {
-      a.destroy(_array + i);
+    if (_capacity != 0) {
+      for (size_type i = 0; i < _capacity; i++) a.destroy(_array + i);
+      a.deallocate(_array, _capacity);
     }
-    a.deallocate(_array, _capacity);
   };
 
   vector<T, Allocator>& operator=(const vector<T, Allocator>& x) {
@@ -363,19 +365,14 @@ class vector {
     ft::vector<T> save(*this);
     try {
       if (n < _size) {
-        for (size_type i = n; i < _size; i++) {
-          a.destroy(_array + i);
-        }
+        for (size_type i = n; i < _size; i++) a.destroy(_array + i);
         _size = n;
         return;
       }
       if (n > _capacity) {
-        size_type save_size = _size;
         realloc(n);
+        std::uninitialized_fill(_array + _size, _array + n, c);
         _size = n;
-        for (size_type i = save_size; i < _size; i++) {
-          _array[i] = c;
-        }
       }
     } catch (std::exception& e) {
       swap(save);
@@ -387,15 +384,11 @@ class vector {
   bool empty() const throw() { return _size == 0; };
 
   void reserve(size_type n) {
-    if (n > _max_size) {
-      throw std::length_error("");
-    }
+    if (n > _max_size) throw std::length_error("");
     if (n > _capacity) {
-      ft::vector<T> save(*this);
       try {
         realloc(n);
       } catch (std::exception& e) {
-        swap(save);
         throw e;
       }
     }
@@ -403,20 +396,15 @@ class vector {
 
   /**************** ACCESS *****************/
 
-  reference operator[](size_type n) throw() {
-    T& ref = _array[n];
-    return ref;
-  };
+  reference operator[](size_type n) throw() { return *(_array + n); };
   const_reference operator[](size_type n) const throw() {
-    const T& ref = _array[n];
-    return (ref);
+    return *(_array + n);
   };
   const_reference at(size_type n) const {
     if (n < _size) {
       ft::vector<T> save(*this);
       try {
-        const T& ref = _array[n];
-        return (ref);
+        return (_array[n]);
       } catch (std::exception& e) {
         swap(save);
         throw e;
@@ -424,12 +412,12 @@ class vector {
     }
     throw std::out_of_range("");
   };
+
   reference at(size_type n) {
     if (n < _size) {
       ft::vector<T> save(*this);
       try {
-        T& ref = _array[n];
-        return ref;
+        return _array[n];
       } catch (std::exception& e) {
         swap(save);
         throw e;
@@ -437,30 +425,27 @@ class vector {
     }
     throw std::out_of_range("");
   };
-  reference front() throw() { return _array[0]; };
-  const_reference front() const throw() { return _array[0]; };
-  reference back() throw() { return _array[_size - 1]; };
-  const_reference back() const throw() { return _array[_size - 1]; };
+  reference front() throw() { return *_array; };
+  const_reference front() const throw() { return *_array; };
+  reference back() throw() { return *(_array + _size - 1); };
+  const_reference back() const throw() { return *(_array + _size - 1); };
 
   /**************** MODIFIERS *****************/
 
   void push_back(const T& x) {
-    T* array_save = _array;
-    size_type capacity_save;
-    size_type size_save;
-
     try {
-      if (_capacity == 0)
-        realloc(1);
-      else if (_size == _capacity)
-        realloc(_capacity * 2);
-      _array[_size] = x;
+      if (_capacity == 0) {
+        _array = a.allocate(1);
+        a.construct(_array, x);
+        _capacity = 1;
+        _size = 1;
+        return;
+      }
+      if (_size == _capacity) realloc(_capacity * 2);
+      a.construct(_array + _size, x);
       _size++;
     } catch (std::bad_alloc& e) {
-      _array = array_save;
-      _capacity = capacity_save;
-      _size = size_save;
-      return;
+      throw e;
     }
   };
 
@@ -471,67 +456,41 @@ class vector {
 
   iterator insert(iterator position, const T& x) {
     ft::vector<T> save(*this);
-    if (_size == 0) {
-      if (_capacity == 0) try {
-          realloc(1);
-        } catch (std::exception& e) {
-          swap(save);
-          throw e;
-        }
-      _array[0] = x;
-      _size = 1;
-      return _array;
-    }
-    size_type ins = 0;
     try {
-      for (iterator it = _array; it != position; it++) {
-        ins++;
-      };
-      if (_size == _capacity) {
-        realloc(_capacity * 2);
+      if (_size == 0) {
+        if (_capacity == 0) {
+          _array = a.allocate(1);
+          _capacity = 1;
+        }
+        a.construct(_array, x);
+        _size = 1;
+        return _array;
       }
+      size_type ins = position - _array;
+      if (_size == _capacity) realloc(_capacity * 2);
       for (size_type i = _size; i > ins; i--) _array[i] = _array[i - 1];
       _size++;
-      _array[ins] = x;
+      a.construct(_array + ins, x);
+      return _array + ins;
     } catch (std::exception& e) {
       swap(save);
       throw e;
     }
-    return _array + ins;
   };
 
   void insert(iterator position, size_type n, const T& x) {
     ft::vector<T> save(*this);
     try {
-      if (_size == 0) {
-        try {
-          if (_capacity == 0)
-            realloc(n);
-          else if (n > _capacity)
-            realloc(_capacity * 2);
-        } catch (std::bad_alloc& e) {
-          throw e;
-        }
-        for (size_type i = 0; i < n; i++) {
-          _array[i] = x;
-        }
-        _size = n;
-        return;
-      }
-      size_type ins = 0;
-      for (iterator it = _array; it != position; it++) {
-        ins++;
-      };
-      try {
-        if (_size + n > _capacity) {
-          realloc(_capacity * 2);
-        }
-      } catch (std::bad_alloc& e) {
-        throw e;
-      }
-      for (size_type i = _size; i >= ins; i--) _array[i + n] = _array[i];
+      size_type ins = position - _array;
+      if (_capacity == 0) {
+        _array = a.allocate(n);
+        _capacity = n;
+      } else if (_size + n > _capacity)
+        realloc(_capacity * 2);
+      for (size_type i = _size; i >= ins; i--)
+        a.construct(_array + i + n, _array[i]);
       _size += n;
-      for (size_type i = ins; i < n + ins; i++) _array[i] = x;
+      for (size_type i = ins; i < n + ins; i++) a.construct(_array + i, x);
     } catch (std::exception& e) {
       swap(save);
       throw e;
@@ -543,29 +502,20 @@ class vector {
               typename ft::enable_if<!ft::is_integral<InputIterator>::value,
                                      InputIterator>::type last) {
     ft::vector<T> save(*this);
-    try {  // TODO : check if right cpt if empty and position not begin
-      size_type to_insert = 0;
-      for (iterator it = first; it != last; it++) to_insert++;
+    try {
+      difference_type to_insert = last - first;
+      difference_type ins = position - _array;
 
-      if (_size == 0) {
-        if (to_insert > _capacity) realloc(to_insert);
-        for (size_type i = 0; i < to_insert; i++) {
-          _array[i] = *first;
-          first++;
-        }
-        _size = to_insert;
-        return;
+      if (_capacity == 0) {
+        _array = a.allocate(to_insert);
+        _capacity = to_insert;
       }
-      size_type ins = 0;
-      for (iterator it = _array; it != position; it++) {
-        ins++;
-      };
       if (_size + to_insert > _capacity) realloc(_capacity * 2);
       for (size_type i = _size; i >= ins; i--)
-        _array[i + to_insert] = _array[i];
+        a.construct(_array + i + to_insert, _array[i]);
       _size += to_insert;
       for (size_type i = ins; i < to_insert + ins; i++) {
-        _array[i] = *first;
+        a.construct(_array + i, *first);
         first++;
       };
     } catch (std::exception& e) {
@@ -577,13 +527,7 @@ class vector {
   iterator erase(iterator position) {
     iterator saved = position;
     try {
-      size_type i = 0;
-      for (iterator it = begin(); it != position; it++) {
-        i++;
-      }
-      for (iterator it = position; it + 1 != end(); it++) {
-        *it = *(it + 1);
-      }
+      for (iterator it = position; it + 1 != end(); it++) *it = *(it + 1);
       _size--;
       a.destroy(_array + _size);
     } catch (std::exception& e) {
@@ -593,49 +537,32 @@ class vector {
   };
 
   iterator erase(iterator first, iterator last) {
-    size_type to_erase = 0;
-    if (last == end()) try {
-        for (iterator it = first; it != last; it++) to_erase++;
-        for (iterator it = first; it != end() - to_erase; it++) {
-          *(it) = *(it + to_erase);
-        }
-        _size -= to_erase;
-        for (size_type i = 0; i < to_erase; i++) {
-          a.destroy(_array + _size + i);
-        }
-        return last - to_erase;
-      } catch (std::exception& e) {
-        return last - to_erase;
-      }
-    else {
-      for (iterator it = first; it != last; it++) to_erase++;
-      for (iterator it = first; it != end() - to_erase; it++) {
+    size_type to_erase = last - first;
+    try {
+      for (iterator it = first; it != end() - to_erase; it++)
         *(it) = *(it + to_erase);
-      }
       _size -= to_erase;
-      for (size_type i = 0; i < to_erase; i++) {
-        a.destroy(_array + _size + i);
-      }
+      for (size_type i = 0; i < to_erase; i++) a.destroy(_array + _size + i);
       return last - to_erase;
+    } catch (std::exception& e) {
+      throw e;
     }
   };
 
   void swap(ft::vector<T, Allocator>& other) throw() {
     try {
       if (_size > other.max_size() || other.size() > _max_size) return;
-      ft::vector<T> tmp = *this;
-      // TODO : swap allocators?!
-      *this = other;
-      other = tmp;
+      std::swap(a, other.a);
+      std::swap(_array, other._array);
+      std::swap(_size, other._size);
+      std::swap(_capacity, other._capacity);
     } catch (std::exception& e) {
-      return;
+      throw e;
     }
   };
 
   void clear() throw() {
-    for (size_type i = 0; i < _size; i++) {
-      a.destroy(&_array[i]);
-    }
+    for (size_type i = 0; i < _size; i++) a.destroy(&_array[i]);
     _size = 0;
   };
 
@@ -648,12 +575,13 @@ class vector {
 
   void realloc(size_type n) {
     try {
+      if (n <= _capacity) return;
       if (n >= _max_size) throw(std::length_error(""));
       T* tmp = a.allocate(n);
       std::uninitialized_copy(_array, _array + _size, tmp);
-      for (size_type i = 0; i < _size; i++) {
-        a.destroy(&_array[i]);
-      }
+      // for (size_type i = 0; i < _size; i++) {
+      //   a.destroy(&_array[i]);
+      // }
       a.deallocate(_array, _capacity);
       _array = tmp;
       _capacity = n;
@@ -662,6 +590,36 @@ class vector {
       throw(e);
     }
   };
+  // void realloc(size_type n) {
+  //   try {
+  //     T* tmp = a.allocate(n);
+  //     std::uninitialized_copy(_array, _array + _size, tmp);
+  //     for (size_type i = 0; i < _size; i++) {
+  //       a.destroy(&_array[i]);
+  //     }
+  //     a.deallocate(_array, _capacity);
+  //     _capacity = n;
+  //     std::swap(_array, tmp);
+  //   } catch (std::exception& e) {
+  //     throw(e);
+  //   }
+  // };
+
+  // void realloc(size_type n) {
+  //   try {
+  //     if (n <= _capacity) return;
+  //     if (n >= _max_size) throw(std::length_error(""));
+  //     ft::vector<T, Allocator> tmp(n);
+  //     tmp._size = _size;
+  //     if (_size != 0)
+  //       std::uninitialized_copy(_array, _array + _size, tmp._array);
+  //     //
+  //     swap(tmp);
+
+  //   } catch (std::exception& e) {
+  //     throw(e);
+  //   }
+  // };
 };
 
 template <class T, class Allocator>
@@ -704,16 +662,10 @@ bool operator<=(const vector<T, Allocator>& x,
 template <class T, class Allocator>
 void swap(vector<T, Allocator>& x, vector<T, Allocator>& y) throw() {
   try {
-    if (x.size() > y.max_size() || y.size() > x.max_size()) return;
-    ft::vector<T> tmp = x;
-    x = y;
-    y = tmp;
+    x.swap(y);
   } catch (std::exception& e) {
     return;
   }
 };
 }  // namespace ft
 #endif
-
-// TODO : test with throwing constructors
-// TODO:check invalid reads
