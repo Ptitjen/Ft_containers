@@ -19,12 +19,28 @@ namespace ft {
 template <class Content>
 class Node {
  public:
-  Node() : parent(NULL), left(NULL), right(NULL) {}
-  Node(Content c) : parent(NULL), left(NULL), right(NULL), content(c){};
+  Node()
+      : parent(NULL),
+        left(NULL),
+        right(NULL),
+        left_weight(0),
+        right_weight(0),
+        height(0) {}
+  Node(Content c)
+      : parent(NULL),
+        left(NULL),
+        right(NULL),
+        left_weight(0),
+        right_weight(0),
+        height(0),
+        content(c){};
   Node(const Node& other) : content(other.content) {
     left = other.left;
     right = other.right;
     parent = other.parent;
+    left_weight = other.left_weight;
+    right_weight = other.right_weight;
+    height = other.height;
   }
 
   Node& operator=(const Node& other) {
@@ -33,6 +49,9 @@ class Node {
     right = other.right;
     content = other.content;
     parent = other.parent;
+    left_weight = other.left_weight;
+    right_weight = other.right_weight;
+    height = other.height;
     return (*this);
   }
 
@@ -42,6 +61,10 @@ class Node {
   Node* parent;
   Node* left;
   Node* right;
+
+  std::size_t left_weight;
+  std::size_t right_weight;
+  std::size_t height;
 };
 
 /* *********************************************************************** */
@@ -57,17 +80,18 @@ class BstTreeHeader {
     hnode.left = &hnode;
     hnode.right = &hnode;
     hnode.parent = NULL;
+    max_height_left = 0;
+    max_height_right = 0;
   };
 
   ~BstTreeHeader(){};
 
-  // void resetTreeHeader() {
-
-  // }
-
   node_allocator a;
   Node<Content> hnode;
   std::size_t count;
+
+  std::size_t max_height_left;
+  std::size_t max_height_right;
 };
 
 /* *********************************************************************** */
@@ -298,6 +322,7 @@ class BstTree {
       : a(alloc) {
     try {
     } catch (std::exception& e) {
+      throw e;
     }
   };
 
@@ -315,6 +340,7 @@ class BstTree {
     } catch (std::exception& e) {
       resetHeader();
       clear();  // ?
+      throw e;
     }
   };
 
@@ -329,16 +355,23 @@ class BstTree {
     } catch (std::exception& e) {
       resetHeader();
       clear();  // ?
+      throw e;
     }
   };
 
   BstTree& operator=(const BstTree<Key, Value, Compare, Allocator>& other) {
-    if (&other == this) return *this;
-    clear();
-    if (other.size() != 0) {
-      for (const_iterator it = other.begin(); it != other.end(); it++)
-        insert(it.node->content);
+    try {
+      if (&other == this) return *this;
+      clear();
+      if (other.size() != 0) {
+        for (const_iterator it = other.begin(); it != other.end(); it++)
+          insert(it.node->content);
+        resetHeader();
+      }
+    } catch (std::exception& e) {
       resetHeader();
+      clear();  // ?
+      throw e;
     }
     return *this;
   }
@@ -353,17 +386,13 @@ class BstTree {
   iterator begin() throw() {
     if (header.count == 0) return end();  // ???
     iterator itb(_startNode);
-    while (itb.node->left) {
-      itb.node = itb.node->left;
-    };
+    while (itb.node->left) itb.node = itb.node->left;
     return itb;
   }
   const_iterator begin() const throw() {
     if (header.count == 0) return end();  // ???
     const_iterator itb(_startNode);
-    while (itb.node->left) {
-      itb.node = itb.node->left;
-    };
+    while (itb.node->left) itb.node = itb.node->left;
     return itb;
   }
 
@@ -399,6 +428,16 @@ class BstTree {
   /*                             ELEMENT ACCESS */
   /* ***********************************************************************
    */
+  void resetWeights(node_ptr n) {
+    while (n->parent) {
+      if (n->parent->left == n) {
+        n->parent->left_weight++;
+      } else {
+        n->parent->right_weight++;
+      }
+      n = n->parent;
+    }
+  }
 
   mapped_type& operator[](const key_type& k) {  // inserts element if not found
     BstTree<Key, Value, Compare, Allocator> save(*this);
@@ -410,26 +449,26 @@ class BstTree {
       a.construct(newNode, Node<pair<Key, Value> >());
       newNode->content.first = k;
       newNode->content.second = Value();
-      newNode->left = NULL;
-      newNode->right = NULL;
+      // newNode->left = NULL;
+      // newNode->right = NULL;
+
       if (f(k, n->content.first)) {
         n->left = newNode;
-        newNode->parent = n;
       } else {
         if (n->right == &header.hnode) {
           newNode->right = &header.hnode;
           header.hnode.parent = newNode;
         }
         n->right = newNode;
-        newNode->parent = n;
       }
+      newNode->parent = n;
+      newNode->height = n->height + 1;
+      resetWeights(newNode);
       resetHeader();
       header.count++;
-      save.~BstTree();
       return newNode->content.second;
     } catch (std::exception& e) {
       swap(save);
-      save.~BstTree();
       throw e;
     }
   };
@@ -466,9 +505,13 @@ class BstTree {
         _startNode->left = NULL;
         _startNode->right = NULL;
         _startNode->parent = NULL;
+        _startNode->left_weight = 0;
+        _startNode->height = 0;
+        _startNode->right_weight = 0;
         header.count++;
         resetHeader();
-        save.~BstTree();
+        header.max_height_left = 0;
+        header.max_height_right = 0;
         return ft::pair<iterator, bool>(iterator(_startNode), true);
       }
       iterator it = iterator(searchToAdd(x.first, _startNode));
@@ -478,26 +521,25 @@ class BstTree {
       newNode = a.allocate(1);
       a.construct(newNode, Node<pair<Key, Value> >());
       newNode->content = x;
-      newNode->left = NULL;
-      newNode->right = NULL;
+      // newNode->left = NULL;
+      // newNode->right = NULL;
       if (f(x.first, it->first)) {
         it.node->left = newNode;
-        newNode->parent = it.node;
       } else {
         if (it.node->right == &header.hnode) {
           newNode->right = &header.hnode;
           header.hnode.parent = newNode;
         }
         it.node->right = newNode;
-        newNode->parent = it.node;
       }
-      header.count++;
+      newNode->parent = it.node;
+      newNode->height = it.node->height + 1;
+      resetWeights(newNode);
       resetHeader();
-      save.~BstTree();
+      header.count++;
       return (ft::pair<iterator, bool>(iterator(newNode), true));
     } catch (std::exception& e) {
       swap(save);
-      save.~BstTree();
       throw e;
     }
   };
@@ -512,10 +554,13 @@ class BstTree {
         _startNode->left = NULL;
         _startNode->right = NULL;
         _startNode->parent = NULL;
+        _startNode->left_weight = 0;
+        _startNode->height = 0;
+        _startNode->right_weight = 0;
         header.count++;
         resetHeader();
-
-        save.~BstTree();
+        header.max_height_left = 0;
+        header.max_height_right = 0;
         return iterator(_startNode);
       }
       if (position->first == x.first) return position;  // position = new value
@@ -527,25 +572,24 @@ class BstTree {
           newNode = a.allocate(1);
           a.construct(newNode, Node<pair<Key, Value> >());
           newNode->content = x;
-          newNode->left = NULL;
-          newNode->right = NULL;
+          // newNode->left = NULL;
+          // newNode->right = NULL;
           if (position.node->right == &header.hnode) {
             newNode->right = &header.hnode;
             header.hnode.parent = newNode;
           }
           position.node->right = newNode;
           newNode->parent = position.node;
+          newNode->height = position.node->height + 1;
           header.count++;
+          resetWeights(newNode);
           resetHeader();
-          save.~BstTree();
           return iterator(newNode);
         }
       }
-      save.~BstTree();
       return insert(x).first;  // position == bad hint
     } catch (std::exception& e) {
       swap(save);
-      save.~BstTree();
       throw e;
     }
   };
@@ -559,9 +603,11 @@ class BstTree {
       _startNode->left = first.node->left;
       _startNode->right = first.node->right;
       _startNode->parent = NULL;
+      _startNode->left_weight = first.node->left_weight;
+      _startNode->height = 0;
+      _startNode->right_weight = first.node->right_weight;
       header.count++;
       resetHeader();
-
       first++;
     }
     iterator hint = begin();
@@ -639,19 +685,16 @@ class BstTree {
   }
 
   size_type erase(const key_type& x) {
-    // BstTree<Key, Value, Compare, Allocator> save(*this);
+    BstTree<Key, Value, Compare, Allocator> save(*this);
     try {
       iterator it = find(x);
       if (it != &header.hnode) {
         erase(x);
-        // save.~BstTree();
         return 1;
       }
-      // save.~BstTree();
       return 0;
     } catch (std::exception& e) {
-      // swap(save);
-      // save.~BstTree();
+      swap(save);
       throw e;
     }
   };
@@ -669,11 +712,9 @@ class BstTree {
   void swap(BstTree<Key, Value, Compare, Allocator>& other) throw() {
     try {
       BstTree<Key, Value, Compare, Allocator> tmp = *this;
-      tmp.a = a;
+      std::swap(tmp.a, a);
       *this = other;
-      a = other.a;
       other = tmp;
-      other.a = tmp.a;
     } catch (std::exception& e) {
       return;
     }
@@ -685,7 +726,9 @@ class BstTree {
     recursiveDealloc(_startNode->right);
     _startNode->left = NULL;
     _startNode->right = NULL;
-    a.destroy(_startNode);  // check how to reinit this
+    _startNode->left_weight = 0;
+    _startNode->right_weight = 0;
+    a.destroy(_startNode);
     a.deallocate(_startNode, 1);
     _startNode = NULL;
     header.count--;
