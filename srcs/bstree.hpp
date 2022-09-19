@@ -49,9 +49,9 @@ class Node {
     right = other.right;
     content = other.content;
     parent = other.parent;
-    left_weight = other.left_weight;
-    right_weight = other.right_weight;
-    height = other.height;
+    // left_weight = other.left_weight;
+    // right_weight = other.right_weight;
+    // height = other.height;
     return (*this);
   }
 
@@ -428,16 +428,6 @@ class BstTree {
   /*                             ELEMENT ACCESS */
   /* ***********************************************************************
    */
-  void resetWeights(node_ptr n) {
-    while (n->parent) {
-      if (n->parent->left == n) {
-        n->parent->left_weight++;
-      } else {
-        n->parent->right_weight++;
-      }
-      n = n->parent;
-    }
-  }
 
   mapped_type& operator[](const key_type& k) {  // inserts element if not found
     BstTree<Key, Value, Compare, Allocator> save(*this);
@@ -463,7 +453,7 @@ class BstTree {
       }
       newNode->parent = n;
       newNode->height = n->height + 1;
-      resetWeights(newNode);
+      resetWeightsUp(newNode);
       resetHeader();
       header.count++;
       return newNode->content.second;
@@ -534,7 +524,7 @@ class BstTree {
       }
       newNode->parent = it.node;
       newNode->height = it.node->height + 1;
-      resetWeights(newNode);
+      resetWeightsUp(newNode);
       resetHeader();
       header.count++;
       return (ft::pair<iterator, bool>(iterator(newNode), true));
@@ -582,7 +572,7 @@ class BstTree {
           newNode->parent = position.node;
           newNode->height = position.node->height + 1;
           header.count++;
-          resetWeights(newNode);
+          resetWeightsUp(newNode);
           resetHeader();
           return iterator(newNode);
         }
@@ -625,6 +615,7 @@ class BstTree {
         clear();
         return;
       }
+      resetWeightsDown(position.node);
       if (position.node->parent->left == position.node)
         position.node->parent->left = NULL;
       else
@@ -632,6 +623,8 @@ class BstTree {
     } else if (position.node->left != NULL &&
                (position.node->right == NULL ||
                 position.node->right == &header.hnode)) {
+      resetWeightsDown(position.node);
+      resetHeightsDown(position.node);
       if (position.node->parent->left == position.node) {
         position.node->parent->left = position.node->left;
         position.node->left->parent = position.node->parent;
@@ -643,6 +636,8 @@ class BstTree {
         position.node->left->parent = NULL;
       }
     } else if (position.node->left == NULL && position.node->right != NULL) {
+      resetWeightsDown(position.node);
+      resetHeightsDown(position.node);
       if (position.node->parent->left == position.node) {
         position.node->parent->left = position.node->right;
         position.node->right->parent = position.node->parent;
@@ -658,6 +653,8 @@ class BstTree {
       iterator next = position;
       position--;
       if (position.node == _startNode) {
+        resetWeightsDown(next.node);
+        resetHeightsDown(next.node->right);
         next.node->right->parent = next.node->parent;
         next.node->parent->left = next.node->right;
         next.node->left = _startNode->left;
@@ -665,19 +662,29 @@ class BstTree {
         next.node->parent = NULL;
         next.node->left->parent = next.node;
         next.node->right->parent = next.node;
+        next.node->left_weight = _startNode->left_weight;
+        next.node->right_weight = _startNode->right_weight;
         _startNode = next.node;
+        _startNode->height = 0;
+
       } else if (position.node->parent->right == position.node) {
+        resetHeightsDown(position.node->right);
+        resetWeightsDown(position.node);
         next.node->left = position.node->left;
         position.node->left->parent = next.node;
         next.node->parent = position.node->parent;
         position.node->parent->right = next.node;
+        next.node->left_weight = position.node->left_weight;
       } else if (position.node->parent->left == position.node) {
         next--;
         next--;
+        resetWeightsDown(next.node);
+        resetHeightsDown(next.node);
         next.node->right = position.node->right;
         position.node->right->parent = next.node;
         next.node->parent = position.node->parent;
         position.node->parent->left = next.node;
+        next.node->right_weight = position.node->right_weight;
       }
     }
     dealloc(position.node);
@@ -818,6 +825,34 @@ class BstTree {
     a.deallocate(n, 1);
     n = NULL;
     header.count--;
+  }
+  void resetWeightsUp(node_ptr n) {
+    while (n->parent) {
+      if (n->parent->left == n) {
+        n->parent->left_weight++;
+      } else {
+        n->parent->right_weight++;
+      }
+      n = n->parent;
+    }
+  }
+
+  void resetWeightsDown(node_ptr n) {
+    while (n->parent) {
+      if (n->parent->left == n) {
+        n->parent->left_weight--;
+      } else {
+        n->parent->right_weight--;
+      }
+      n = n->parent;
+    }
+  }
+
+  void resetHeightsDown(node_ptr n) {
+    if (n == NULL || n == &header.hnode) return;
+    n->height--;
+    resetHeightsDown(n->left);
+    resetHeightsDown(n->right);
   }
 
   void resetHeader() {

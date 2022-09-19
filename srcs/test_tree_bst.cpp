@@ -193,7 +193,7 @@ int main(void) {
     //   printNode(t.find(12).node);
     //   std::cout << " " << std::endl;
 
-    //   std::cout << BOLDBLUE "Insert: " END << std::endl;
+    std::cout << BOLDBLUE "Insert: " END << std::endl;
 
     //   /* BAsic insert */
     //   // std::cout << (t.insert(ft::make_pair(0, '.')).second ? "Insert 0"
@@ -221,19 +221,19 @@ int main(void) {
     //   //                                                       exists")
     //   //           << std::endl;
 
-    //   /* With hint insert */
-    //   t.insert(t.begin(), ft::make_pair(-1, '='));
-    //   t.insert(t.begin(), ft::make_pair(5, '#'));
+    /* With hint insert */
+    t.insert(t.begin(), ft::make_pair(-1, '='));
+    t.insert(t.begin(), ft::make_pair(5, '#'));
 
-    //   /*With iterators insert */
-    //   std::cout << BOLDBLUE "Insert this tree" END << std::endl;
+    /*With iterators insert */
+    std::cout << BOLDBLUE "Insert this tree" END << std::endl;
 
-    //   ft::BstTree<int, char> t_insert;
-    //   t_insert.insert(ft::pair<int, char>(ft::make_pair(1, '*')));
-    //   t_insert.insert(ft::pair<int, char>(ft::make_pair(9, 'i')));
-    //   t_insert.insert(ft::pair<int, char>(ft::make_pair(-2, '/')));
-    //   t_insert.insert(ft::pair<int, char>(ft::make_pair(18, '%')));
-    //   printWithIterators(t);
+    ft::BstTree<int, char> t_insert;
+    t_insert.insert(ft::pair<int, char>(ft::make_pair(1, '*')));
+    t_insert.insert(ft::pair<int, char>(ft::make_pair(9, 'i')));
+    t_insert.insert(ft::pair<int, char>(ft::make_pair(-2, '/')));
+    t_insert.insert(ft::pair<int, char>(ft::make_pair(18, '%')));
+    printWithIterators(t);
 
     //   std::cout << BOLDWHITE << "          ";
     //   printNode(t_insert.getStart());
@@ -251,10 +251,10 @@ int main(void) {
     //   printNode(t_insert.getStart()->right->right);
     //   std::cout << std::endl;
 
-    //   t.insert(t_insert.begin(), t_insert.end());
+    t.insert(t_insert.begin(), t_insert.end());
 
-    //   printWithIterators(t);
-    //   printThisTree(t);
+    printWithIterators(t);
+    printThisTree(t);
     //   std::cout << "                         ";
     //   std::cout << BOLDWHITE;
 
@@ -293,18 +293,21 @@ int main(void) {
     //   printThisTree(t);
     //   std::cout << BOLDMAGENTA "Size: " END << t.size() << std::endl;
 
-    //   std::cout << BOLDRED "Erase :" END << std::endl;
-    //   // t.erase(t.begin());
-    //   // printWithIterators(t);
-    //   // t.erase(t.find(10));  // right node 2 children
-    //   // printThisTree(t);
-    //   // printWithIterators(t);
-    //   t.erase(t.find(6));  // root
-    //   printThisTree(t);
-    //   printWithIterators(t);
-    //   // t.erase(t.find(1));  // left node 2 childre
-    //   // printThisTree(t);
-    //   // printWithIterators(t);
+    std::cout << BOLDRED "Erase :" END << std::endl;
+    // t.erase(t.begin()); // no child
+    // printWithIterators(t);
+    // t.erase(t.find(-1));  // 1 child
+    // printThisTree(t);
+    // printWithIterators(t);
+    // t.erase(t.find(10));  // right node 2 children
+    // printThisTree(t);
+    // printWithIterators(t);
+    // t.erase(t.find(6));  // root
+    // printThisTree(t);
+    // printWithIterators(t);
+    t.erase(t.find(1));  // left node 2 childre
+    printThisTree(t);
+    printWithIterators(t);
 
     //   /****** ELEMENT ACCESS *****/
     //   std::cout << BOLDBLUE "[]: " END;
