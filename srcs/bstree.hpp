@@ -80,8 +80,6 @@ class BstTreeHeader {
     hnode.left = &hnode;
     hnode.right = &hnode;
     hnode.parent = NULL;
-    max_height_left = 0;
-    max_height_right = 0;
   };
 
   ~BstTreeHeader(){};
@@ -89,9 +87,6 @@ class BstTreeHeader {
   node_allocator a;
   Node<Content> hnode;
   std::size_t count;
-
-  std::size_t max_height_left;
-  std::size_t max_height_right;
 };
 
 /* *********************************************************************** */
@@ -500,8 +495,7 @@ class BstTree {
         _startNode->right_weight = 0;
         header.count++;
         resetHeader();
-        header.max_height_left = 0;
-        header.max_height_right = 0;
+
         return ft::pair<iterator, bool>(iterator(_startNode), true);
       }
       iterator it = iterator(searchToAdd(x.first, _startNode));
@@ -549,8 +543,7 @@ class BstTree {
         _startNode->right_weight = 0;
         header.count++;
         resetHeader();
-        header.max_height_left = 0;
-        header.max_height_right = 0;
+
         return iterator(_startNode);
       }
       if (position->first == x.first) return position;  // position = new value
@@ -853,6 +846,32 @@ class BstTree {
     n->height--;
     resetHeightsDown(n->left);
     resetHeightsDown(n->right);
+  }
+
+  void leftLeftRotate(node_ptr node) {}
+  void rightLeftRotate(node_ptr node) {}
+  void leftRightRotate(node_ptr node) {}
+  void rightRightRotate(node_ptr node) {}
+
+  long int balanceFactor(node_ptr n) {
+    return n->right_weight - n->left_weight;
+  }
+  void rebalanceTree() {
+    if (header.count != 0) rebalance(_startNode);
+  }
+
+  void rebalanceNode(node_ptr n) {
+    if (n == NULL || n == &header.hnode) return;
+    rebalanceNode(n->left);
+    rebalanceNode(n->right);
+    long int balanceFactor = n->right_weight - n->left_weight;
+    if (balanceFactor(n) == 2 && balanceFactor(n->left) == 1) leftLeftRotate(n);
+    if (balanceFactor(n) == -2 && balanceFactor(n->right) == 1)
+      rightRightRotate(n);
+    if (balanceFactor(n) == -2 && balanceFactor(n->right) == 1)
+      rightLeftRotate(n);
+    if (balanceFactor(n) == 2 && balanceFactor(n->left) == -1)
+      leftRightRotate(n);
   }
 
   void resetHeader() {
