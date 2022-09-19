@@ -65,9 +65,13 @@ void printThisTree(ft::BstTree<int, char>& t) {
   }
 
   std::cout << std::endl << "        ";
-  printNode(t.getStart()->left->right->right->left);
+  if (t.getStart()->left && t.getStart()->left->right &&
+      t.getStart()->left->right->right)
+    printNode(t.getStart()->left->right->right->left);
   std::cout << " ";
-  printNode(t.getStart()->left->right->right->right);
+  if (t.getStart()->left && t.getStart()->left->right &&
+      t.getStart()->left->right->right)
+    printNode(t.getStart()->left->right->right->right);
   std::cout << END << std::endl;
 }
 
@@ -80,8 +84,8 @@ void printWithIterators(ft::BstTree<int, char>& t) {
     std::cout << "|";
     std::cout << it->first << " " << it->second
               << " | Height: " << it.node->height
-              << " | LeftW: " << it.node->left_weight
-              << " | RightW: " << it.node->right_weight << std::endl;
+              << " | LeftH: " << it.node->left_height
+              << " | RightH: " << it.node->right_height << std::endl;
   }
   //   for (ft::BstTree<int, char>::iterator it = t.begin(); it != t.end();
   //   it++) { std::cout << "|"; std::cout << *(it->first) << " " <<
@@ -104,38 +108,41 @@ int main(void) {
               << std::endl;
 
     ft::BstTree<int, char> t;
-    ft::BstTree<int, char> tc;
-    tc = t;
-    printWithIterators(t);
-    printWithIterators(tc);
+    // ft::BstTree<int, char> tc;
+    // tc = t;
+    // printWithIterators(t);
+    // printWithIterators(tc);
     ft::pair<int, char> p = ft::make_pair(6, 'f');
     t.insert(p);
-    // std::cout << t.begin()->first;
-    // std::cout << t.last()->first;
-    // std::cout << t.size();
-    // std::cout << t.end().node;
+    printWithIterators(t);
 
-    // tc = t;
-    // printWithIterators(t);
-    // printWithIterators(tc);
     ft::pair<int, char> p1 = ft::make_pair(1, 'a');
+
     t.insert(p1);
-    // tc = t;
-    // printWithIterators(t);
-    // printWithIterators(tc);
+    printThisTree(t);
+    printWithIterators(t);
+
     t.insert(ft::pair<int, char>(ft::make_pair(10, 'j')));
-    // tc = t;
-    // printWithIterators(t);
-    // printWithIterators(tc);
+    printThisTree(t);
+    printWithIterators(t);
+
     t.insert(ft::pair<int, char>(ft::make_pair(7, 'g')));
+    printThisTree(t);
+    printWithIterators(t);
     t.insert(ft::pair<int, char>(ft::make_pair(2, 'b')));
+    printThisTree(t);
+    printWithIterators(t);
     t.insert(ft::pair<int, char>(ft::make_pair(4, 'd')));
+    printThisTree(t);
+    printWithIterators(t);
     t.insert(ft::pair<int, char>(ft::make_pair(5, 'e')));
+    printThisTree(t);
+    printWithIterators(t);
     t.insert(ft::pair<int, char>(ft::make_pair(6, 'f')));
+    printThisTree(t);
+    printWithIterators(t);
     t.insert(ft::pair<int, char>(ft::make_pair(3, 'c')));
     printThisTree(t);
-    // std::cout << "Begin : " << t.begin().node;
-    std::cout << "End address : " << t.end().node << std::endl;
     printWithIterators(t);
 
     //   std::cout << std::endl << BOLDBLUE "Lower and upper bounds: " END;
@@ -225,15 +232,15 @@ int main(void) {
     t.insert(t.begin(), ft::make_pair(-1, '='));
     t.insert(t.begin(), ft::make_pair(5, '#'));
 
-    /*With iterators insert */
-    std::cout << BOLDBLUE "Insert this tree" END << std::endl;
+    // /*With iterators insert */
+    // std::cout << BOLDBLUE "Insert this tree" END << std::endl;
 
     ft::BstTree<int, char> t_insert;
     t_insert.insert(ft::pair<int, char>(ft::make_pair(1, '*')));
     t_insert.insert(ft::pair<int, char>(ft::make_pair(9, 'i')));
     t_insert.insert(ft::pair<int, char>(ft::make_pair(-2, '/')));
     t_insert.insert(ft::pair<int, char>(ft::make_pair(18, '%')));
-    printWithIterators(t);
+    // printWithIterators(t);
 
     //   std::cout << BOLDWHITE << "          ";
     //   printNode(t_insert.getStart());
@@ -293,9 +300,11 @@ int main(void) {
     //   printThisTree(t);
     //   std::cout << BOLDMAGENTA "Size: " END << t.size() << std::endl;
 
-    std::cout << BOLDRED "Erase :" END << std::endl;
-    // t.erase(t.begin()); // no child
+    // std::cout << BOLDRED "Erase :" END << std::endl;
+    // t.erase(t.begin());  // no child
     // printWithIterators(t);
+    // printThisTree(t);
+
     // t.erase(t.find(-1));  // 1 child
     // printThisTree(t);
     // printWithIterators(t);
@@ -305,9 +314,9 @@ int main(void) {
     // t.erase(t.find(6));  // root
     // printThisTree(t);
     // printWithIterators(t);
-    t.erase(t.find(1));  // left node 2 childre
-    printThisTree(t);
-    printWithIterators(t);
+    // t.erase(t.find(1));  // left node 2 childre
+    // printThisTree(t);
+    // printWithIterators(t);
 
     //   /****** ELEMENT ACCESS *****/
     //   std::cout << BOLDBLUE "[]: " END;
