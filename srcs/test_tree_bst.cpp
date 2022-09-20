@@ -268,6 +268,8 @@ int main(void) {
     //   std::cout << std::endl;
 
     t.insert(t_insert.begin(), t_insert.end());
+    t.insert(ft::pair<int, char>(ft::make_pair(8, 'Y')));
+    t.insert(ft::pair<int, char>(ft::make_pair(11, 'W')));
 
     printWithIterators(t);
     printThisTree(t);
@@ -326,7 +328,7 @@ int main(void) {
     // t.erase(t.find(1));
     // printThisTree(t);
     // printWithIterators(t);
-    t.erase(t.find(3));
+    t.erase(t.find(9));
     printThisTree(t);
     printWithIterators(t);
     // t.erase(t.find(7));
