@@ -45,19 +45,23 @@ void printThisTree(ft::BstTree<int, char>& t) {
     printNode(t.getStart()->left->left->right);
   } else
     std::cout << "    ";
-  std::cout << "| ";
+  std::cout << " | ";
   if (t.getStart()->left != NULL && t.getStart()->left->right != NULL) {
     printNode(t.getStart()->left->right->left);
     std::cout << " ";
     printNode(t.getStart()->left->right->right);
-  }
+  } else
+    std::cout << "    ";
+  std::cout << " | ";
   if (t.getStart()->right != NULL && t.getStart()->right->left != NULL) {
-    std::cout << "  | ";
+    std::cout << "  ";
     printNode(t.getStart()->right->left->left);
     std::cout << " ";
     printNode(t.getStart()->right->left->right);
-    std::cout << "|";
-  }
+    std::cout << "";
+  } else
+    std::cout << "    ";
+  std::cout << "| ";
   if (t.getStart()->right != NULL && t.getStart()->right->right != NULL) {
     printNode(t.getStart()->right->right->left);
     std::cout << " ";
@@ -85,7 +89,12 @@ void printWithIterators(ft::BstTree<int, char>& t) {
     std::cout << it->first << " " << it->second
               << " | Height: " << it.node->height
               << " | LeftH: " << it.node->left_height
-              << " | RightH: " << it.node->right_height << std::endl;
+              << " | RightH: " << it.node->right_height << " |";
+    it.node->left_height >= it.node->right_height + 2 ||
+            it.node->left_height + 2 <= it.node->right_height
+        ? (std::cout << BOLDRED "KO" END)
+        : (std::cout << BOLDGREEN "OK" END);
+    std::cout << std::endl;
   }
   //   for (ft::BstTree<int, char>::iterator it = t.begin(); it != t.end();
   //   it++) { std::cout << "|"; std::cout << *(it->first) << " " <<
@@ -314,9 +323,15 @@ int main(void) {
     // t.erase(t.find(6));  // root
     // printThisTree(t);
     // printWithIterators(t);
-    t.erase(t.find(1));  // left node 2 childre
+    // t.erase(t.find(1));
+    // printThisTree(t);
+    // printWithIterators(t);
+    t.erase(t.find(3));
     printThisTree(t);
     printWithIterators(t);
+    // t.erase(t.find(7));
+    // printThisTree(t);
+    // printWithIterators(t);
 
     //   /****** ELEMENT ACCESS *****/
     //   std::cout << BOLDBLUE "[]: " END;
