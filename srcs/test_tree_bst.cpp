@@ -300,7 +300,7 @@ int main(void) {
     //   printThisTree(t);
     //   std::cout << BOLDMAGENTA "Size: " END << t.size() << std::endl;
 
-    // std::cout << BOLDRED "Erase :" END << std::endl;
+    std::cout << BOLDRED "Erase :" END << std::endl;
     // t.erase(t.begin());  // no child
     // printWithIterators(t);
     // printThisTree(t);
@@ -314,9 +314,9 @@ int main(void) {
     // t.erase(t.find(6));  // root
     // printThisTree(t);
     // printWithIterators(t);
-    // t.erase(t.find(1));  // left node 2 childre
-    // printThisTree(t);
-    // printWithIterators(t);
+    t.erase(t.find(1));  // left node 2 childre
+    printThisTree(t);
+    printWithIterators(t);
 
     //   /****** ELEMENT ACCESS *****/
     //   std::cout << BOLDBLUE "[]: " END;
