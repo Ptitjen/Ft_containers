@@ -516,8 +516,10 @@ class BstTree {
       newNode->height = it.node->height + 1;
       resetHeightsAbove(newNode);
       if (newNode->parent->parent != NULL) rebalanceNode(newNode);
-      resetHeader();
+      // else
+      //   rebalanceNodeErase(newNode->parent);
 
+      resetHeader();
       header.count++;
       return (ft::pair<iterator, bool>(iterator(newNode), true));
     } catch (std::exception& e) {
@@ -561,6 +563,8 @@ class BstTree {
           header.count++;
           resetHeightsAbove(newNode);
           if (newNode->parent->parent != NULL) rebalanceNode(newNode);
+          // else
+          //   rebalanceNodeErase(newNode->parent);
           resetHeader();
           return iterator(newNode);
         }
@@ -710,7 +714,7 @@ class BstTree {
         next.node->left_height = position.node->left_height;
         resetHeightAboveErase(next.node->parent);
       }
-      //  rebalanceTree(_startNode);
+      rebalanceTree(_startNode);
     }
     dealloc(position.node);
     resetHeader();
@@ -929,7 +933,8 @@ class BstTree {
     resetHeightsDown(y->left);
     z->height++;
     if (z->left)
-      z->left_height = std::max(z->left->right_height, z->left->left_height);
+      z->left_height =
+          std::max(z->left->right_height, z->left->left_height) + 1;
     else
       z->left_height = 0;
     resetHeightsUnderIncrease(z->right);
@@ -957,7 +962,8 @@ class BstTree {
     resetHeightsDown(y->right);
     z->height++;
     if (z->right)
-      z->right_height = std::max(z->right->right_height, z->right->left_height);
+      z->right_height =
+          std::max(z->right->right_height, z->right->left_height) + 1;
     else
       z->right_height = 0;
     resetHeightsUnderIncrease(z->left);
@@ -1003,23 +1009,23 @@ class BstTree {
     while (n->parent) {
       if (balanceFactor(n->parent->parent) == 2 ||
           balanceFactor(n->parent->parent) == -2) {
-        // std::cout << "Imbalanced node: " << n->parent->parent->content.first
-        //<< std::endl;
+        std::cout << "Imbalanced node: " << n->parent->parent->content.first
+                  << std::endl;
         if (n == n->parent->left && n->parent == n->parent->parent->left) {
-          // std::cout << "LEFT LEFT CASE" << std::endl;
+          std::cout << "LEFT LEFT CASE" << std::endl;
           singleRightRotate(n->parent->parent);
         } else if (n == n->parent->right &&
                    n->parent == n->parent->parent->left) {
-          // std::cout << "LEFT RIGHT CASE" << std::endl;
+          std::cout << "LEFT RIGHT CASE" << std::endl;
           leftRightRotate(n->parent->parent);
         } else if (n == n->parent->right &&
                    n->parent == n->parent->parent->right) {
-          // std::cout << "RIGHT RIGHT CASE" << std::endl;
+          std::cout << "RIGHT RIGHT CASE" << std::endl;
           singleLeftRotate(n->parent->parent);
         } else if (n == n->parent->left &&
                    n->parent == n->parent->parent->right) {
           rightLeftRotate(n->parent->parent);
-          // std::cout << "RIGHT LEFT CASE" << std::endl;
+          std::cout << "RIGHT LEFT CASE" << std::endl;
         }
         break;
       }

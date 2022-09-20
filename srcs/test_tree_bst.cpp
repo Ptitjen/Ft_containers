@@ -8,10 +8,10 @@
 template <class Key, class T>
 void printNode(const ft::Node<ft::pair<Key, T> >* node) {
   if (node) {
-    if (node->content.first < -20 || node->content.first > 20)
-      std::cout << "END";
-    else
-      std::cout << node->content.first << "" << node->content.second;
+    // if (node->content.first < -20 || node->content.first > 20)
+    //   std::cout << "END";
+    // else
+    std::cout << node->content.first << "" << node->content.second;
   } else
     std::cout << "X ";
 }
@@ -328,9 +328,15 @@ int main(void) {
     // t.erase(t.find(1));
     // printThisTree(t);
     // printWithIterators(t);
-    t.erase(t.find(9));
+    // t.erase(t.find(9));
     printThisTree(t);
     printWithIterators(t);
+    for (int i = 0; i < 8; i++) {
+      t.insert(ft::pair<int, char>(ft::make_pair(rand(), 'Y')));
+      printThisTree(t);
+      printWithIterators(t);
+    }
+
     // t.erase(t.find(7));
     // printThisTree(t);
     // printWithIterators(t);
