@@ -869,13 +869,15 @@ class BstTree {
     resetHeightsDown(n->right);
   }
 
-  void leftLeftRotate(node_ptr n) {}
+  void rightLeftRotate(node_ptr n) {
+    singleRightRotate(n->right);
+    singleLeftRotate(n);
+  }
 
-  void rightRightRotate(node_ptr n) {}
-
-  void rightLeftRotate(node_ptr n) {}
-
-  void leftRightRotate(node_ptr n) {}
+  void leftRightRotate(node_ptr n) {
+    singleLeftRotate(n->left);
+    singleRightRotate(n);
+  }
 
   void singleRightRotate(node_ptr z) {  // ok
     node_ptr y = z->left;
@@ -953,22 +955,22 @@ class BstTree {
         if (n == n->parent->left && n->parent == n->parent->parent->left) {
           std::cout << "LEFT LEFT CASE" << std::endl;
           singleRightRotate(n->parent->parent);
-        }
-        if (n == n->parent->right && n->parent == n->parent->parent->left) {
+        } else if (n == n->parent->right &&
+                   n->parent == n->parent->parent->left) {
           std::cout << "LEFT RIGHT CASE" << std::endl;
-        }
-        if (n == n->parent->right && n->parent == n->parent->parent->right) {
+          leftRightRotate(n->parent->parent);
+        } else if (n == n->parent->right &&
+                   n->parent == n->parent->parent->right) {
           std::cout << "RIGHT RIGHT CASE" << std::endl;
           singleLeftRotate(n->parent->parent);
-        }
-        if (n == n->parent->left && n->parent == n->parent->parent->right) {
+        } else if (n == n->parent->left &&
+                   n->parent == n->parent->parent->right) {
           std::cout << "RIGHT LEFT CASE" << std::endl;
         }
         break;
       }
       n = n->parent;
     }
-    // resetAllHeights();
   }
 
   void resetHeader() {
