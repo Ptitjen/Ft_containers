@@ -331,12 +331,12 @@ int main(void) {
     // t.erase(t.find(9));
     printThisTree(t);
     printWithIterators(t);
-    for (int i = 0; i < 8; i++) {
-      t.insert(ft::pair<int, char>(ft::make_pair(rand(), 'Y')));
-      printThisTree(t);
+    for (int i = 0; i < 20; i++) {
+      t.insert(ft::pair<int, char>(ft::make_pair(rand() % 100, 'Y')));
       printWithIterators(t);
     }
-
+    printThisTree(t);
+    printWithIterators(t);
     // t.erase(t.find(7));
     // printThisTree(t);
     // printWithIterators(t);
