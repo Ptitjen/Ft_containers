@@ -16,68 +16,68 @@ void printNode(const ft::Node<ft::pair<Key, T> >* node) {
     std::cout << "X ";
 }
 
-void printThisTree(ft::BstTree<int, char>& t) {
-  std::cout << BOLDWHITE "            ";
-  /* Start*/
-  printNode(t.getStart());
-  std::cout << std::endl << "    ";
-  /*Etage 1*/
-  printNode(t.getStart()->left);
-  std::cout << "       |      ";
-  printNode(t.getStart()->right);
-  std::cout << std::endl;
-  /* Etage 2 */
-  if (t.getStart()->left != NULL) {
-    printNode(t.getStart()->left->left);
-    std::cout << "     ";
-    printNode(t.getStart()->left->right);
-    std::cout << "    |  ";
-  }
-  if (t.getStart()->right != NULL) {
-    printNode(t.getStart()->right->left);
-    std::cout << "    ";
-    printNode(t.getStart()->right->right);
-    std::cout << std::endl;
-  }
-  /* Etage 3 */
-  if (t.getStart()->left != NULL && t.getStart()->left->left != NULL) {
-    printNode(t.getStart()->left->left->left);
-    printNode(t.getStart()->left->left->right);
-  } else
-    std::cout << "    ";
-  std::cout << " | ";
-  if (t.getStart()->left != NULL && t.getStart()->left->right != NULL) {
-    printNode(t.getStart()->left->right->left);
-    std::cout << " ";
-    printNode(t.getStart()->left->right->right);
-  } else
-    std::cout << "    ";
-  std::cout << " | ";
-  if (t.getStart()->right != NULL && t.getStart()->right->left != NULL) {
-    std::cout << "  ";
-    printNode(t.getStart()->right->left->left);
-    std::cout << " ";
-    printNode(t.getStart()->right->left->right);
-    std::cout << "";
-  } else
-    std::cout << "    ";
-  std::cout << "| ";
-  if (t.getStart()->right != NULL && t.getStart()->right->right != NULL) {
-    printNode(t.getStart()->right->right->left);
-    std::cout << " ";
-    printNode(t.getStart()->right->right->right);
-  }
+// void printThisTree(ft::BstTree<int, char>& t) {
+//   std::cout << BOLDWHITE "            ";
+//   /* Start*/
+//   printNode(t.getStart());
+//   std::cout << std::endl << "    ";
+//   /*Etage 1*/
+//   printNode(t.getStart()->left);
+//   std::cout << "       |      ";
+//   printNode(t.getStart()->right);
+//   std::cout << std::endl;
+//   /* Etage 2 */
+//   if (t.getStart()->left != NULL) {
+//     printNode(t.getStart()->left->left);
+//     std::cout << "     ";
+//     printNode(t.getStart()->left->right);
+//     std::cout << "    |  ";
+//   }
+//   if (t.getStart()->right != NULL) {
+//     printNode(t.getStart()->right->left);
+//     std::cout << "    ";
+//     printNode(t.getStart()->right->right);
+//     std::cout << std::endl;
+//   }
+//   /* Etage 3 */
+//   if (t.getStart()->left != NULL && t.getStart()->left->left != NULL) {
+//     printNode(t.getStart()->left->left->left);
+//     printNode(t.getStart()->left->left->right);
+//   } else
+//     std::cout << "    ";
+//   std::cout << " | ";
+//   if (t.getStart()->left != NULL && t.getStart()->left->right != NULL) {
+//     printNode(t.getStart()->left->right->left);
+//     std::cout << " ";
+//     printNode(t.getStart()->left->right->right);
+//   } else
+//     std::cout << "    ";
+//   std::cout << " | ";
+//   if (t.getStart()->right != NULL && t.getStart()->right->left != NULL) {
+//     std::cout << "  ";
+//     printNode(t.getStart()->right->left->left);
+//     std::cout << " ";
+//     printNode(t.getStart()->right->left->right);
+//     std::cout << "";
+//   } else
+//     std::cout << "    ";
+//   std::cout << "| ";
+//   if (t.getStart()->right != NULL && t.getStart()->right->right != NULL) {
+//     printNode(t.getStart()->right->right->left);
+//     std::cout << " ";
+//     printNode(t.getStart()->right->right->right);
+//   }
 
-  std::cout << std::endl << "        ";
-  if (t.getStart()->left && t.getStart()->left->right &&
-      t.getStart()->left->right->right)
-    printNode(t.getStart()->left->right->right->left);
-  std::cout << " ";
-  if (t.getStart()->left && t.getStart()->left->right &&
-      t.getStart()->left->right->right)
-    printNode(t.getStart()->left->right->right->right);
-  std::cout << END << std::endl;
-}
+//   std::cout << std::endl << "        ";
+//   if (t.getStart()->left && t.getStart()->left->right &&
+//       t.getStart()->left->right->right)
+//     printNode(t.getStart()->left->right->right->left);
+//   std::cout << " ";
+//   if (t.getStart()->left && t.getStart()->left->right &&
+//       t.getStart()->left->right->right)
+//     printNode(t.getStart()->left->right->right->right);
+//   std::cout << END << std::endl;
+// }
 
 void printWithIterators(ft::BstTree<int, char>& t) {
   if (t.size() == 0) {
@@ -86,8 +86,9 @@ void printWithIterators(ft::BstTree<int, char>& t) {
   }
   for (ft::BstTree<int, char>::iterator it = t.begin(); it != t.end(); it++) {
     std::cout << "|";
-    std::cout << it->first << " " << it->second
-              << " | Height: " << it.node->height
+    std::cout << it->first << " "
+              << it->second
+              //<< " | Height: " << it.node->height
               << " | LeftH: " << it.node->left_height
               << " | RightH: " << it.node->right_height << " |";
     it.node->left_height >= it.node->right_height + 2 ||
@@ -129,30 +130,30 @@ int main(int argc, char** argv) {
     ft::pair<int, char> p1 = ft::make_pair(1, 'a');
 
     t.insert(p1);
-    printThisTree(t);
+    // printThisTree(t);
     printWithIterators(t);
 
     t.insert(ft::pair<int, char>(ft::make_pair(10, 'j')));
-    printThisTree(t);
+    // printThisTree(t);
     printWithIterators(t);
 
     t.insert(ft::pair<int, char>(ft::make_pair(7, 'g')));
-    printThisTree(t);
+    // printThisTree(t);
     printWithIterators(t);
     t.insert(ft::pair<int, char>(ft::make_pair(2, 'b')));
-    printThisTree(t);
+    // printThisTree(t);
     printWithIterators(t);
     t.insert(ft::pair<int, char>(ft::make_pair(4, 'd')));
-    printThisTree(t);
+    // printThisTree(t);
     printWithIterators(t);
     t.insert(ft::pair<int, char>(ft::make_pair(5, 'e')));
-    printThisTree(t);
+    // printThisTree(t);
     printWithIterators(t);
     t.insert(ft::pair<int, char>(ft::make_pair(6, 'f')));
-    printThisTree(t);
+    // printThisTree(t);
     printWithIterators(t);
     t.insert(ft::pair<int, char>(ft::make_pair(3, 'c')));
-    printThisTree(t);
+    // printThisTree(t);
     printWithIterators(t);
 
     //   std::cout << std::endl << BOLDBLUE "Lower and upper bounds: " END;
@@ -273,9 +274,9 @@ int main(int argc, char** argv) {
     t.insert(ft::pair<int, char>(ft::make_pair(11, 'W')));
 
     printWithIterators(t);
-    printThisTree(t);
-    //   std::cout << "                         ";
-    //   std::cout << BOLDWHITE;
+    // printThisTree(t);
+    //    std::cout << "                         ";
+    //    std::cout << BOLDWHITE;
 
     //   printNode(t.getStart()->right->right->right->right);
     //   std::cout << END;
@@ -329,23 +330,25 @@ int main(int argc, char** argv) {
     // printThisTree(t);
     // printWithIterators(t);
     // t.erase(t.find(9));
-    printThisTree(t);
+    // printThisTree(t);
     printWithIterators(t);
-    for (int i = 0; i < 1000; i++) {
-      t.insert(ft::pair<int, char>(ft::make_pair(rand() % 1000, 'Y')));
-    }
-    printThisTree(t);
-    printWithIterators(t);
-    for (int i = 0; i < 1000; i++) {
-      t.erase(rand() % 1000);
+
+    for (int i = 0; i < 20000; i++) {
+      t.insert(ft::pair<int, char>(ft::make_pair(rand() % 20000, 'Y')));
     }
 
     // printThisTree(t);
     // printWithIterators(t);
-    std::cout << BOLDRED "Erase :" END << std::endl;
-    t.erase(atoi(argv[1]));
-    printThisTree(t);
+    for (int i = 0; i < 2000; i++) {
+      t.erase(rand() % 2000);
+    }
+
+    // // printThisTree(t);
     printWithIterators(t);
+    // // std::cout << BOLDRED "Erase :" END << std::endl;
+    // // t.erase(atoi(argv[1]));
+    // printThisTree(t);
+    // printWithIterators(t);
 
     //   /****** ELEMENT ACCESS *****/
     //   std::cout << BOLDBLUE "[]: " END;

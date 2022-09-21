@@ -273,7 +273,6 @@ class BstTree {
   /*                                CLASS                                    */
   /* *********************************************************************** */
 
-  // public:
   typedef Key key_type;
   typedef Value mapped_type;
   typedef pair<Key, Value> value_type;
@@ -295,7 +294,7 @@ class BstTree {
   typedef ft::reverse_iterator<const_iterator> const_reverse_iterator;
   class value_compare
       : public std::binary_function<value_type, value_type, bool> {
-    friend class map;
+    // friend class map;
 
    protected:
     Compare comp;
@@ -333,9 +332,8 @@ class BstTree {
         insert(first.node->content);
         first++;
       }
-      resetHeader();
+
     } catch (std::exception& e) {
-      resetHeader();
       clear();  // ?
       throw e;
     }
@@ -347,10 +345,8 @@ class BstTree {
       if (x.size() != 0) {
         for (const_iterator it = x.begin(); it != x.end(); it++)
           insert(it.node->content);
-        resetHeader();
       }
     } catch (std::exception& e) {
-      resetHeader();
       clear();  // ?
       throw e;
     }
@@ -363,10 +359,8 @@ class BstTree {
       if (other.size() != 0) {
         for (const_iterator it = other.begin(); it != other.end(); it++)
           insert(it.node->content);
-        resetHeader();
       }
     } catch (std::exception& e) {
-      resetHeader();
       clear();  // ?
       throw e;
     }
@@ -429,6 +423,20 @@ class BstTree {
   mapped_type& operator[](const key_type& k) {  // inserts element if not found
     BstTree<Key, Value, Compare, Allocator> save(*this);
     try {
+      if (header.count == 0) {
+        _startNode = a.allocate(1);
+        a.construct(_startNode, Node<pair<Key, Value> >());
+        _startNode->content = k;
+        _startNode->left = NULL;
+        _startNode->right = &header.hnode;
+        header.hnode.parent = _startNode;
+        _startNode->parent = NULL;
+        _startNode->left_height = 0;
+        _startNode->height = 0;
+        _startNode->right_height = 0;
+        header.count++;
+        return _startNode->content.second;
+      }
       node_ptr n = searchToAdd(k, _startNode);
       if (n->content.first == k) return n->content.second;
       Node<value_type>* newNode;
@@ -446,15 +454,11 @@ class BstTree {
         n->right = newNode;
       }
       newNode->parent = n;
-      // newNode->height = n->height + 1;
       resetHeightsAbove(newNode);
       if (newNode->parent->parent != NULL) rebalanceNode(newNode);
-
-      resetHeader();
       _startNode->height = 0;
-      resetAllHeights(_startNode->left);
-      resetAllHeights(_startNode->right);
-
+      // resetAllHeights(_startNode->left);
+      // resetAllHeights(_startNode->right);
       header.count++;
       return newNode->content.second;
     } catch (std::exception& e) {
@@ -491,13 +495,13 @@ class BstTree {
         a.construct(_startNode, Node<pair<Key, Value> >());
         _startNode->content = x;
         _startNode->left = NULL;
-        _startNode->right = NULL;
+        _startNode->right = &header.hnode;
+        header.hnode.parent = _startNode;
         _startNode->parent = NULL;
         _startNode->left_height = 0;
         _startNode->height = 0;
         _startNode->right_height = 0;
         header.count++;
-        resetHeader();
         return ft::pair<iterator, bool>(iterator(_startNode), true);
       }
       iterator it = iterator(searchToAdd(x.first, _startNode));
@@ -520,13 +524,9 @@ class BstTree {
       // newNode->height = it.node->height + 1;
       resetHeightsAbove(newNode);
       if (newNode->parent->parent != NULL) rebalanceNode(newNode);
-
-      resetHeader();
       _startNode->height = 0;
-
-      resetAllHeights(_startNode->left);
-      resetAllHeights(_startNode->right);
-
+      // resetAllHeights(_startNode->left);
+      // resetAllHeights(_startNode->right);
       header.count++;
       return (ft::pair<iterator, bool>(iterator(newNode), true));
     } catch (std::exception& e) {
@@ -542,13 +542,15 @@ class BstTree {
         a.construct(_startNode, Node<pair<Key, Value> >());
         _startNode->content = x;
         _startNode->left = NULL;
-        _startNode->right = NULL;
+        _startNode->right = &header.hnode;
+        header.hnode.parent = _startNode;
+
         _startNode->parent = NULL;
         _startNode->left_height = 0;
         _startNode->height = 0;
         _startNode->right_height = 0;
         header.count++;
-        resetHeader();
+
         return iterator(_startNode);
       }
       if (position->first == x.first) return position;  // position = new value
@@ -566,16 +568,12 @@ class BstTree {
           }
           position.node->right = newNode;
           newNode->parent = position.node;
-          // newNode->height = position.node->height + 1;
           header.count++;
           resetHeightsAbove(newNode);
           if (newNode->parent->parent != NULL) rebalanceNode(newNode);
-
-          // resetAllHeights(_startNode);  // change if not ok
-          resetHeader();
-          _startNode->height = 0;
-          resetAllHeights(_startNode->left);
-          resetAllHeights(_startNode->right);
+          // _startNode->height = 0;
+          // resetAllHeights(_startNode->left);
+          // resetAllHeights(_startNode->right);
 
           return iterator(newNode);
         }
@@ -593,14 +591,14 @@ class BstTree {
       _startNode = a.allocate(1);
       a.construct(_startNode, Node<pair<Key, Value> >());
       _startNode->content = first.node->content;
-      _startNode->left = first.node->left;
-      _startNode->right = first.node->right;
+      _startNode->left = NULL;
+      _startNode->right = &header.hnode;
+      header.hnode.parent = _startNode;
       _startNode->parent = NULL;
-      _startNode->left_height = first.node->left_height;
+      _startNode->left_height = 0;
       _startNode->height = 0;
-      _startNode->right_height = first.node->right_height;
+      _startNode->right_height = 0;
       header.count++;
-      resetHeader();
       first++;
     }
     iterator hint = begin();
@@ -609,158 +607,6 @@ class BstTree {
       first++;
     }
   };
-
-  // void erase(iterator position) throw() {  //? see this - depends if
-  //   // comparison throws
-  //   if (position.node->left == NULL &&
-  //       (position.node->right == NULL ||
-  //        position.node->right == &header.hnode)) {
-  //     /* NO CHILD */
-  //     std::cout << "NO CHILD" << std::endl;
-
-  //     if (position.node == _startNode) {
-  //       clear();
-  //       return;
-  //     }
-  //     if (position.node->parent->left == position.node) {
-  //       position.node->parent->left = NULL;
-  //       position.node->parent->left_height = 0;
-  //     } else {
-  //       position.node->parent->right = NULL;
-  //       position.node->parent->right_height = 0;
-  //     }
-  //     resetHeightAboveErase(position.node->parent);
-  //     // rebalanceNodeErase(position.node->parent);
-  //   } else if (position.node->left != NULL &&
-  //              (position.node->right == NULL ||
-  //               position.node->right == &header.hnode)) {
-  //     /* ONE LEFT CHILD */
-  //     std::cout << "ONE LEFT CHILD" << std::endl;
-
-  //     if (position.node->parent->left == position.node) {
-  //       position.node->parent->left = position.node->left;
-  //       position.node->left->parent = position.node->parent;
-  //     } else if (position.node->parent->right == position.node) {
-  //       position.node->parent->right = position.node->left;
-  //       position.node->left->parent = position.node->parent;
-  //     } else if (position.node == _startNode) {
-  //       _startNode = position.node->left;
-  //       position.node->left->parent = NULL;
-  //     }
-  //     resetHeightAboveErase(position.node->parent);
-  //     // rebalanceNodeErase(position.node->parent);
-  //   } else if (position.node->left == NULL && position.node->right != NULL) {
-  //     /* ONE RIGHT CHILD */
-  //     std::cout << "ONE RIGHT CHILD" << std::endl;
-
-  //     if (position.node->parent->left == position.node) {
-  //       position.node->parent->left = position.node->right;
-  //       position.node->right->parent = position.node->parent;
-  //     } else if (position.node->parent->right == position.node) {
-  //       position.node->parent->right = position.node->right;
-  //       position.node->right->parent = position.node->parent;
-  //     } else if (position.node == _startNode) {
-  //       _startNode = position.node->right;
-  //       position.node->right->parent = NULL;
-  //     }
-  //     resetHeightAboveErase(position.node->parent);
-  //     // rebalanceNodeErase(position.node->parent);
-  //   } else {  // REBALANCE TO DO
-  //     /* 2 CHILDREN */
-  //     std::cout << "2 CHILDREN" << std::endl;
-  //     position++;
-  //     iterator next = position;
-  //     position--;
-  //     if (position.node == _startNode) {  // OK
-  //       if (next.node->right) next.node->right->parent = next.node->parent;
-  //       next.node->parent->left = next.node->right;
-  //       next.node->left = _startNode->left;
-  //       next.node->right = _startNode->right;
-  //       next.node->left->parent = next.node;
-  //       next.node->right->parent = next.node;
-  //       next.node->left_height = _startNode->left_height;
-  //       next.node->right_height = _startNode->right_height;
-  //       next.node->parent->left_height--;
-  //       _startNode = next.node;
-  //       next.node->parent = NULL;
-  //       _startNode->height = 0;
-  //     } else if (position.node->parent->right == position.node) {
-  //       std::cout << "RIGHT NODE" << std::endl;
-
-  //       if (next.node == position.node->right) {  // next : right child
-  //         next.node->left = position.node->left;
-  //         next.node->left->parent = next.node;
-  //         position.node->parent->right = next.node;
-  //         next.node->parent = position.node->parent;
-  //         next.node->left_height = position.node->left_height;
-  //       } else {
-  //         if (next.node->left) next.node->left->parent = next.node->parent;
-  //         next.node->parent->left = next.node->right;
-  //         next.node->right = position.node->right;
-  //         if (next.node->right) next.node->right->parent = next.node;
-  //         next.node->left = position.node->left;
-  //         if (next.node->left) next.node->left->parent = next.node;
-  //         next.node->parent->left_height--;
-  //         next.node->parent = position.node->parent;
-  //         next.node->parent->right = next.node;
-  //         if (next.node->right && next.node->right != &header.hnode)
-  //           next.node->right_height = std::max(next.node->left->right_height,
-  //                                              next.node->left->left_height)
-  //                                              +
-  //                                     1;
-  //         next.node->left_height = position.node->left_height;
-  //       }
-  //       resetHeightAboveErase(next.node->parent);
-  //     } else if (position.node->parent->left == position.node) {
-  //       std::cout << "LEFT NODE" << std::endl;
-
-  //       if (next.node == position.node->right) {  // next : right child
-  //         next.node->left = position.node->left;
-  //         next.node->left->parent = next.node;
-  //         position.node->parent->left = next.node;
-  //         next.node->parent = position.node->parent;
-  //         next.node->left_height = position.node->left_height;
-  //       } else {
-  //         if (next.node->right) next.node->right->parent = next.node->parent;
-  //         next.node->parent->left = next.node->right;
-  //         next.node->left = position.node->left;
-  //         if (next.node->left) next.node->left->parent = next.node;
-  //         next.node->right = position.node->right;
-  //         if (next.node->right) next.node->right->parent = next.node;
-  //         next.node->parent->left_height--;
-  //         next.node->parent = position.node->parent;
-  //         next.node->parent->left = next.node;
-  //         if (next.node->right)
-  //           next.node->right_height =
-  //           std::max(next.node->right->right_height,
-  //                                              next.node->right->left_height)
-  //                                              +
-  //                                     1;
-  //         next.node->left_height = position.node->left_height;
-  //       }
-  //       resetHeightAboveErase(next.node->parent);
-  //       rebalanceNodeErase(next.node);
-  //     }
-  //   }
-  //   dealloc(position.node);
-  //   _startNode->height = 0;
-  //   resetAllHeights(_startNode->left);
-  //   resetAllHeights(_startNode->right);
-  //   resetHeader();
-  // }
-  // Case 1: Deleting from the right subtree.
-
-  //     1A. If BF(node) = +2 and BF(node -> left-child) = +1, perform LL
-  //     rotation. 1B. If BF(node) = +2 and BF(node -> left-child) = -1, perform
-  //     LR rotation. 1C. If BF(node) = +2 and BF(node -> left-child) = 0,
-  //     perform LL rotation.
-
-  // Case 2: Deleting from left subtree.
-
-  //     2A. If BF(node) = -2 and BF(node -> right-child) = -1, perform RR
-  //     rotation. 2B. If BF(node) = -2 and BF(node -> right-child) = +1,
-  //     perform RL rotation. 2C. If BF(node) = -2 and BF(node -> right-child) =
-  //     0, perform RR rotation.
 
   void erase(iterator position) throw() {  //? see this - depends if
                                            // comparison throws
@@ -812,9 +658,7 @@ class BstTree {
           next.node->right_height = position.node->right_height;
           _startNode = next.node;
         }
-      } else
-        std::cout << "NOT RECOGNIZED - PROBLEM" << std::endl;
-      // rebalanceFromStartNode
+      }
     } else if (position.node->parent->left ==
                position.node)  // delete from left subtree
     {
@@ -859,7 +703,9 @@ class BstTree {
           next.node->parent->right = next.node->left;
           if (next.node->left) next.node->left->parent = next.node->parent;
           next.node->parent->right_height--;
+
           resetHeightAboveErase(next.node->parent);
+
           next.node->left = position.node->left;
           next.node->left->parent = next.node;
           next.node->right = position.node->right;
@@ -870,9 +716,7 @@ class BstTree {
           next.node->right_height = position.node->right_height;
           resetHeightAboveErase(next.node->parent);
         }
-      } else
-        std::cout << "NOT RECOGNIZED - PROBLEM" << std::endl;
-      // rebalanceFromLeftTree
+      }
     } else if (position.node->parent->right ==
                position.node)  // delete frome right subtree
     {
@@ -880,7 +724,6 @@ class BstTree {
           (position.node->right == NULL ||
            position.node->right == &header.hnode)) {
         /* NO CHILD */
-
         position.node->parent->right = NULL;
         position.node->parent->right_height = 0;
         resetHeightAboveErase(position.node->parent);
@@ -892,7 +735,6 @@ class BstTree {
         position.node->left->parent = position.node->parent;
         position.node->parent->right_height--;
         resetHeightAboveErase(position.node->parent);
-
       } else if (position.node->left == NULL &&
                  (position.node->right != NULL &&
                   position.node->right != &header.hnode)) {
@@ -929,127 +771,14 @@ class BstTree {
           next.node->right_height = position.node->right_height;
           resetHeightAboveErase(next.node->parent);
         }
-      } else
-        std::cout << "NOT RECOGNIZED - PROBLEM" << std::endl;
-      // rebalanceFromRightTree
+      }
     }
 
-    // else if (position.node->left != NULL &&
-    //            (position.node->right == NULL ||
-    //             position.node->right == &header.hnode)) {
-    //   /* ONE LEFT CHILD */
-    //   std::cout << "ONE LEFT CHILD" << std::endl;
-
-    //   if (position.node->parent->left == position.node) {
-    //     position.node->parent->left = position.node->left;
-    //     position.node->left->parent = position.node->parent;
-    //   } else if (position.node->parent->right == position.node) {
-    //     position.node->parent->right = position.node->left;
-    //     position.node->left->parent = position.node->parent;
-    //   } else if (position.node == _startNode) {
-    //     _startNode = position.node->left;
-    //     position.node->left->parent = NULL;
-    //   }
-    //   resetHeightAboveErase(position.node->parent);
-    //   // rebalanceNodeErase(position.node->parent);
-    // } else if (position.node->left == NULL && position.node->right != NULL) {
-    //   /* ONE RIGHT CHILD */
-    //   std::cout << "ONE RIGHT CHILD" << std::endl;
-
-    //   if (position.node->parent->left == position.node) {
-    //     position.node->parent->left = position.node->right;
-    //     position.node->right->parent = position.node->parent;
-    //   } else if (position.node->parent->right == position.node) {
-    //     position.node->parent->right = position.node->right;
-    //     position.node->right->parent = position.node->parent;
-    //   } else if (position.node == _startNode) {
-    //     _startNode = position.node->right;
-    //     position.node->right->parent = NULL;
-    //   }
-    //   resetHeightAboveErase(position.node->parent);
-    //   // rebalanceNodeErase(position.node->parent);
-    // } else {  // REBALANCE TO DO
-    //   /* 2 CHILDREN */
-    //   std::cout << "2 CHILDREN" << std::endl;
-    //   position++;
-    //   iterator next = position;
-    //   position--;
-    //   if (position.node == _startNode) {  // OK
-    //     if (next.node->right) next.node->right->parent = next.node->parent;
-    //     next.node->parent->left = next.node->right;
-    //     next.node->left = _startNode->left;
-    //     next.node->right = _startNode->right;
-    //     next.node->left->parent = next.node;
-    //     next.node->right->parent = next.node;
-    //     next.node->left_height = _startNode->left_height;
-    //     next.node->right_height = _startNode->right_height;
-    //     next.node->parent->left_height--;
-    //     _startNode = next.node;
-    //     next.node->parent = NULL;
-    //     _startNode->height = 0;
-    //   } else if (position.node->parent->right == position.node) {
-    //     std::cout << "RIGHT NODE" << std::endl;
-
-    //     if (next.node == position.node->right) {  // next : right child
-    //       next.node->left = position.node->left;
-    //       next.node->left->parent = next.node;
-    //       position.node->parent->right = next.node;
-    //       next.node->parent = position.node->parent;
-    //       next.node->left_height = position.node->left_height;
-    //     } else {
-    //       if (next.node->left) next.node->left->parent = next.node->parent;
-    //       next.node->parent->left = next.node->right;
-    //       next.node->right = position.node->right;
-    //       if (next.node->right) next.node->right->parent = next.node;
-    //       next.node->left = position.node->left;
-    //       if (next.node->left) next.node->left->parent = next.node;
-    //       next.node->parent->left_height--;
-    //       next.node->parent = position.node->parent;
-    //       next.node->parent->right = next.node;
-    //       if (next.node->right && next.node->right != &header.hnode)
-    //         next.node->right_height = std::max(next.node->left->right_height,
-    //                                            next.node->left->left_height)
-    //                                            +
-    //                                   1;
-    //       next.node->left_height = position.node->left_height;
-    //     }
-    //     resetHeightAboveErase(next.node->parent);
-    //   } else if (position.node->parent->left == position.node) {
-    //     std::cout << "LEFT NODE" << std::endl;
-
-    //     if (next.node == position.node->right) {  // next : right child
-    //       next.node->left = position.node->left;
-    //       next.node->left->parent = next.node;
-    //       position.node->parent->left = next.node;
-    //       next.node->parent = position.node->parent;
-    //       next.node->left_height = position.node->left_height;
-    //     } else {
-    //       if (next.node->right) next.node->right->parent = next.node->parent;
-    //       next.node->parent->left = next.node->right;
-    //       next.node->left = position.node->left;
-    //       if (next.node->left) next.node->left->parent = next.node;
-    //       next.node->right = position.node->right;
-    //       if (next.node->right) next.node->right->parent = next.node;
-    //       next.node->parent->left_height--;
-    //       next.node->parent = position.node->parent;
-    //       next.node->parent->left = next.node;
-    //       if (next.node->right)
-    //         next.node->right_height =
-    //         std::max(next.node->right->right_height,
-    //                                            next.node->right->left_height)
-    //                                            +
-    //                                   1;
-    //       next.node->left_height = position.node->left_height;
-    //     }
-    //     resetHeightAboveErase(next.node->parent);
-    //     rebalanceNodeErase(next.node);
-    //   }
-    // }
     dealloc(position.node);
-    _startNode->height = 0;
-    resetAllHeights(_startNode->left);
-    resetAllHeights(_startNode->right);
-    resetHeader();
+    rebalanceTree(_startNode);
+    // _startNode->height = 0;
+    // resetAllHeights(_startNode->left);
+    // resetAllHeights(_startNode->right);
   }
 
   size_type erase(const key_type& x) {
@@ -1169,7 +898,6 @@ class BstTree {
   /* ********************************************************************** */
 
   /*** Utils : put all in private when finished ***/
-  Node<value_type>* getStart() { return _startNode; };
 
  private:
   void recursiveDealloc(node_ptr n) {
@@ -1187,6 +915,13 @@ class BstTree {
     n = NULL;
     header.count--;
   }
+
+  // void resetAllHeights(node_ptr n) {
+  //   if (n == NULL || n == &header.hnode) return;
+  //   n->height = (n->parent->height) + 1;
+  //   resetAllHeights(n->left);
+  //   resetAllHeights(n->right);
+  // }
 
   void resetHeightsAbove(node_ptr n) {
     while (n->parent->parent) {
@@ -1220,22 +955,6 @@ class BstTree {
     }
   }
 
-  // void resetHeightsDown(node_ptr n) {
-  //   // if (n == NULL || n == &header.hnode) return;
-  //   // //n->height--;
-  //   // if (n->height > 1000) std::cout << "ICI3" << std::endl;
-
-  //   // resetHeightsDown(n->left);
-  //   // resetHeightsDown(n->right);
-  // }
-
-  // void resetHeightsUnderIncrease(node_ptr n) {
-  //   // if (n == NULL || n == &header.hnode) return;
-  //   // n->height++;
-  //   // resetHeightsDown(n->left);
-  //   // resetHeightsDown(n->right);
-  // }
-
   void rightLeftRotate(node_ptr n) {
     singleRightRotate(n->right);
     singleLeftRotate(n);
@@ -1248,7 +967,6 @@ class BstTree {
 
   void singleRightRotate(node_ptr z) {
     node_ptr y = z->left;
-    // node_ptr x = y->left;
     if (z == _startNode) {
       _startNode = y;
       y->parent = NULL;
@@ -1263,22 +981,16 @@ class BstTree {
     if (y->right) y->right->parent = z;
     y->right = z;
     z->parent = y;
-    // y->height--;
-
-    // resetHeightsDown(y->left);
-    // z->height++;
     if (z->left)
       z->left_height =
           std::max(z->left->right_height, z->left->left_height) + 1;
     else
       z->left_height = 0;
-    // resetHeightsUnderIncrease(z->right);
     resetHeightsAbove(z);
   }
 
   void singleLeftRotate(node_ptr z) {
     node_ptr y = z->right;
-    // node_ptr x = y->right;
     if (z == _startNode) {
       _startNode = y;
       y->parent = NULL;
@@ -1293,16 +1005,12 @@ class BstTree {
     if (y->left) y->left->parent = z;
     y->left = z;
     z->parent = y;
-    // y->height--;
-    // x->height--;
-    //  resetHeightsDown(y->right);
-    // z->height++;
+
     if (z->right)
       z->right_height =
           std::max(z->right->right_height, z->right->left_height) + 1;
     else
       z->right_height = 0;
-    // resetHeightsUnderIncrease(z->left);
     resetHeightsAbove(z);
   }
 
@@ -1312,37 +1020,21 @@ class BstTree {
     return 0;
   }
 
-  void rebalanceTree(node_ptr n) {
-    if (n == NULL || n == &header.hnode) return;
-    if (balanceFactor(n) == 2 || balanceFactor(n) == -2) rebalanceNodeErase(n);
-    rebalanceTree(n->left);
-    rebalanceTree(n->right);
-  }
-
   void rebalanceNodeErase(node_ptr n) {
     if (n == NULL || n == &header.hnode) return;
-    // while (n->parent) {
     if (balanceFactor(n) == 2) {
-      if (balanceFactor(n->left) == -1)
-        singleRightRotate(n);
-      else
+      if (balanceFactor(n->left) == -1 ||
+          balanceFactor(n->left) == 0)  // LRrotate
         leftRightRotate(n);
-      // break;
+      else if (balanceFactor(n->left) == 1)  // LL rotate
+        singleRightRotate(n);
     } else if (balanceFactor(n) == -2) {
-      if (balanceFactor(n->right) == -1)
+      if (balanceFactor(n->right) == -1 ||
+          balanceFactor(n->right) == 0)  // RR rotate
         singleLeftRotate(n);
-      else
+      else if (balanceFactor(n->right) == 1)  // RL rotate
         rightLeftRotate(n);
-      // break;
     }
-    // n = n->parent;
-    //}
-  }
-  void resetAllHeights(node_ptr n) {
-    if (n == NULL || n == &header.hnode) return;
-    n->height = (n->parent->height) + 1;
-    resetAllHeights(n->left);
-    resetAllHeights(n->right);
   }
 
   void rebalanceNode(node_ptr n) {
@@ -1350,23 +1042,17 @@ class BstTree {
     while (n->parent) {
       if (balanceFactor(n->parent->parent) == 2 ||
           balanceFactor(n->parent->parent) == -2) {
-        std::cout << "Imbalanced node: " << n->parent->parent->content.first
-                  << std::endl;
         if (n == n->parent->left && n->parent == n->parent->parent->left) {
-          std::cout << "LEFT LEFT CASE" << std::endl;
           singleRightRotate(n->parent->parent);
         } else if (n == n->parent->right &&
                    n->parent == n->parent->parent->left) {
-          std::cout << "LEFT RIGHT CASE" << std::endl;
           leftRightRotate(n->parent->parent);
         } else if (n == n->parent->right &&
                    n->parent == n->parent->parent->right) {
-          std::cout << "RIGHT RIGHT CASE" << std::endl;
           singleLeftRotate(n->parent->parent);
         } else if (n == n->parent->left &&
                    n->parent == n->parent->parent->right) {
           rightLeftRotate(n->parent->parent);
-          std::cout << "RIGHT LEFT CASE" << std::endl;
         }
         break;
       }
@@ -1374,12 +1060,17 @@ class BstTree {
     }
   }
 
-  void resetHeader() {
-    if (header.count == 0) return;
-    iterator it = last();
-    it.node->right = &header.hnode;
-    header.hnode.parent = it.node;
-  };
+  bool isImbalanced(node_ptr n) {
+    long int bf = balanceFactor(n);
+    return (bf == 2 || bf == -2);
+  }
+
+  void rebalanceTree(node_ptr node) {
+    if (node == NULL || node == &header.hnode) return;
+    rebalanceTree(node->left);
+    rebalanceTree(node->right);
+    if (isImbalanced(node)) rebalanceNodeErase(node);
+  }
 
   template <typename A, typename B>
   bool f(A a, B b, std::less<Key> u = std::less<Key>()) {
@@ -1388,21 +1079,6 @@ class BstTree {
   template <typename A, typename B>
   bool f(A a, B b, std::less<Key> u = std::less<Key>()) const {
     return u(a, b);
-  }
-
- public:  // TODO:remove when fixed
-  iterator last() {
-    iterator itl(_startNode);
-    while (itl.node->right && itl.node->right != &header.hnode)
-      itl.node = itl.node->right;
-    return itl;
-  }
-
-  const_iterator last() const {
-    const_iterator itl(_startNode);
-    while (itl.node->right && itl.node->right != &header.hnode)
-      itl.node = itl.node->right;
-    return itl;
   }
 
   node_ptr searchToFind(const key_type& key, node_ptr root) const {
@@ -1428,6 +1104,9 @@ class BstTree {
     return searchToAdd(key, root->left);
   }
 
+  Node<value_type>* getStart() { return _startNode; };
+
+  // REMOVE WHEN FINISHED
   /* ********************************************************************** */
   /*                               MEMBER VALUES                            */
   /* ********************************************************************** */
@@ -1506,7 +1185,7 @@ void swap(BstTree<Key, T, Compare, Allocator>& x,
 #endif
 
 /* TO DO LEFT */
-// perf : if not ok : rebalance as AVL tree
 // transform to map
 // check iterator print shit
 // swap allocators
+// change all == with < <
