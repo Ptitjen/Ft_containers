@@ -103,7 +103,8 @@ void printWithIterators(ft::BstTree<int, char>& t) {
   std::cout << "|" << std::endl << std::endl;
 }
 
-int main(void) {
+int main(int argc, char** argv) {
+  (void)argc;
   {
     std::cout << BOLDGREEN
         "/* ***************************************************************** "
@@ -311,7 +312,6 @@ int main(void) {
     //   printThisTree(t);
     //   std::cout << BOLDMAGENTA "Size: " END << t.size() << std::endl;
 
-    std::cout << BOLDRED "Erase :" END << std::endl;
     // t.erase(t.begin());  // no child
     // printWithIterators(t);
     // printThisTree(t);
@@ -331,15 +331,21 @@ int main(void) {
     // t.erase(t.find(9));
     printThisTree(t);
     printWithIterators(t);
-    for (int i = 0; i < 20; i++) {
-      t.insert(ft::pair<int, char>(ft::make_pair(rand() % 100, 'Y')));
-      printWithIterators(t);
+    for (int i = 0; i < 1000; i++) {
+      t.insert(ft::pair<int, char>(ft::make_pair(rand() % 1000, 'Y')));
     }
     printThisTree(t);
     printWithIterators(t);
-    // t.erase(t.find(7));
+    for (int i = 0; i < 1000; i++) {
+      t.erase(rand() % 1000);
+    }
+
     // printThisTree(t);
     // printWithIterators(t);
+    std::cout << BOLDRED "Erase :" END << std::endl;
+    t.erase(atoi(argv[1]));
+    printThisTree(t);
+    printWithIterators(t);
 
     //   /****** ELEMENT ACCESS *****/
     //   std::cout << BOLDBLUE "[]: " END;
