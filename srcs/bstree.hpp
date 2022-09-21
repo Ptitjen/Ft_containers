@@ -7,6 +7,8 @@
 #include <limits>
 #include <stdexcept>
 
+#include "enable_if.hpp"
+#include "is_integral.hpp"
 #include "pair.hpp"
 #include "reverse_iterator.hpp"
 
@@ -24,8 +26,7 @@ class Node {
         left(NULL),
         right(NULL),
         left_height(0),
-        right_height(0),
-        height(0){};
+        right_height(0){};
 
   Node(Content c)
       : parent(NULL),
@@ -33,7 +34,6 @@ class Node {
         right(NULL),
         left_height(0),
         right_height(0),
-        height(0),
         content(c){};
 
   Node(const Node& other) : content(other.content) {
@@ -42,7 +42,6 @@ class Node {
     parent = other.parent;
     left_height = other.left_height;
     right_height = other.right_height;
-    height = other.height;
   }
 
   Node& operator=(const Node& other) {
@@ -53,7 +52,6 @@ class Node {
     parent = other.parent;
     left_height = other.left_height;
     right_height = other.right_height;
-    height = other.height;
     return (*this);
   }
 
@@ -66,7 +64,6 @@ class Node {
 
   std::size_t left_height;
   std::size_t right_height;
-  std::size_t height;
 };
 
 /* *********************************************************************** */
@@ -288,8 +285,8 @@ class BstTree {
 
   typedef Node<value_type>* node_ptr;
 
-  typedef BstTree::iterator iterator;
-  typedef BstTree::const_iterator const_iterator;
+  typedef iterator iterator;
+  typedef const_iterator const_iterator;
   typedef ft::reverse_iterator<iterator> reverse_iterator;
   typedef ft::reverse_iterator<const_iterator> const_reverse_iterator;
   class value_compare
@@ -323,7 +320,10 @@ class BstTree {
   };
 
   template <class InputIterator>
-  BstTree(InputIterator first, InputIterator last,
+  BstTree(typename ft::enable_if<!ft::is_integral<InputIterator>::value,
+                                 InputIterator>::type first,
+          typename ft::enable_if<!ft::is_integral<InputIterator>::value,
+                                 InputIterator>::type last,
           const key_compare& comp = key_compare(),
           const allocator_type& alloc = allocator_type()) {
     try {
@@ -340,7 +340,8 @@ class BstTree {
   };
 
   BstTree(const BstTree<Key, Value, Compare, Allocator>& x) {
-    a = node_allocator();  // ???
+    header = BstTreeHeader<ft::pair<Key, Value>, Allocator, Key, Value>();
+    a = Allocator();
     try {
       if (x.size() != 0) {
         for (const_iterator it = x.begin(); it != x.end(); it++)
@@ -421,7 +422,10 @@ class BstTree {
    */
 
   mapped_type& operator[](const key_type& k) {  // inserts element if not found
-    BstTree<Key, Value, Compare, Allocator> save(*this);
+    BstTree<Key, Value, Compare, Allocator> save;
+    // for (iterator it = begin(); it != end(); it++) {
+    //   std::cout << "BLI";
+    // }
     try {
       if (header.count == 0) {
         _startNode = a.allocate(1);
@@ -432,7 +436,6 @@ class BstTree {
         header.hnode.parent = _startNode;
         _startNode->parent = NULL;
         _startNode->left_height = 0;
-        _startNode->height = 0;
         _startNode->right_height = 0;
         header.count++;
         return _startNode->content.second;
@@ -456,9 +459,6 @@ class BstTree {
       newNode->parent = n;
       resetHeightsAbove(newNode);
       if (newNode->parent->parent != NULL) rebalanceNode(newNode);
-      _startNode->height = 0;
-      // resetAllHeights(_startNode->left);
-      // resetAllHeights(_startNode->right);
       header.count++;
       return newNode->content.second;
     } catch (std::exception& e) {
@@ -488,7 +488,10 @@ class BstTree {
    */
 
   pair<iterator, bool> insert(const value_type& x) {
-    //    BstTree<Key, Value, Compare, Allocator> save(*this);
+    BstTree<Key, Value, Compare, Allocator> save;
+    // for (iterator it = begin(); it != end(); it++) {
+    //   std::cout << "BLI";
+    // }
     try {
       if (header.count == 0) {
         _startNode = a.allocate(1);
@@ -499,7 +502,6 @@ class BstTree {
         header.hnode.parent = _startNode;
         _startNode->parent = NULL;
         _startNode->left_height = 0;
-        _startNode->height = 0;
         _startNode->right_height = 0;
         header.count++;
         return ft::pair<iterator, bool>(iterator(_startNode), true);
@@ -521,21 +523,21 @@ class BstTree {
         it.node->right = newNode;
       }
       newNode->parent = it.node;
-      // newNode->height = it.node->height + 1;
       resetHeightsAbove(newNode);
       if (newNode->parent->parent != NULL) rebalanceNode(newNode);
-      _startNode->height = 0;
-      // resetAllHeights(_startNode->left);
-      // resetAllHeights(_startNode->right);
       header.count++;
       return (ft::pair<iterator, bool>(iterator(newNode), true));
     } catch (std::exception& e) {
+      swap(save);
       throw e;
     }
   };
 
   iterator insert(iterator position, const value_type& x) {
-    // BstTree<Key, Value, Compare, Allocator> save(*this);
+    BstTree<Key, Value, Compare, Allocator> save;
+    // for (iterator it = begin(); it != end(); it++) {
+    //   std::cout << "BLI";
+    // }
     try {
       if (header.count == 0) {
         _startNode = a.allocate(1);
@@ -544,13 +546,10 @@ class BstTree {
         _startNode->left = NULL;
         _startNode->right = &header.hnode;
         header.hnode.parent = _startNode;
-
         _startNode->parent = NULL;
         _startNode->left_height = 0;
-        _startNode->height = 0;
         _startNode->right_height = 0;
         header.count++;
-
         return iterator(_startNode);
       }
       if (position->first == x.first) return position;  // position = new value
@@ -571,40 +570,39 @@ class BstTree {
           header.count++;
           resetHeightsAbove(newNode);
           if (newNode->parent->parent != NULL) rebalanceNode(newNode);
-          // _startNode->height = 0;
-          // resetAllHeights(_startNode->left);
-          // resetAllHeights(_startNode->right);
-
           return iterator(newNode);
         }
       }
       return insert(x).first;  // position == bad hint
     } catch (std::exception& e) {
-      //   swap(save);
+      swap(save);
       throw e;
     }
   };
 
   template <class InputIterator>
-  void insert(InputIterator first, InputIterator last) {
+  void insert(typename ft::enable_if<!ft::is_integral<InputIterator>::value,
+                                     InputIterator>::type first,
+              typename ft::enable_if<!ft::is_integral<InputIterator>::value,
+                                     InputIterator>::type last) {
+    iterator it = first;
     if (header.count == 0) {
       _startNode = a.allocate(1);
       a.construct(_startNode, Node<pair<Key, Value> >());
-      _startNode->content = first.node->content;
+      _startNode->content = it.node->content;
       _startNode->left = NULL;
       _startNode->right = &header.hnode;
       header.hnode.parent = _startNode;
       _startNode->parent = NULL;
       _startNode->left_height = 0;
-      _startNode->height = 0;
       _startNode->right_height = 0;
       header.count++;
-      first++;
+      it++;
     }
     iterator hint = begin();
-    while (first != last) {
-      hint = insert(hint, first.node->content);
-      first++;
+    while (it != last) {
+      hint = insert(hint, it.node->content);
+      it++;
     }
   };
 
@@ -776,9 +774,6 @@ class BstTree {
 
     dealloc(position.node);
     rebalanceTree(_startNode);
-    // _startNode->height = 0;
-    // resetAllHeights(_startNode->left);
-    // resetAllHeights(_startNode->right);
   }
 
   size_type erase(const key_type& x) {
@@ -897,8 +892,6 @@ class BstTree {
   /*                                  UTILS                                 */
   /* ********************************************************************** */
 
-  /*** Utils : put all in private when finished ***/
-
  private:
   void recursiveDealloc(node_ptr n) {
     if (n == NULL || n == &header.hnode) return;
@@ -915,13 +908,6 @@ class BstTree {
     n = NULL;
     header.count--;
   }
-
-  // void resetAllHeights(node_ptr n) {
-  //   if (n == NULL || n == &header.hnode) return;
-  //   n->height = (n->parent->height) + 1;
-  //   resetAllHeights(n->left);
-  //   resetAllHeights(n->right);
-  // }
 
   void resetHeightsAbove(node_ptr n) {
     while (n->parent->parent) {

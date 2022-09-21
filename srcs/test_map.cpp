@@ -28,36 +28,84 @@ void printDiffMap(ft::map<T, U>& my_m, std::map<T, U>& m) {
 
 int main(void) {
   Chrono chrono = Chrono("My map", "Std map");
-
-  ft::map<int, char> my_m;
-  std::map<int, char> m;
-  printDiffMap(my_m, m);
-  my_m.insert(ft::pair<int, char>(1, 'a'));
-  m.insert(std::pair<int, char>(1, 'a'));
-  printDiffMap(my_m, m);
-  for (int i = 0; i < 10000; i++) {
-    int n = rand() % 1000;
-    my_m.insert(ft::pair<int, char>(n, '@'));
-    m.insert(std::pair<int, char>(n, '@'));
+  {
+    /* SOME BASIC TESTS */
+    ft::map<int, char> my_m;
+    std::map<int, char> m;
+    printDiffMap(my_m, m);
+    my_m.insert(ft::pair<int, char>(1, 'a'));
+    m.insert(std::pair<int, char>(1, 'a'));
+    printDiffMap(my_m, m);
+    for (int i = 0; i < 10000; i++) {
+      int n = rand() % 1000;
+      my_m.insert(ft::pair<int, char>(n, '@'));
+      m.insert(std::pair<int, char>(n, '@'));
+    }
+    for (int i = 0; i < 5000; i++) {
+      int n = rand() % 1000;
+      my_m.insert(ft::pair<int, char>(n, '#'));
+      m.insert(std::pair<int, char>(n, '#'));
+    }
+    printDiffMap(my_m, m);
   }
-  for (int i = 0; i < 5000; i++) {
-    int n = rand() % 1000;
-    my_m.insert(ft::pair<int, char>(n, '#'));
-    m.insert(std::pair<int, char>(n, '#'));
-  }
-  printDiffMap(my_m, m);
-
   std::cout << std::endl;
+  {
+    /* PERF TEST : INSERT */
+    Chrono chrono = Chrono("My map", "Std map");
 
-  chrono.begin();
-  for (int i = 0; i < 100000; i++) {
-    int n = rand() % 100000;
-    my_m.insert(ft::pair<int, char>(n, '$'));
+    ft::map<int, char> my_m;
+    std::map<int, char> m;
+    chrono.begin();
+    for (int i = 0; i < 1000000; i++) {
+      int n = rand() % 1000000;
+      my_m.insert(ft::pair<int, char>(n, '$'));
+    }
+    chrono.stop();
+    for (int i = 0; i < 1000000; i++) {
+      int n = rand() % 1000000;
+      m.insert(std::pair<int, char>(n, '$'));
+    }
+    chrono.stop();
+
+    /* PERF TEST : ERASE */
+    /* PERF TEST : FIND */
   }
-  chrono.stop();
-  for (int i = 0; i < 100000; i++) {
-    int n = rand() % 100000;
-    m.insert(std::pair<int, char>(n, '$'));
+  {
+    /* CONSTRUCTORS */
+    /* default */
+    ft::map<int, char> my_m;
+    std::map<int, char> m;
+    printDiffMap(my_m, m);
+
+    /* iterators */  // PB
+    // ft::map<int, char> my_m_it;
+    // std::map<int, char> m_it;
+    // for (int i = 0; i < 100; i++) {
+    //   int n = rand() % 100;
+    //   my_m_it.insert(ft::pair<int, char>(n, '@'));
+    //   m_it.insert(std::pair<int, char>(n, '@'));
+    // }
+    // ft::map<int, char> my_m_it_cpy(my_m_it.begin(), my_m_it.end());
+    // std::map<int, char> m_it_cpy(m_it.begin(), m_it.end());
+    // printDiffMap(my_m, m);
+
+    /* = */
+    // ft::map<int, char> my_m1 = my_m;
+    // std::map<int, char> m1 = m;
+    // printDiffMap(my_m1, m1);
+    // my_m1.insert(ft::pair<int, char>(1, 'a'));
+    // m1.insert(std::pair<int, char>(1, 'a'));
+    // printDiffMap(my_m, m);
+    // printDiffMap(my_m1, m1);
+
+    /* () */
+    // ft::map<int, char> my_m2(my_m1);
+    // std::map<int, char> m2(m1);
+    // printDiffMap(my_m2, m2);
+    // my_m2.insert(ft::pair<int, char>(2, 'b'));
+    // m2.insert(std::pair<int, char>(2, 'b'));
+    // printDiffMap(my_m, m);
+    // printDiffMap(my_m1, m1);
+    // printDiffMap(my_m2, m2);
   }
-  chrono.stop();
 }
