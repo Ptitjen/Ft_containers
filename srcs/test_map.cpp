@@ -78,34 +78,42 @@ int main(void) {
     printDiffMap(my_m, m);
 
     /* iterators */  // PB
-    // ft::map<int, char> my_m_it;
-    // std::map<int, char> m_it;
-    // for (int i = 0; i < 100; i++) {
-    //   int n = rand() % 100;
-    //   my_m_it.insert(ft::pair<int, char>(n, '@'));
-    //   m_it.insert(std::pair<int, char>(n, '@'));
-    // }
-    // ft::map<int, char> my_m_it_cpy(my_m_it.begin(), my_m_it.end());
+    ft::map<int, char> my_m_it;
+    std::map<int, char> m_it;
+    for (int i = 0; i < 100; i++) {
+      int n = rand() % 100;
+      my_m_it.insert(ft::pair<int, char>(n, '@'));
+      m_it.insert(std::pair<int, char>(n, '@'));
+    }
+
+    /**************** TO DO *******************/
+    // ft::map<int, char> my_m_it_cpy(my_m_it.begin(), my_m_it.end()); );
     // std::map<int, char> m_it_cpy(m_it.begin(), m_it.end());
     // printDiffMap(my_m, m);
 
     /* = */
-    // ft::map<int, char> my_m1 = my_m;
-    // std::map<int, char> m1 = m;
-    // printDiffMap(my_m1, m1);
-    // my_m1.insert(ft::pair<int, char>(1, 'a'));
-    // m1.insert(std::pair<int, char>(1, 'a'));
-    // printDiffMap(my_m, m);
-    // printDiffMap(my_m1, m1);
+    my_m.insert(ft::pair<int, char>(0, '#'));
+    m.insert(std::pair<int, char>(0, '#'));
+    my_m.insert(ft::pair<int, char>(9, '&'));
+    m.insert(std::pair<int, char>(9, '&'));
+    ft::map<int, char> my_m1;
+    my_m1 = my_m;
+    std::map<int, char> m1;
+    m1 = m;
+    printDiffMap(my_m1, m1);
+    my_m1.insert(ft::pair<int, char>(1, 'a'));
+    m1.insert(std::pair<int, char>(1, 'a'));
+    printDiffMap(my_m, m);
+    printDiffMap(my_m1, m1);
 
     /* () */
-    // ft::map<int, char> my_m2(my_m1);
-    // std::map<int, char> m2(m1);
-    // printDiffMap(my_m2, m2);
-    // my_m2.insert(ft::pair<int, char>(2, 'b'));
-    // m2.insert(std::pair<int, char>(2, 'b'));
-    // printDiffMap(my_m, m);
-    // printDiffMap(my_m1, m1);
-    // printDiffMap(my_m2, m2);
+    ft::map<int, char> my_m2(my_m1);
+    std::map<int, char> m2(m1);
+    printDiffMap(my_m2, m2);
+    my_m2.insert(ft::pair<int, char>(2, 'b'));
+    m2.insert(std::pair<int, char>(2, 'b'));
+    printDiffMap(my_m, m);
+    printDiffMap(my_m1, m1);
+    printDiffMap(my_m2, m2);
   }
 }

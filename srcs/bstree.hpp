@@ -113,6 +113,7 @@ class BstTree {
     iterator() throw() : node(NULL){};
     iterator(value_type node) : node(&node){};
     iterator(node_pointer ptr) throw() : node(ptr) {}
+
     iterator(iterator const& it) throw() : node(it.node){};
     iterator& operator=(iterator const& it) {
       if (&it == this) return (*this);
@@ -319,7 +320,7 @@ class BstTree {
     }
   };
 
-  template <class InputIterator>
+  template <typename InputIterator>
   BstTree(typename ft::enable_if<!ft::is_integral<InputIterator>::value,
                                  InputIterator>::type first,
           typename ft::enable_if<!ft::is_integral<InputIterator>::value,
@@ -332,16 +333,13 @@ class BstTree {
         insert(first.node->content);
         first++;
       }
-
     } catch (std::exception& e) {
       clear();  // ?
       throw e;
     }
-  };
+  };  // marche po
 
   BstTree(const BstTree<Key, Value, Compare, Allocator>& x) {
-    header = BstTreeHeader<ft::pair<Key, Value>, Allocator, Key, Value>();
-    a = Allocator();
     try {
       if (x.size() != 0) {
         for (const_iterator it = x.begin(); it != x.end(); it++)
@@ -422,14 +420,15 @@ class BstTree {
    */
 
   mapped_type& operator[](const key_type& k) {  // inserts element if not found
-    BstTree<Key, Value, Compare, Allocator> save;
-    // for (iterator it = begin(); it != end(); it++) {
-    //   std::cout << "BLI";
-    // }
+
     try {
       if (header.count == 0) {
-        _startNode = a.allocate(1);
-        a.construct(_startNode, Node<pair<Key, Value> >());
+        try {
+          _startNode = a.allocate(1);
+          a.construct(_startNode, Node<pair<Key, Value> >());
+        } catch (std::exception& e) {
+          throw e;
+        }
         _startNode->content = k;
         _startNode->left = NULL;
         _startNode->right = &header.hnode;
@@ -462,7 +461,6 @@ class BstTree {
       header.count++;
       return newNode->content.second;
     } catch (std::exception& e) {
-      swap(save);
       throw e;
     }
   };
@@ -488,14 +486,14 @@ class BstTree {
    */
 
   pair<iterator, bool> insert(const value_type& x) {
-    BstTree<Key, Value, Compare, Allocator> save;
-    // for (iterator it = begin(); it != end(); it++) {
-    //   std::cout << "BLI";
-    // }
     try {
       if (header.count == 0) {
-        _startNode = a.allocate(1);
-        a.construct(_startNode, Node<pair<Key, Value> >());
+        try {
+          _startNode = a.allocate(1);
+          a.construct(_startNode, Node<pair<Key, Value> >());
+        } catch (std::exception& e) {
+          throw e;
+        }
         _startNode->content = x;
         _startNode->left = NULL;
         _startNode->right = &header.hnode;
@@ -528,20 +526,19 @@ class BstTree {
       header.count++;
       return (ft::pair<iterator, bool>(iterator(newNode), true));
     } catch (std::exception& e) {
-      swap(save);
       throw e;
     }
   };
 
   iterator insert(iterator position, const value_type& x) {
-    BstTree<Key, Value, Compare, Allocator> save;
-    // for (iterator it = begin(); it != end(); it++) {
-    //   std::cout << "BLI";
-    // }
     try {
       if (header.count == 0) {
-        _startNode = a.allocate(1);
-        a.construct(_startNode, Node<pair<Key, Value> >());
+        try {
+          _startNode = a.allocate(1);
+          a.construct(_startNode, Node<pair<Key, Value> >());
+        } catch (std::exception& e) {
+          throw e;
+        }
         _startNode->content = x;
         _startNode->left = NULL;
         _startNode->right = &header.hnode;
@@ -558,8 +555,12 @@ class BstTree {
         if (f(position->first, x.first)) {
           position--;
           Node<value_type>* newNode;
-          newNode = a.allocate(1);
-          a.construct(newNode, Node<pair<Key, Value> >());
+          try {
+            newNode = a.allocate(1);
+            a.construct(newNode, Node<pair<Key, Value> >());
+          } catch (std::exception& e) {
+            throw e;
+          }
           newNode->content = x;
           if (position.node->right == &header.hnode) {
             newNode->right = &header.hnode;
@@ -575,34 +576,69 @@ class BstTree {
       }
       return insert(x).first;  // position == bad hint
     } catch (std::exception& e) {
-      swap(save);
       throw e;
     }
   };
 
+  // NOT SUPPOSED TO EXIST
+  // void insert(iterator first, iterator last) {
+  //   try {
+  //     iterator it = first;
+  //     if (header.count == 0) {
+  //       try {
+  //         _startNode = a.allocate(1);
+  //         a.construct(_startNode, Node<pair<Key, Value> >());
+  //       } catch (std::exception& e) {
+  //         throw e;
+  //       }
+  //       _startNode->content = it.node->content;
+  //       _startNode->left = NULL;
+  //       _startNode->right = &header.hnode;
+  //       header.hnode.parent = _startNode;
+  //       _startNode->parent = NULL;
+  //       _startNode->left_height = 0;
+  //       _startNode->right_height = 0;
+  //       header.count++;
+  //       it++;
+  //     }
+  //     iterator hint = begin();
+  //     while (it != last) {
+  //       hint = insert(hint, it.node->content);
+  //       it++;
+  //     }
+  //   } catch (std::exception& e) {
+  //     throw e;
+  //   }
+  // };
+
   template <class InputIterator>
-  void insert(typename ft::enable_if<!ft::is_integral<InputIterator>::value,
-                                     InputIterator>::type first,
-              typename ft::enable_if<!ft::is_integral<InputIterator>::value,
-                                     InputIterator>::type last) {
-    iterator it = first;
-    if (header.count == 0) {
-      _startNode = a.allocate(1);
-      a.construct(_startNode, Node<pair<Key, Value> >());
-      _startNode->content = it.node->content;
-      _startNode->left = NULL;
-      _startNode->right = &header.hnode;
-      header.hnode.parent = _startNode;
-      _startNode->parent = NULL;
-      _startNode->left_height = 0;
-      _startNode->right_height = 0;
-      header.count++;
-      it++;
-    }
-    iterator hint = begin();
-    while (it != last) {
-      hint = insert(hint, it.node->content);
-      it++;
+  void insert(InputIterator first, InputIterator last) {
+    try {
+      iterator it = first;
+      if (header.count == 0) {
+        try {
+          _startNode = a.allocate(1);
+          a.construct(_startNode, Node<pair<Key, Value> >());
+        } catch (std::exception& e) {
+          throw e;
+        }
+        _startNode->content = it.node->content;
+        _startNode->left = NULL;
+        _startNode->right = &header.hnode;
+        header.hnode.parent = _startNode;
+        _startNode->parent = NULL;
+        _startNode->left_height = 0;
+        _startNode->right_height = 0;
+        header.count++;
+        it++;
+      }
+      iterator hint = begin();
+      while (it != last) {
+        hint = insert(hint, it.node->content);
+        it++;
+      }
+    } catch (std::exception& e) {
+      throw e;
     }
   };
 
