@@ -1,6 +1,6 @@
-SRCSFT = srcs/mainFt.cpp srcs/tests_utils/Chrono.cpp srcs/tests_utils/tests_utils.cpp
+SRCSFT = srcs/mainFt.cpp srcs/tests_utils/chrono.cpp srcs/tests_utils/tests_utils.cpp
 
-SRCSSTD = srcs/mainStd.cpp srcs/tests_utils/Chrono.cpp srcs/tests_utils/tests_utils.cpp
+SRCSSTD = srcs/mainStd.cpp srcs/tests_utils/chrono.cpp srcs/tests_utils/tests_utils.cpp
 
 OBJSFT = ${SRCSFT:.cpp=.o}
 
