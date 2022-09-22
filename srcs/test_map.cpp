@@ -50,8 +50,10 @@ int main(void) {
     printDiffMap(my_m, m);
   }
   std::cout << std::endl;
-  { /* ******************* PERFORMANCE ****************** */
-
+  /* ***************************************************************** */
+  /*                          PERFORMANCE                              */
+  /* ***************************************************************** */
+  {
     std::cout << BOLDBLUE "********* Performance *********" END << std::endl;
 
     /* PERF TEST : INSERT */
@@ -74,10 +76,12 @@ int main(void) {
     /* PERF TEST : ERASE */
     /* PERF TEST : FIND */
   }
+  /* ***************************************************************** */
+  /*                          CONSTRUCTORS                             */
+  /* ***************************************************************** */
   {
     std::cout << BOLDBLUE "********* Constructors *********" END << std::endl;
 
-    /* ******************* CONSTRUCTORS ****************** */
     /* default */
     ft::map<int, char> my_m;
     std::map<int, char> m;
@@ -122,6 +126,10 @@ int main(void) {
     printDiffMap(my_m1, m1);
     printDiffMap(my_m2, m2);
   }
+
+  /* ***************************************************************** */
+  /*                          ITERATORS                                */
+  /* ***************************************************************** */
   {
     std::cout << std::endl
               << BOLDBLUE "********* Iterators *********" END << std::endl;
@@ -194,24 +202,67 @@ int main(void) {
       }
     }
     if (success) std::cout << BOLDGREEN "OK " END;
-
-    // std::map<int, char> m;
-    // for (int i = 33; i < 65; i++) {
-    //   m.insert(std::pair<int, char>(i, (char)i));
-    // }
-    // for (std::map<int, char>::iterator it = m.begin(); it != m.end(); it++) {
-    //   std ::cout << it->first << " " << it->second << std::endl;
-    // }
-
-    // for (ft::map<int, char>::iterator it = my_m.end(); it != my_m.begin();
-    //      it--) {
-    //   std ::cout << it->first << " " << it->second << std::endl;
-    // }
-
-    // for (std::map<int, char>::reverse_iterator it = m.rbegin(); it !=
-    // m.rend();
-    //      it++) {
-    //   std ::cout << it->first << " " << it->second << std::endl;
-    // }
   }
+  /* ***************************************************************** */
+  /*                          CAPACITY                                 */
+  /* ***************************************************************** */
+  {
+    std::cout << std::endl
+              << BOLDBLUE "********* Capacity *********" END << std::endl;
+    ft::map<int, char> my_m;
+    std::map<int, char> m;
+    std::cout << "Empty: ";
+    std::cout << (m.empty() == my_m.empty() ? BOLDGREEN "OK " END
+                                            : BOLDRED "KO " END);
+
+    for (int i = 33; i < 65; i++) {
+      my_m.insert(ft::pair<int, char>(i, (char)i));
+      m.insert(std::pair<int, char>(i, (char)i));
+    }
+    std::cout << (m.empty() == my_m.empty() ? BOLDGREEN "OK " END
+                                            : BOLDRED "KO " END);
+    std::cout << std::endl;
+    std::cout << "Size: ";
+    std::cout << (m.size() == my_m.size() ? BOLDGREEN "OK " END
+                                          : BOLDRED "KO " END);
+  }
+  /* ***************************************************************** */
+  /*                          ELEMENT ACCESS                           */
+  /* ***************************************************************** */
+  {
+    std::cout << std::endl
+              << BOLDBLUE "********* Element access *********" END << std::endl;
+    ft::map<int, char> my_m;
+    std::map<int, char> m;
+    for (int i = 33; i < 65; i++) {
+      my_m.insert(ft::pair<int, char>(i, (char)i));
+      m.insert(std::pair<int, char>(i, (char)i));
+    }
+    std::cout
+        << "Size before access [] to not existing element => adds element :"
+        << m.size() << " " << my_m.size() << std::endl;
+
+    std::cout << (my_m[32] == m[32] ? BOLDGREEN "OK " END
+                                    : BOLDRED
+                      "KO " END);  // does not exist : add
+    std::cout << std::endl
+              << "Size after => added element :" << m.size() << " "
+              << my_m.size() << std::endl;
+    std::cout << (my_m[33] == m[33] ? BOLDGREEN "OK " END : BOLDRED "KO " END);
+    std::cout << (my_m[61] == m[61] ? BOLDGREEN "OK " END : BOLDRED "KO " END);
+    std::cout << (my_m[75] == m[75] ? BOLDGREEN "OK " END : BOLDRED "KO " END);
+    printDiffMap(my_m, m);
+    my_m[75] = 'A';
+    m[75] = 'A';
+    printDiffMap(my_m, m);
+    my_m[87] = 'B';
+    m[87] = 'B';
+    my_m[60] = 'C';
+    m[60] = 'C';
+    printDiffMap(my_m, m);
+  }
+  /* ***************************************************************** */
+  /*                              MODIFIERS                            */
+  /* ***************************************************************** */
+  {}
 }

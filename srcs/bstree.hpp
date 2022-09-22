@@ -502,14 +502,14 @@ class BstTree {
   /* ***********************************************************************
    */
   iterator begin() throw() {
-    if (header.count == 0) return end();  // ???
+    if (header.count == 0) return end();
     iterator itb(_startNode);
     while (itb.node->left && itb.node->left != &header.rendNode)
       itb.node = itb.node->left;
     return itb;
   }
   const_iterator begin() const throw() {
-    if (header.count == 0) return end();  // ???
+    if (header.count == 0) return end();
     const_iterator itb(_startNode);
     while (itb.node->left && itb.node->left != &header.rendNode)
       itb.node = itb.node->left;
@@ -555,8 +555,7 @@ class BstTree {
   /* ***********************************************************************
    */
 
-  mapped_type& operator[](const key_type& k) {  // inserts element if not found
-
+  mapped_type& operator[](const key_type& k) {
     try {
       if (header.count == 0) {
         try {
@@ -565,13 +564,11 @@ class BstTree {
         } catch (std::exception& e) {
           throw e;
         }
-        _startNode->content = k;
-        // _startNode->left = NULL;
+        _startNode->content.first = k;
         _startNode->left = &header.rendNode;
         _startNode->right = &header.endNode;
         header.endNode.parent = _startNode;
         header.rendNode.parent = _startNode;
-
         _startNode->parent = NULL;
         _startNode->left_height = 0;
         _startNode->right_height = 0;
@@ -579,7 +576,8 @@ class BstTree {
         return _startNode->content.second;
       }
       node_ptr n = searchToAdd(k, _startNode);
-      if (n->content.first == k) return n->content.second;
+      if ((!f(n->content.first, k) && !f(k, n->content.first)))
+        return n->content.second;
       Node<value_type>* newNode;
       newNode = a.allocate(1);
       a.construct(newNode, Node<pair<Key, Value> >());
@@ -610,14 +608,14 @@ class BstTree {
 
   mapped_type& at(const key_type& k) {  // strong guarantee : something to do??
     node_ptr n = searchToAdd(k, _startNode);
-    if (n->content.first == k)  // replace
+    if (!f(n->content->first, k) && !f(k, n->content->first))  // replace
       return n->content.second;
     throw std::out_of_range("");
   };
 
   const mapped_type& at(const key_type& k) const {
     node_ptr n = searchToAdd(k, _startNode);
-    if (n->content.first == k)  // replace
+    if ((!f(n->content->first, k) && !f(k, n->content->first)))  // replace
       return n->content.second;
     throw std::out_of_range("");
   };
@@ -638,7 +636,6 @@ class BstTree {
           throw e;
         }
         _startNode->content = x;
-        //_startNode->left = NULL;
         _startNode->left = &header.rendNode;
         _startNode->right = &header.endNode;
         header.endNode.parent = _startNode;
@@ -650,7 +647,7 @@ class BstTree {
         return ft::pair<iterator, bool>(iterator(_startNode), true);
       }
       iterator it = iterator(searchToAdd(x.first, _startNode));
-      if (it->first == x.first)  //  change == with !< && !>
+      if (!f(it->first, x.first) && !f(x.first, it->first))
         return (ft::pair<iterator, bool>(it, false));
       Node<value_type>* newNode;
       newNode = a.allocate(1);
@@ -700,9 +697,11 @@ class BstTree {
         header.count++;
         return iterator(_startNode);
       }
-      if (position->first == x.first) return position;  // position = new value
-      if (!f(position->first, x.first)) {               // position == good hint
-        position++;                                     // limit if end
+
+      if (!f(position->first, x.first) && !f(x.first, position->first))
+        return position;                   // position = new value
+      if (!f(position->first, x.first)) {  // position == good hint
+        position++;                        // limit if end
         if (f(position->first, x.first)) {
           position--;
           Node<value_type>* newNode;
@@ -1038,7 +1037,9 @@ class BstTree {
     while (f(it.node->content.first, k) && it != end()) {
       it++;
     }
-    if (it.node->content.first == k && it != end()) it++;
+    if ((!f(it.node->content.first, k) && !f(k, it.node->content.first)) &&
+        it != end())
+      it++;
     return it;
   };
 
@@ -1047,7 +1048,10 @@ class BstTree {
     while (f(it.node->content.first, k) && it != end()) {
       it++;
     }
-    if (it.node->content.first == k && it != end()) it++;
+
+    if ((!f(it.node->content.first, k) && !f(k, it.node->content.first)) &&
+        it != end())
+      it++;
     return it;
   };
 
@@ -1242,7 +1246,9 @@ class BstTree {
   node_ptr searchToFind(const key_type& key, node_ptr root) const {
     if (root == NULL || root == &header.rendNode)
       return const_cast<node_ptr>(&(header.endNode));
-    if (root->content.first == key) return root;
+
+    if (!f(root->content.first, key) && !f(key, root->content.first))
+      return root;
     if (f(root->content.first, key)) {
       if (root->right == &header.endNode)
         return const_cast<node_ptr>(&(header.endNode));
@@ -1253,7 +1259,8 @@ class BstTree {
 
   node_ptr searchToAdd(const key_type& key, node_ptr root) {
     if (root == NULL || root == &header.rendNode) return NULL;
-    if (root->content.first == key) return root;
+    if (!f(root->content.first, key) && !f(key, root->content.first))
+      return root;
     if (f(root->content.first, key)) {
       if (root->right == &header.endNode) return header.endNode.parent;
       if (root->right == NULL) return root;
