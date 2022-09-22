@@ -880,7 +880,7 @@ class BstTree {
       if (position.node->right == &header.endNode) {
       }
       if (noChild) {
-        position.node->parent->right = NULL;
+        position.node->parent->right = position.node->right;
         position.node->parent->right_height = 0;
         resetHeightAboveErase(position.node->parent);
         rebalanceNodeBis(position.node->parent);

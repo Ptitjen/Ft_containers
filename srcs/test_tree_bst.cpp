@@ -337,19 +337,19 @@ int main(int argc, char** argv) {
     // printWithIterators(t);
     std::cout << BOLDBLUE "Erase: " END << std::endl;
 
-    for (int i = 0; i < 2000; i++) {
-      int n = rand() % 200;
+    for (int i = 0; i < 20000; i++) {
+      int n = rand() % 20000;
       t.insert(ft::pair<int, char>(ft::make_pair(n, 'Y')));
     }
-    printWithIterators(t);
-    // t.erase(199);
-    //  printWithIterators(t);
+    // printWithIterators(t);
+    //  t.erase(199);
+    //   printWithIterators(t);
 
     // std::cout << BOLDMAGENTA "ERASE" END << std::endl;
     // // printThisTree(t);
     // // printWithIterators(t);
-    for (int i = 0; i < 200; i++) {
-      t.erase(rand() % 200);
+    for (int i = 0; i < 2000; i++) {
+      t.erase(rand() % 20000);
     }
 
     // printThisTree(t);
