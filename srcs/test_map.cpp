@@ -2,7 +2,6 @@
 #include <stdexcept>
 
 #include "containers/map.hpp"
-#include "containers_utils/bstree.hpp"
 #include "functions/pair.hpp"
 #include "tests_utils/chrono.hpp"
 #include "tests_utils/tests_utils.hpp"
@@ -90,69 +89,69 @@ int main(void) {  // NOLINT
     }
     /* PERF TEST : ERASE */
     {
-      //   std::cout << "Erase: ";
+      std::cout << "Erase: ";
 
-      //   Chrono chrono = Chrono("My map", "Std map");
+      Chrono chrono = Chrono("My map", "Std map");
 
-      //   ft::map<int, char> my_m;
-      //   std::map<int, char> m;
-      //   for (int i = 0; i < 1000000; i++) {
-      //     my_m.insert(ft::pair<int, char>(i, '$'));
-      //   }
-      //   for (int i = 0; i < 1000000; i++) {
-      //     m.insert(std::pair<int, char>(i, '$'));
-      //   }
-      //   chrono.begin();
-      //   my_m.erase(1);
-      //   my_m.erase(50000);
-      //   my_m.erase(100000);
-      //   my_m.erase(500000);
-      //   chrono.stop();
-      //   m.erase(1);
-      //   m.erase(50000);
-      //   m.erase(100000);
-      //   m.erase(500000);
-      //   chrono.stop();
+      ft::map<int, char> my_m;
+      std::map<int, char> m;
+      for (int i = 0; i < 1000000; i++) {
+        my_m.insert(ft::pair<int, char>(i, '$'));
+      }
+      for (int i = 0; i < 1000000; i++) {
+        m.insert(std::pair<int, char>(i, '$'));
+      }
+      chrono.begin();
+      my_m.erase(1);
+      my_m.erase(50000);
+      my_m.erase(100000);
+      my_m.erase(500000);
+      chrono.stop();
+      m.erase(1);
+      m.erase(50000);
+      m.erase(100000);
+      m.erase(500000);
+      chrono.stop();
 
-      //   std::cout << "Reinsert after erase: ";
+      std::cout << "Reinsert after erase: ";
 
-      //   /* Reinsert after */
-      //   Chrono chrono2 = Chrono("My map", "Std map");
-      //   chrono2.begin();
-      //   for (int i = 0; i < 1000000; i++) {
-      //     int n = rand() % 10000000;
-      //     my_m.insert(ft::pair<int, char>(n, '$'));
-      //   }
-      //   chrono2.stop();
-      //   for (int i = 0; i < 1000000; i++) {
-      //     int n = rand() % 10000000;
-      //     m.insert(std::pair<int, char>(n, '$'));
-      //   }
-      //   chrono2.stop();
-      // }
-      // /* PERF TEST : FIND */
-      // {
-      //   std::cout << "Find: ";
+      /* Reinsert after */
+      Chrono chrono2 = Chrono("My map", "Std map");
+      chrono2.begin();
+      for (int i = 0; i < 1000000; i++) {
+        int n = rand() % 10000000;
+        my_m.insert(ft::pair<int, char>(n, '$'));
+      }
+      chrono2.stop();
+      for (int i = 0; i < 1000000; i++) {
+        int n = rand() % 10000000;
+        m.insert(std::pair<int, char>(n, '$'));
+      }
+      chrono2.stop();
+    }
+    /* PERF TEST : FIND */
+    {
+      std::cout << "Find: ";
 
-      //   Chrono chrono = Chrono("My map", "Std map");
+      Chrono chrono = Chrono("My map", "Std map");
 
-      //   ft::map<int, char> my_m;
-      //   std::map<int, char> m;
-      //   for (int i = 0; i < 1000000; i++) {
-      //     my_m.insert(ft::pair<int, char>(i, '$'));
-      //   }
-      //   for (int i = 0; i < 1000000; i++) {
-      //     m.insert(std::pair<int, char>(i, '$'));
-      //   }
-      //   chrono.begin();
-      //   for (int i = 0; i < 1000000; i++) {
-      //     my_m.find(i);
-      //   }
-      //   chrono.stop();
-      //   for (int i = 0; i < 1000000; i++) {
-      //     my_m.find(i);
-      //   }
-      //   chrono.stop();
+      ft::map<int, char> my_m;
+      std::map<int, char> m;
+      for (int i = 0; i < 1000000; i++) {
+        my_m.insert(ft::pair<int, char>(i, '$'));
+      }
+      for (int i = 0; i < 1000000; i++) {
+        m.insert(std::pair<int, char>(i, '$'));
+      }
+      chrono.begin();
+      for (int i = 0; i < 1000000; i++) {
+        my_m.find(i);
+      }
+      chrono.stop();
+      for (int i = 0; i < 1000000; i++) {
+        my_m.find(i);
+      }
+      chrono.stop();
     }
   } /* ***************************************************************** */
   /*                          CONSTRUCTORS                             */
