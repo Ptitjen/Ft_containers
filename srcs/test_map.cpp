@@ -7,6 +7,20 @@
 #include "map.hpp"
 #include "pair.hpp"
 #include "tests_utils.hpp"
+
+template <class T, class U>
+void printMap(ft::map<T, U>& my_m, std::map<T, U>& m) {
+  bool success = true;
+
+  for (typename ft::map<T, U>::iterator it = my_m.begin(); it != my_m.end();
+       it++) {
+    std::cout << it->first << " " << it->second << std::endl;
+  }
+  for (typename std::map<T, U>::iterator it = m.begin(); it != m.end(); it++) {
+    std::cout << it->first << " " << it->second << std::endl;
+  }
+}
+
 template <class T, class U>
 void printDiffMap(ft::map<T, U>& my_m, std::map<T, U>& m) {
   bool success = true;
@@ -264,5 +278,285 @@ int main(void) {
   /* ***************************************************************** */
   /*                              MODIFIERS                            */
   /* ***************************************************************** */
-  {}
+  {
+    std::cout << std::endl
+              << BOLDBLUE "********* Modifiers *********" END << std::endl;
+    std::cout << std::endl << "Basic insert : " << std::endl;
+    {
+      ft::map<int, char> my_m;
+      std::map<int, char> m;
+      for (int i = 33; i < 65; i++) {
+        int n = rand() % 32 + 33;
+        my_m.insert(ft::pair<int, char>(n, (char)n));
+        m.insert(std::pair<int, char>(n, (char)n));
+      }
+      for (int i = 33; i < 65; i++) {
+        int n = rand() % 32 + 33;
+        my_m.insert(ft::pair<int, char>(n, (char)n));
+        m.insert(std::pair<int, char>(n, (char)n));
+      }
+      printDiffMap(my_m, m);
+    }
+
+    std::cout << std::endl << "Hint insert : " << std::endl;
+    {
+      ft::map<int, char> my_m;
+      std::map<int, char> m;
+      for (int i = 33; i < 65; i++) {
+        i++;
+        my_m.insert(ft::pair<int, char>(i, (char)i));
+        m.insert(std::pair<int, char>(i, (char)i));
+      }
+      for (int i = 33; i < 65; i++) {
+        my_m.insert(my_m.find(i - 1), ft::pair<int, char>(i, (char)i));
+        m.insert(m.find(i - 1), std::pair<int, char>(i, (char)i));
+      }
+
+      printDiffMap(my_m, m);
+    }
+    std::cout << std::endl << "Iterator insert : " << std::endl;
+    {
+      ft::map<int, char> my_m;
+      std::map<int, char> m;
+      for (int i = 33; i < 65; i++) {
+        i++;
+        my_m.insert(ft::pair<int, char>(i, (char)i));
+        m.insert(std::pair<int, char>(i, (char)i));
+      }
+      ft::map<int, char> my_m1;
+      std::map<int, char> m1;
+      for (int i = 32; i < 64; i++) {
+        i++;
+        my_m1.insert(ft::pair<int, char>(i, (char)i));
+        m1.insert(std::pair<int, char>(i, (char)i));
+      }
+      my_m.insert(my_m1.begin(), my_m1.end());
+      m.insert(m1.begin(), m1.end());
+      printDiffMap(my_m, m);
+
+      std::cout << std::endl << "Erase iterator : " << std::endl;
+      my_m.erase(my_m.find(33));
+      m.erase(m.find(33));
+      printDiffMap(my_m, m);
+      my_m.erase(my_m.begin());
+      m.erase(m.begin());
+      printDiffMap(my_m, m);
+      my_m.erase(my_m.find(45));
+      m.erase(m.find(45));
+      printDiffMap(my_m, m);
+      my_m.erase(my_m.find(63));
+      m.erase(m.find(63));
+      printDiffMap(my_m, m);
+
+      std::cout << std::endl << "Erase key : " << std::endl;
+      my_m.erase(47);
+      m.erase(47);
+      printDiffMap(my_m, m);
+      my_m.erase(0);
+      m.erase(0);
+      printDiffMap(my_m, m);
+      my_m.erase(62);
+      m.erase(62);
+      printDiffMap(my_m, m);
+      my_m.erase(51);
+      m.erase(51);
+      printDiffMap(my_m, m);
+    }
+    {
+      std::cout << std::endl << "Erase iterator : " << std::endl;
+
+      ft::map<int, char> my_m;
+      std::map<int, char> m;
+      for (int i = 33; i < 65; i++) {
+        my_m.insert(ft::pair<int, char>(i, (char)i));
+        m.insert(std::pair<int, char>(i, (char)i));
+      }
+      my_m.erase(my_m.find(35), my_m.find(55));
+      m.erase(m.find(35), m.find(55));
+      printDiffMap(my_m, m);
+    }
+    {
+      std::cout << std::endl << "Swap : " << std::endl;
+      ft::map<int, char> my_m;
+      std::map<int, char> m;
+      for (int i = 33; i < 65; i++) {
+        i++;
+        my_m.insert(ft::pair<int, char>(i, (char)i));
+        m.insert(std::pair<int, char>(i, (char)i));
+      }
+      ft::map<int, char> my_m1;
+      std::map<int, char> m1;
+      for (int i = 32; i < 64; i++) {
+        i++;
+        my_m1.insert(ft::pair<int, char>(i, (char)i));
+        m1.insert(std::pair<int, char>(i, (char)i));
+      }
+      printDiffMap(my_m, m);
+      my_m.swap(my_m1);
+      m.swap(m1);
+      my_m1.insert(ft::pair<int, char>(8, '*'));
+      m1.insert(std::pair<int, char>(8, '*'));
+      my_m.insert(ft::pair<int, char>(7, '~'));
+      m.insert(std::pair<int, char>(7, '~'));
+      printDiffMap(my_m, m);
+      printDiffMap(my_m1, m1);
+
+      std::cout << std::endl << "Clear : " << std::endl;
+
+      my_m.clear();
+      m.clear();
+      printDiffMap(my_m, m);
+
+      ft::map<int, char> my_m3;
+      std::map<int, char> m3;
+      my_m3.clear();
+      m3.clear();
+      printDiffMap(my_m3, m3);
+    }
+  }
+
+  /* ********************************************************************  */
+  /*                                 OPERATIONS                            */
+  /* ********************************************************************  */
+  {
+    std::cout << std::endl
+              << BOLDBLUE "********* Operations *********" END << std::endl;
+    std::cout << std::endl << "Find : " << std::endl;
+
+    ft::map<int, char> my_m;
+    std::map<int, char> m;
+    for (int i = 33; i < 65; i++) {
+      my_m.insert(ft::pair<int, char>(i, (char)i));
+      m.insert(std::pair<int, char>(i, (char)i));
+    }
+    std::cout << (my_m.find(33)->first == m.find(33)->first
+                      ? BOLDGREEN "OK " END
+                      : BOLDRED "KO " END);
+    std::cout << (my_m.find(53)->first == m.find(53)->first
+                      ? BOLDGREEN "OK " END
+                      : BOLDRED "KO " END);
+    std::cout << (my_m.find(25) == my_m.end() && m.find(25) == m.end()
+                      ? BOLDGREEN "OK " END
+                      : BOLDRED "KO " END);
+
+    std::cout << std::endl << "Count : " << std::endl;
+
+    std::cout << (my_m.count(33) == m.count(33) ? BOLDGREEN "OK " END
+                                                : BOLDRED "KO " END);
+
+    std::cout << (my_m.count(25) == m.count(25) ? BOLDGREEN "OK " END
+                                                : BOLDRED "KO " END);
+
+    std::cout << std::endl << "Lower & Upper Bounds : " << std::endl;
+
+    std::cout << (my_m.lower_bound(33)->first == m.lower_bound(33)->first
+                      ? BOLDGREEN "OK " END
+                      : BOLDRED "KO " END);
+
+    std::cout << (my_m.upper_bound(33)->first == m.upper_bound(33)->first
+                      ? BOLDGREEN "OK " END
+                      : BOLDRED "KO " END);
+    std::cout << (my_m.lower_bound(33)->first == m.lower_bound(33)->first
+                      ? BOLDGREEN "OK " END
+                      : BOLDRED "KO " END);
+    std::cout << (my_m.lower_bound(45)->first == m.lower_bound(45)->first
+                      ? BOLDGREEN "OK " END
+                      : BOLDRED "KO " END);
+    std::cout << (my_m.upper_bound(45)->first == m.upper_bound(45)->first
+                      ? BOLDGREEN "OK " END
+                      : BOLDRED "KO " END);
+    std::cout << (my_m.lower_bound(63)->first == m.lower_bound(63)->first
+                      ? BOLDGREEN "OK " END
+                      : BOLDRED "KO " END);
+    std::cout << (my_m.upper_bound(63)->first == m.upper_bound(63)->first
+                      ? BOLDGREEN "OK " END
+                      : BOLDRED "KO " END);
+    std::cout << (my_m.lower_bound(68) == my_m.end() &&
+                          m.lower_bound(68) == m.end()
+                      ? BOLDGREEN "OK " END
+                      : BOLDRED "KO " END);
+    std::cout << (my_m.upper_bound(68) == my_m.end() &&
+                          m.upper_bound(68) == m.end()
+                      ? BOLDGREEN "OK " END
+                      : BOLDRED "KO " END);
+
+    std::cout << std::endl << "Equal range : " << std::endl;
+
+    std::cout << (my_m.equal_range(33).first->first ==
+                              m.equal_range(33).first->first &&
+                          my_m.equal_range(33).first->second ==
+                              m.equal_range(33).first->second &&
+                          my_m.equal_range(33).second->first ==
+                              m.equal_range(33).second->first &&
+                          my_m.equal_range(33).second->second ==
+                              m.equal_range(33).second->second
+                      ? BOLDGREEN "OK " END
+                      : BOLDRED "KO " END);
+    std::cout << (my_m.equal_range(45).first->first ==
+                              m.equal_range(45).first->first &&
+                          my_m.equal_range(45).first->second ==
+                              m.equal_range(45).first->second &&
+                          my_m.equal_range(45).second->first ==
+                              m.equal_range(45).second->first &&
+                          my_m.equal_range(45).second->second ==
+                              m.equal_range(45).second->second
+                      ? BOLDGREEN "OK " END
+                      : BOLDRED "KO " END);
+  }
+
+  /* ********************************************************************  */
+  /*                                 NON MEMBER FUNCTIONS */
+  /* ********************************************************************  */
+  {
+    std::cout << std::endl
+              << BOLDBLUE "********* Non member functions *********" END
+              << std::endl;
+    std::cout << std::endl << "Comparison : " << std::endl;
+    ft::map<int, char> my_m;
+    std::map<int, char> m;
+    for (int i = 33; i < 65; i++) {
+      my_m.insert(ft::pair<int, char>(i, (char)i));
+      m.insert(std::pair<int, char>(i, (char)i));
+    }
+    ft::map<int, char> my_m1;
+    std::map<int, char> m1;
+    for (int i = 33; i < 65; i++) {
+      my_m1.insert(ft::pair<int, char>(i, (char)i));
+      m1.insert(std::pair<int, char>(i, (char)i));
+    }
+
+    std::cout << ((my_m == my_m1) == (m == m1) ? BOLDGREEN "OK " END
+                                               : BOLDRED "KO " END);
+    std::cout << ((my_m < my_m1) == (m < m1) ? BOLDGREEN "OK " END
+                                             : BOLDRED "KO " END);
+    std::cout << ((my_m <= my_m1) == (m <= m1) ? BOLDGREEN "OK " END
+                                               : BOLDRED "KO " END);
+    std::cout << ((my_m > my_m1) == (m > m1) ? BOLDGREEN "OK " END
+                                             : BOLDRED "KO " END);
+    std::cout << ((my_m >= my_m1) == (m >= m1) ? BOLDGREEN "OK " END
+                                               : BOLDRED "KO " END);
+    std::cout << ((my_m != my_m1) == (m != m1) ? BOLDGREEN "OK " END
+                                               : BOLDRED "KO " END);
+    my_m1.insert(ft::pair<int, char>(98, '@'));
+    m1.insert(std::pair<int, char>(98, '@'));
+    std::cout << ((my_m == my_m1) == (m == m1) ? BOLDGREEN "OK " END
+                                               : BOLDRED "KO " END);
+    std::cout << ((my_m < my_m1) == (m < m1) ? BOLDGREEN "OK " END
+                                             : BOLDRED "KO " END);
+    std::cout << ((my_m <= my_m1) == (m <= m1) ? BOLDGREEN "OK " END
+                                               : BOLDRED "KO " END);
+    std::cout << ((my_m > my_m1) == (m > m1) ? BOLDGREEN "OK " END
+                                             : BOLDRED "KO " END);
+    std::cout << ((my_m >= my_m1) == (m >= m1) ? BOLDGREEN "OK " END
+                                               : BOLDRED "KO " END);
+    std::cout << ((my_m != my_m1) == (m != m1) ? BOLDGREEN "OK " END
+                                               : BOLDRED "KO " END);
+
+    std::cout << std::endl << "Swap : " << std::endl;
+    swap(my_m, my_m1);
+    swap(m, m1);
+    printDiffMap(my_m, m);
+
+    printDiffMap(my_m1, m1);
+  }
 }
