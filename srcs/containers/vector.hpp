@@ -9,11 +9,11 @@
 #include <new>
 #include <stdexcept>
 
-#include "../containers_utils/reverse_iterator.hpp"
 #include "../functions/enable_if.hpp"
 #include "../functions/equal.hpp"
 #include "../functions/is_integral.hpp"
 #include "../functions/lexicographical_compare.hpp"
+#include "../functions/reverse_iterator.hpp"
 
 namespace ft {
 
