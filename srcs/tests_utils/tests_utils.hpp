@@ -5,9 +5,9 @@
 #include <utility>
 #include <vector>
 
-#include "pair.hpp"
-#include "stack.hpp"
-#include "vector.hpp"
+#include "../containers/stack.hpp"
+#include "../containers/vector.hpp"
+#include "../functions/pair.hpp"
 
 #define BLACK "\033[30m"              /* Black */
 #define RED "\033[31m"                /* Red */

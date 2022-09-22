@@ -1,9 +1,9 @@
 
 #include <stdexcept>
 
-#include "bstree.hpp"
-#include "make_pair.hpp"
-#include "tests_utils.hpp"
+#include "containers_utils/bstree.hpp"
+#include "functions/make_pair.hpp"
+#include "tests_utils/tests_utils.hpp"
 
 template <class Key, class T>
 void printNode(const ft::Node<ft::pair<Key, T> >* node) {
@@ -16,68 +16,68 @@ void printNode(const ft::Node<ft::pair<Key, T> >* node) {
     std::cout << "X ";
 }
 
-void printThisTree(ft::BstTree<int, char>& t) {
-  std::cout << BOLDWHITE "            ";
-  /* Start*/
-  printNode(t.getStart());
-  std::cout << std::endl << "    ";
-  /*Etage 1*/
-  printNode(t.getStart()->left);
-  std::cout << "       |      ";
-  printNode(t.getStart()->right);
-  std::cout << std::endl;
-  /* Etage 2 */
-  if (t.getStart()->left != NULL) {
-    printNode(t.getStart()->left->left);
-    std::cout << "     ";
-    printNode(t.getStart()->left->right);
-    std::cout << "    |  ";
-  }
-  if (t.getStart()->right != NULL) {
-    printNode(t.getStart()->right->left);
-    std::cout << "    ";
-    printNode(t.getStart()->right->right);
-    std::cout << std::endl;
-  }
-  /* Etage 3 */
-  if (t.getStart()->left != NULL && t.getStart()->left->left != NULL) {
-    printNode(t.getStart()->left->left->left);
-    printNode(t.getStart()->left->left->right);
-  } else
-    std::cout << "    ";
-  std::cout << " | ";
-  if (t.getStart()->left != NULL && t.getStart()->left->right != NULL) {
-    printNode(t.getStart()->left->right->left);
-    std::cout << " ";
-    printNode(t.getStart()->left->right->right);
-  } else
-    std::cout << "    ";
-  std::cout << " | ";
-  if (t.getStart()->right != NULL && t.getStart()->right->left != NULL) {
-    std::cout << "  ";
-    printNode(t.getStart()->right->left->left);
-    std::cout << " ";
-    printNode(t.getStart()->right->left->right);
-    std::cout << "";
-  } else
-    std::cout << "    ";
-  std::cout << "| ";
-  if (t.getStart()->right != NULL && t.getStart()->right->right != NULL) {
-    printNode(t.getStart()->right->right->left);
-    std::cout << " ";
-    printNode(t.getStart()->right->right->right);
-  }
+// void printThisTree(ft::BstTree<int, char>& t) {
+//   std::cout << BOLDWHITE "            ";
+//   /* Start*/
+//   printNode(t.getStart());
+//   std::cout << std::endl << "    ";
+//   /*Etage 1*/
+//   printNode(t.getStart()->left);
+//   std::cout << "       |      ";
+//   printNode(t.getStart()->right);
+//   std::cout << std::endl;
+//   /* Etage 2 */
+//   if (t.getStart()->left != NULL) {
+//     printNode(t.getStart()->left->left);
+//     std::cout << "     ";
+//     printNode(t.getStart()->left->right);
+//     std::cout << "    |  ";
+//   }
+//   if (t.getStart()->right != NULL) {
+//     printNode(t.getStart()->right->left);
+//     std::cout << "    ";
+//     printNode(t.getStart()->right->right);
+//     std::cout << std::endl;
+//   }
+//   /* Etage 3 */
+//   if (t.getStart()->left != NULL && t.getStart()->left->left != NULL) {
+//     printNode(t.getStart()->left->left->left);
+//     printNode(t.getStart()->left->left->right);
+//   } else
+//     std::cout << "    ";
+//   std::cout << " | ";
+//   if (t.getStart()->left != NULL && t.getStart()->left->right != NULL) {
+//     printNode(t.getStart()->left->right->left);
+//     std::cout << " ";
+//     printNode(t.getStart()->left->right->right);
+//   } else
+//     std::cout << "    ";
+//   std::cout << " | ";
+//   if (t.getStart()->right != NULL && t.getStart()->right->left != NULL) {
+//     std::cout << "  ";
+//     printNode(t.getStart()->right->left->left);
+//     std::cout << " ";
+//     printNode(t.getStart()->right->left->right);
+//     std::cout << "";
+//   } else
+//     std::cout << "    ";
+//   std::cout << "| ";
+//   if (t.getStart()->right != NULL && t.getStart()->right->right != NULL) {
+//     printNode(t.getStart()->right->right->left);
+//     std::cout << " ";
+//     printNode(t.getStart()->right->right->right);
+//   }
 
-  std::cout << std::endl << "        ";
-  if (t.getStart()->left && t.getStart()->left->right &&
-      t.getStart()->left->right->right)
-    printNode(t.getStart()->left->right->right->left);
-  std::cout << " ";
-  if (t.getStart()->left && t.getStart()->left->right &&
-      t.getStart()->left->right->right)
-    printNode(t.getStart()->left->right->right->right);
-  std::cout << END << std::endl;
-}
+//   std::cout << std::endl << "        ";
+//   if (t.getStart()->left && t.getStart()->left->right &&
+//       t.getStart()->left->right->right)
+//     printNode(t.getStart()->left->right->right->left);
+//   std::cout << " ";
+//   if (t.getStart()->left && t.getStart()->left->right &&
+//       t.getStart()->left->right->right)
+//     printNode(t.getStart()->left->right->right->right);
+//   std::cout << END << std::endl;
+// }
 
 void printWithIterators(ft::BstTree<int, char>& t) {
   if (t.size() == 0) {

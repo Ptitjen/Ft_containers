@@ -9,11 +9,11 @@
 #include <new>
 #include <stdexcept>
 
-#include "enable_if.hpp"
-#include "equal.hpp"
-#include "is_integral.hpp"
-#include "lexicographical_compare.hpp"
-#include "reverse_iterator.hpp"
+#include "../containers_utils/reverse_iterator.hpp"
+#include "../functions/enable_if.hpp"
+#include "../functions/equal.hpp"
+#include "../functions/is_integral.hpp"
+#include "../functions/lexicographical_compare.hpp"
 
 namespace ft {
 
@@ -579,9 +579,9 @@ class vector {
       if (n >= _max_size) throw(std::length_error(""));
       T* tmp = a.allocate(n);
       std::uninitialized_copy(_array, _array + _size, tmp);
-      // for (size_type i = 0; i < _size; i++) {
-      //   a.destroy(&_array[i]);
-      // }
+      for (size_type i = 0; i < _size; i++) {
+        a.destroy(&_array[i]);
+      }
       a.deallocate(_array, _capacity);
       _array = tmp;
       _capacity = n;
@@ -590,36 +590,6 @@ class vector {
       throw(e);
     }
   };
-  // void realloc(size_type n) {
-  //   try {
-  //     T* tmp = a.allocate(n);
-  //     std::uninitialized_copy(_array, _array + _size, tmp);
-  //     for (size_type i = 0; i < _size; i++) {
-  //       a.destroy(&_array[i]);
-  //     }
-  //     a.deallocate(_array, _capacity);
-  //     _capacity = n;
-  //     std::swap(_array, tmp);
-  //   } catch (std::exception& e) {
-  //     throw(e);
-  //   }
-  // };
-
-  // void realloc(size_type n) {
-  //   try {
-  //     if (n <= _capacity) return;
-  //     if (n >= _max_size) throw(std::length_error(""));
-  //     ft::vector<T, Allocator> tmp(n);
-  //     tmp._size = _size;
-  //     if (_size != 0)
-  //       std::uninitialized_copy(_array, _array + _size, tmp._array);
-  //     //
-  //     swap(tmp);
-
-  //   } catch (std::exception& e) {
-  //     throw(e);
-  //   }
-  // };
 };
 
 template <class T, class Allocator>

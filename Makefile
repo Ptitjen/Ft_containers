@@ -1,29 +1,36 @@
-SRCS = srcs/main.cpp srcs/Chrono.cpp srcs/tests_utils.cpp
+SRCSFT = srcs/mainFt.cpp srcs/tests_utils/Chrono.cpp srcs/tests_utils/tests_utils.cpp
 
-OBJS = ${SRCS:.cpp=.o}
+SRCSSTD = srcs/mainStd.cpp srcs/tests_utils/Chrono.cpp srcs/tests_utils/tests_utils.cpp
 
-NAME	= containers
+OBJSFT = ${SRCSFT:.cpp=.o}
+
+OBJSSTD = ${SRCSSTD:.cpp=.o}
+
+NAMEFT	= ft_containers
+
+NAMESTD	= std_containers
 
 RM	= @rm -f
 
 CFLAGS = -Wall -Wextra -Werror
 
-CC = clang++ -std=c++98 
-#-fsanitize=address -g
+CC = clang++ -std=c++98 -fsanitize=address -g
 
+all:	${NAMEFT}	${NAMESTD}	
 
-all:	${NAME}		
+$(NAMEFT):	${OBJSFT}
+			@${CC} ${CFLAGS} ${OBJSFT} -o ${NAMEFT}		
 
-$(NAME):	${OBJS}
-			@${CC} ${CFLAGS} ${OBJS} -o ${NAME}		
+$(NAMESTD):	${OBJSSTD}
+			@${CC} ${CFLAGS} ${OBJSSTD} -o ${NAMESTD}	
 
 .cpp.o:
 	${CC} ${CFLAGS} -c $< -o ${<:.cpp=.o}
 
 clean:
-	${RM} ${OBJS}
+	${RM} ${OBJSFT} ${OBJSSTD}
 
 fclean:	clean
-	${RM} ${NAME}
+	${RM} ${NAMEFT} ${NAMESTD}
 
 re:	fclean all

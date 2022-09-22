@@ -7,9 +7,9 @@
 #include <limits>
 #include <stdexcept>
 
-#include "enable_if.hpp"
-#include "is_integral.hpp"
-#include "pair.hpp"
+#include "../functions/enable_if.hpp"
+#include "../functions/is_integral.hpp"
+#include "../functions/pair.hpp"
 
 namespace ft {
 
@@ -156,7 +156,7 @@ class BstTree {
 
     void increment() {
       if (node->right == node && node->parent->left == node)
-        node = node->parent;
+        node = node->parent;  // NOLINT
       else if (node->right != NULL) {
         node = node->right;
         if (node->left == node) return;
@@ -236,14 +236,12 @@ class BstTree {
     pointer operator->() const { return &node->content; }
 
     /* comparison */
-    bool operator==(const const_iterator& rhs) {
-      return node == rhs.node;
-    }  // check this
+    bool operator==(const const_iterator& rhs) { return node == rhs.node; }
     bool operator!=(const const_iterator& rhs) { return !(node == rhs.node); }
 
     void increment() {
       if (node->right == node && node->parent->left == node)
-        node = node->parent;
+        node = node->parent;  // NOLINT
       else if (node->right != NULL) {
         node = node->right;
         if (node->left == node) return;
@@ -347,7 +345,7 @@ class BstTree {
     const_reverse_iterator(const_reverse_iterator& u) throw()
         : current(u.current){};
     const_reverse_iterator& operator=(
-        const_reverse_iterator const& it) throw() {  // PB?
+        const_reverse_iterator const& it) throw() {
       if (&it == this) return (*this);
       ptr_(it.ptr_);
       return (*this);
@@ -453,24 +451,21 @@ class BstTree {
     }
   };
 
-  template <typename InputIterator>
-  BstTree(typename ft::enable_if<!ft::is_integral<InputIterator>::value,
-                                 InputIterator>::type first,
-          typename ft::enable_if<!ft::is_integral<InputIterator>::value,
-                                 InputIterator>::type last,
-          const key_compare& comp = key_compare(),
-          const allocator_type& alloc = allocator_type()) {
-    try {
-      a = alloc;
-      while (first != last) {
-        insert(first.node->content);
-        first++;
-      }
-    } catch (std::exception& e) {
-      clear();
-      throw e;
-    }
-  };  // marche po
+  // template <typename InputIterator>
+  // BstTree(InputIterator first, InputIterator last,
+  //         const key_compare& comp = key_compare(),
+  //         const allocator_type& alloc = allocator_type()) {
+  //   try {
+  //     a = alloc;
+  //     while (first != last) {
+  //       this->insert(first.node->content);
+  //       first++;
+  //     }
+  //   } catch (std::exception& e) {
+  //     this->clear();
+  //     throw e;
+  //   }
+  // };  // marche po
 
   BstTree(const BstTree<Key, Value, Compare, Allocator>& x) {
     try {
@@ -681,7 +676,7 @@ class BstTree {
     }
   };
 
-  iterator insert(iterator position, const value_type& x) {
+  iterator insert(iterator position, const value_type& x) {  // NOLINT
     try {
       if (position.node == &header.endNode) return insert(x).first;
 
@@ -774,7 +769,7 @@ class BstTree {
     }
   };
 
-  void erase(iterator position) throw() {
+  void erase(iterator position) throw() {  // NOLINT
     if (position == &header.endNode) return;
     bool noChild = (position.node->left == NULL ||
                     position.node->left == &header.rendNode) &&
@@ -968,7 +963,7 @@ class BstTree {
     } catch (std::exception& e) {
       return;
     }
-  };  // TODO : test
+  };
 
   void clear() throw() {
     if (header.count == 0) return;
@@ -1188,9 +1183,6 @@ class BstTree {
   void rebalanceNodeBis(node_ptr n) {
     while (n) {
       if (n == NULL || n == &header.endNode || n == &header.rendNode) return;
-      // while (isImbalanced(n)) {
-      // rebalanceTree(n->left);
-      // rebalanceTree(n->right);
       if (balanceFactor(n) >= 2) {
         if (balanceFactor(n->left) <= -1 || balanceFactor(n->left) == 0)
           leftRightRotate(n);
@@ -1202,7 +1194,6 @@ class BstTree {
         else if (balanceFactor(n->right) >= 1)
           rightLeftRotate(n);
       }
-      //  }
       n = n->parent;
     }
   }
@@ -1279,13 +1270,12 @@ class BstTree {
     return searchToAdd(key, root->left);
   }
 
- public:  // REMOVE
   Node<value_type>* getStart() { return _startNode; };
 
   /* ********************************************************************** */
   /*                               MEMBER VALUES                            */
   /* ********************************************************************** */
- private:
+
   node_allocator a;
   BstTreeHeader<value_type, Allocator, Key, Value> header;
   Node<value_type>* _startNode;
