@@ -155,7 +155,9 @@ class BstTree {
     bool operator!=(const iterator& rhs) { return !(node == rhs.node); }
 
     void increment() {
-      if (node->right != NULL) {
+      if (node->right == node && node->parent->left == node)
+        node = node->parent;
+      else if (node->right != NULL) {
         node = node->right;
         if (node->left == node) return;
         while (node->left != NULL) node = node->left;
@@ -253,11 +255,11 @@ class BstTree {
     }
 
     void decrement() {
-      if (node->left == node)
+      if (node->left == node && node->parent->right == node)
         node = node->parent;  // NOLINT
-      else if (node->left != NULL) {
+      else if (node->left != NULL && node->left != node) {
         node = node->left;
-        while (node->right != NULL) node = node->right;
+        while (node->right != NULL && node->right != node) node = node->right;
       } else if (node == node->parent->right) {
         node = node->parent;
       } else if (node == node->parent->left) {
