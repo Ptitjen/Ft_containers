@@ -85,25 +85,25 @@ void printWithIterators(ft::BstTree<int, char>& t) {
     return;
   }
   for (ft::BstTree<int, char>::iterator it = t.begin(); it != t.end(); it++) {
-    // if (it.node != NULL &&
-    //     (it.node->left_height >= it.node->right_height + 2 ||
-    //      it.node->left_height + 2 <= it.node->right_height)) {
-    std::cout << "|";
-    std::cout << it->first << " "
-              << it->second
-              //<< " | Height: " << it.node->height
-              << " | LeftH: " << it.node->left_height
-              << " | RightH: " << it.node->right_height << " |";
-    it.node->left_height >= it.node->right_height + 2 ||
-            it.node->left_height + 2 <= it.node->right_height
-        ? (std::cout << BOLDRED "KO" END)
-        : (std::cout << BOLDGREEN "OK" END);
-    std::cout << std::endl;
+    if (it.node != NULL &&
+        (it.node->left_height >= it.node->right_height + 2 ||
+         it.node->left_height + 2 <= it.node->right_height)) {
+      std::cout << "|";
+      std::cout << it->first << " "
+                << it->second
+                //<< " | Height: " << it.node->height
+                << " | LeftH: " << it.node->left_height
+                << " | RightH: " << it.node->right_height << " |";
+      it.node->left_height >= it.node->right_height + 2 ||
+              it.node->left_height + 2 <= it.node->right_height
+          ? (std::cout << BOLDRED "KO" END)
+          : (std::cout << BOLDGREEN "OK" END);
+      std::cout << std::endl;
+    }
+    //   for (ft::BstTree<int, char>::iterator it = t.begin(); it != t.end();
+    //   it++) { std::cout << "|"; std::cout << *(it->first) << " " <<
+    //   it.node->content.second;
   }
-  //   for (ft::BstTree<int, char>::iterator it = t.begin(); it != t.end();
-  //   it++) { std::cout << "|"; std::cout << *(it->first) << " " <<
-  //   it.node->content.second;
-  //}
   //}
 }
 
