@@ -7,8 +7,6 @@
 #include <limits>
 #include <stdexcept>
 
-#include "../functions/enable_if.hpp"
-#include "../functions/is_integral.hpp"
 #include "../functions/pair.hpp"
 
 namespace ft {
@@ -271,7 +269,7 @@ class map {
     node_pointer node;
   };
   /* *********************************************************************** */
-  /*                            REVERSE ITERATOR */
+  /*                            REVERSE ITERATOR                             */
   /* *********************************************************************** */
   class reverse_iterator {
    public:
@@ -395,11 +393,9 @@ class map {
     iterator current;
   };
 
-  /* ***********************************************************************
-   */
-  /*                                CLASS */
-  /* ***********************************************************************
-   */
+  /* ********************************************************************** */
+  /*                                CLASS                                   */
+  /* ********************************************************************** */
 
   typedef Key key_type;
   typedef Value mapped_type;
@@ -422,7 +418,6 @@ class map {
   typedef const_reverse_iterator const_reverse_iterator;
   class value_compare
       : public std::binary_function<value_type, value_type, bool> {
-    // friend class map;
    protected:
     Compare comp;
     value_compare(Compare c) : comp(c) {}
@@ -436,11 +431,9 @@ class map {
   typedef typename Allocator::template rebind<Node<pair<Key, Value> > >::other
       node_allocator;
 
-  /* ***********************************************************************
-   */
-  /*                      CONSTRUCTORS & DESTRUCTOR */
-  /* ***********************************************************************
-   */
+  /* ********************************************************************** */
+  /*                      CONSTRUCTORS & DESTRUCTOR                         */
+  /* ********************************************************************** */
 
   explicit map(const key_compare& comp = key_compare(),
                const allocator_type& alloc = allocator_type())
@@ -465,7 +458,7 @@ class map {
       this->clear();
       throw e;
     }
-  };  // marche po
+  };
 
   map(const map<Key, Value, Compare, Allocator>& x) {
     try {
@@ -496,11 +489,9 @@ class map {
 
   ~map() throw() { clear(); };
 
-  /* ***********************************************************************
-   */
-  /*                             ITERATORS */
-  /* ***********************************************************************
-   */
+  /* ********************************************************************* */
+  /*                             ITERATORS                                 */
+  /* ********************************************************************* */
   iterator begin() throw() {
     if (header.count == 0) return end();
     iterator itb(_startNode);
@@ -537,11 +528,9 @@ class map {
     return const_reverse_iterator(it.node->left);
   }
 
-  /* ***********************************************************************
-   */
-  /*                             CAPACITY */
-  /* ***********************************************************************
-   */
+  /* ********************************************************************* */
+  /*                             CAPACITY                                  */
+  /* ********************************************************************* */
 
   bool empty() const throw() { return header.count == 0; }
   std::size_t size() const throw() { return header.count; }
@@ -549,11 +538,9 @@ class map {
     return std::numeric_limits<std::size_t>::max();
   }
 
-  /* ***********************************************************************
-   */
-  /*                             ELEMENT ACCESS */
-  /* ***********************************************************************
-   */
+  /* ********************************************************************* */
+  /*                             ELEMENT ACCESS                            */
+  /* ********************************************************************* */
 
   mapped_type& operator[](const key_type& k) {
     try {
@@ -606,25 +593,22 @@ class map {
     }
   };
 
-  mapped_type& at(const key_type& k) {  // strong guarantee : something to do??
+  mapped_type& at(const key_type& k) {
     node_ptr n = searchToAdd(k, _startNode);
-    if (!f(n->content->first, k) && !f(k, n->content->first))  // replace
+    if (!f(n->content->first, k) && !f(k, n->content->first))
       return n->content.second;
     throw std::out_of_range("");
   };
 
   const mapped_type& at(const key_type& k) const {
     node_ptr n = searchToAdd(k, _startNode);
-    if ((!f(n->content->first, k) && !f(k, n->content->first)))  // replace
-      return n->content.second;
-    throw std::out_of_range("");
+    if ((!f(n->content->first, k) && !f(k, n->content->first)))
+      throw std::out_of_range("");
   };
 
-  /* ***********************************************************************
-   */
-  /*                               MOFIFIERS */
-  /* ***********************************************************************
-   */
+  /* ******************************************************************** */
+  /*                               MOFIFIERS                              */
+  /* ******************************************************************** */
 
   pair<iterator, bool> insert(const value_type& x) {
     try {
@@ -864,10 +848,13 @@ class map {
           next.node->right_height = position.node->right_height;
           resetHeightAboveErase(next.node->parent);
         }
+        rebalanceTree(tmp);
+        rebalanceNodeBis(tmp);
       }
       rebalanceTree(position.node->parent->left);
       rebalanceTree(position.node->parent->right);
       rebalanceNodeBis(position.node->parent);
+
     } else if (position.node->parent->right ==
                position.node)  // delete frome right subtree
     {
@@ -923,6 +910,8 @@ class map {
           next.node->right_height = position.node->right_height;
           resetHeightAboveErase(next.node->parent);
         }
+        rebalanceTree(tmp);
+        rebalanceNodeBis(tmp);
       }
       rebalanceTree(position.node->parent->right);
       rebalanceTree(position.node->parent->left);
@@ -951,8 +940,6 @@ class map {
       erase(it);
     }
   };
-
-  /* ***************************************** */
 
   void swap(map<Key, Value, Compare, Allocator>& other) throw() {
     try {

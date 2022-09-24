@@ -7,9 +7,9 @@
 #include <limits>
 #include <stdexcept>
 
-#include "../functions/enable_if.hpp"
-#include "../functions/is_integral.hpp"
-#include "../functions/pair.hpp"
+#include "../srcs/functions/enable_if.hpp"
+#include "../srcs/functions/is_integral.hpp"
+#include "../srcs/functions/pair.hpp"
 
 namespace ft {
 
@@ -864,6 +864,8 @@ class BstTree {
           next.node->right_height = position.node->right_height;
           resetHeightAboveErase(next.node->parent);
         }
+        rebalanceTree(tmp->parent);
+        rebalanceNodeBis(tmp);
       }
       rebalanceTree(position.node->parent->left);
       rebalanceTree(position.node->parent->right);
@@ -890,8 +892,8 @@ class BstTree {
           }
         }
         resetHeightAboveErase(position.node->parent);
-        rebalanceTree(position.node->parent->right);
-        rebalanceNodeBis(position.node->parent);
+        // rebalanceTree(position.node->parent->right);
+        // rebalanceNodeBis(position.node->parent);
       } else if (oneChildRight) {
         position.node->parent->right = position.node->right;
         position.node->right->parent = position.node->parent;
@@ -923,11 +925,15 @@ class BstTree {
           next.node->right_height = position.node->right_height;
           resetHeightAboveErase(next.node->parent);
         }
+        rebalanceTree(tmp->parent);
+        rebalanceNodeBis(tmp);
       }
       rebalanceTree(position.node->parent->right);
       rebalanceTree(position.node->parent->left);
       rebalanceNodeBis(position.node->parent);
     }
+    for (iterator it = begin(); it != end(); it++)
+      if (isImbalanced(it.node)) rebalanceNodeErase(it.node);
     dealloc(position.node);
   }
 
