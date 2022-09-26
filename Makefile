@@ -1,6 +1,6 @@
-SRCSFT = srcs/mainFt.cpp srcs/tests_utils/chrono_mono.cpp srcs/tests_utils/tests_utils.cpp
+SRCSFT = srcs/mainFt.cpp srcs/tests_utils/chrono_mono.cpp srcs/tests_utils/utils.cpp
 
-SRCSSTD = srcs/mainStd.cpp srcs/tests_utils/chrono_mono.cpp srcs/tests_utils/tests_utils.cpp
+SRCSSTD = srcs/mainStd.cpp srcs/tests_utils/chrono_mono.cpp srcs/tests_utils/utils.cpp
 
 OBJSFT = ${SRCSFT:.cpp=.o}
 
@@ -12,7 +12,7 @@ NAMESTD	= std_containers
 
 RM	= @rm -f
 
-CFLAGS = -Wall -Wextra -Werror
+CFLAGS = -Wall -Wextra -Werror 
 
 CC = c++ -std=c++98 
 

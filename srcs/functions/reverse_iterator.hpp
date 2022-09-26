@@ -2,22 +2,24 @@
 #define REVERSE_ITERATOR_HPP
 
 #include <cstddef>
+
+#include "iterator_traits.hpp"
+
 namespace ft {
-/* ***************** reverse operator **************** */
 
 template <class Iterator>
 class reverse_iterator {
  public:
   typedef Iterator iterator_type;
-  typedef typename Iterator::difference_type difference_type;
-  typedef typename Iterator::reference reference;
-  typedef typename Iterator::pointer pointer;
+  typedef typename iterator_traits<Iterator>::difference_type difference_type;
+  typedef typename iterator_traits<Iterator>::reference reference;
+  typedef typename iterator_traits<Iterator>::pointer pointer;
   reverse_iterator() throw() : current(NULL){};
   explicit reverse_iterator(Iterator x) throw() : current(x){};
 
   template <class U>
   reverse_iterator(const reverse_iterator<U> &u) throw() : current(u.current){};
-  reverse_iterator &operator=(reverse_iterator const &it) throw() {  // PB?
+  reverse_iterator &operator=(reverse_iterator const &it) throw() {
     if (&it == this) return (*this);
     ptr_(it.ptr_);
     return (*this);
@@ -28,7 +30,7 @@ class reverse_iterator {
     Iterator it;
     it = current + 1;
     return it;
-  };  // verify - returns pointer to adjacent (next)element
+  };
 
   reference operator*() { return *current; };
   pointer operator->() { return current; };
@@ -77,7 +79,7 @@ class reverse_iterator {
     return *this;
   };
 
-  reference operator[](difference_type n) const { return current - n; };  //???
+  reference operator[](difference_type n) const { return current - n; };
 
   bool operator==(const reverse_iterator &rhs) {
     return current == rhs.current;
@@ -98,7 +100,6 @@ class reverse_iterator {
   Iterator current;
 };
 
-/* ***************** const reverse operator **************** */
 template <class Iterator>
 class const_reverse_iterator {
   typedef Iterator iterator_type;
@@ -111,8 +112,7 @@ class const_reverse_iterator {
   template <class U>
   const_reverse_iterator(const reverse_iterator<U> &u) throw()
       : current(u.current){};
-  const_reverse_iterator &operator=(
-      const_reverse_iterator const &it) throw() {  // PB?
+  const_reverse_iterator &operator=(const_reverse_iterator const &it) throw() {
     if (&it == this) return (*this);
     ptr_(it.ptr_);
     return (*this);
@@ -122,9 +122,9 @@ class const_reverse_iterator {
 
   Iterator base() const {
     Iterator it;
-    it = current + 1;  // access to next element??
+    it = current + 1;
     return it;
-  };  // verify - returns pointer to adjacent (next)element
+  };
 
   reference operator*() { return *current; };
   pointer operator->() { return current; };
@@ -173,7 +173,7 @@ class const_reverse_iterator {
     return *this;
   };
 
-  reference operator[](difference_type n) const { return current - n; };  //???
+  reference operator[](difference_type n) const { return current - n; };
 
   bool operator==(const const_reverse_iterator &rhs) {
     return current == rhs.current;
@@ -199,4 +199,3 @@ class const_reverse_iterator {
 };
 }  // namespace ft
 #endif
-/// https://cplusplus.com/reference/iterator/reverse_iterator/?kw=reverse_iterator

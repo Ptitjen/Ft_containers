@@ -35,5 +35,3 @@ class iterator_traits<const T *> {
 };
 
 #endif
-
-// https://cplusplus.com/reference/iterator/iterator_traits/

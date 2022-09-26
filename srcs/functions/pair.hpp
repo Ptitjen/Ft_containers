@@ -1,6 +1,6 @@
 #ifndef PAIR_HPP
 #define PAIR_HPP
-// TODO : check constructor and functions
+
 namespace ft {
 template <class T1, class T2>
 struct pair {
@@ -44,8 +44,7 @@ struct pair {
 };
 
 template <class T1, class T2>
-void swap(pair<T1, T2>& x, pair<T1, T2>& y)  // NOLINT
-{
+void swap(pair<T1, T2>& x, pair<T1, T2>& y) {
   T1 tmp1 = x.first;
   T2 tmp2 = x.second;
   x.first = y.first;

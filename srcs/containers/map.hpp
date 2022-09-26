@@ -1,6 +1,7 @@
 #ifndef MAP_HPP
 #define MAP_HPP
 
+#include <algorithm>
 #include <cstddef>
 #include <exception>
 #include <functional>
@@ -10,10 +11,6 @@
 #include "../functions/pair.hpp"
 
 namespace ft {
-
-/* *********************************************************************** */
-/*                             NODE                                        */
-/* *********************************************************************** */
 
 template <class Content>
 class Node {
@@ -63,9 +60,6 @@ class Node {
   std::size_t right_height;
 };
 
-/* *********************************************************************** */
-/*                             TREE HEADER                                 */
-/* *********************************************************************** */
 template <class Content, class Allocator, class Key, class Value>
 class mapHeader {
  public:
@@ -90,16 +84,10 @@ class mapHeader {
   std::size_t count;
 };
 
-/* *********************************************************************** */
-/*                                TREE                                     */
-/* *********************************************************************** */
 template <class Key, class Value, class Compare = std::less<Key>,
           class Allocator = std::allocator<pair<const Key, Value> > >
 
 class map {
-  /* *********************************************************************** */
-  /*                                ITERATOR                                 */
-  /* *********************************************************************** */
  public:
   class iterator {
    public:
@@ -111,7 +99,6 @@ class map {
     typedef std::bidirectional_iterator_tag iterator_category;
     typedef std::ptrdiff_t difference_type;
 
-    /* Constructors and destructor */
     iterator() throw() : node(NULL){};
     iterator(value_type node) : node(&node){};
     iterator(node_pointer ptr) throw() : node(ptr) {}
@@ -124,7 +111,6 @@ class map {
     };
     ~iterator() throw(){};
 
-    /* incrementation and decrementation */
     iterator& operator++() {
       increment();
       return *this;
@@ -148,13 +134,12 @@ class map {
     reference operator*() { return (node->content); }
     pointer operator->() { return &node->content; }
 
-    /* comparison */
     bool operator==(const iterator& rhs) { return node == rhs.node; }
     bool operator!=(const iterator& rhs) { return !(node == rhs.node); }
 
     void increment() {
       if (node->right == node && node->parent->left == node)
-        node = node->parent;  // NOLINT
+        node = node->parent;
       else if (node->right != NULL) {
         node = node->right;
         if (node->left == node) return;
@@ -169,7 +154,7 @@ class map {
 
     void decrement() {
       if (node->left == node && node->parent->right == node)
-        node = node->parent;  // NOLINT
+        node = node->parent;
       else if (node->left != NULL && node->left != node) {
         node = node->left;
         while (node->right != NULL && node->right != node) node = node->right;
@@ -184,9 +169,6 @@ class map {
     node_pointer node;
   };
 
-  /* *********************************************************************** */
-  /*                            CONST ITERATOR                               */
-  /* *********************************************************************** */
   class const_iterator {
    public:
     typedef const Node<pair<Key, Value> > value_type;
@@ -197,7 +179,6 @@ class map {
     typedef std::bidirectional_iterator_tag iterator_category;
     typedef std::ptrdiff_t difference_type;
 
-    /* Constructors and destructor */
     const_iterator() throw() : node(NULL){};
     const_iterator(value_type node) throw() : node(&node) {}
     const_iterator(node_pointer ptr) throw() : node(ptr) {}
@@ -210,7 +191,6 @@ class map {
     };
     ~const_iterator() throw(){};
 
-    /* incrementation and decrementation */
     const_iterator& operator++() {
       increment();
       return *this;
@@ -233,13 +213,12 @@ class map {
     reference operator*() const { return node->content; }
     pointer operator->() const { return &node->content; }
 
-    /* comparison */
     bool operator==(const const_iterator& rhs) { return node == rhs.node; }
     bool operator!=(const const_iterator& rhs) { return !(node == rhs.node); }
 
     void increment() {
       if (node->right == node && node->parent->left == node)
-        node = node->parent;  // NOLINT
+        node = node->parent;
       else if (node->right != NULL) {
         node = node->right;
         if (node->left == node) return;
@@ -254,7 +233,7 @@ class map {
 
     void decrement() {
       if (node->left == node && node->parent->right == node)
-        node = node->parent;  // NOLINT
+        node = node->parent;
       else if (node->left != NULL && node->left != node) {
         node = node->left;
         while (node->right != NULL && node->right != node) node = node->right;
@@ -268,9 +247,7 @@ class map {
 
     node_pointer node;
   };
-  /* *********************************************************************** */
-  /*                            REVERSE ITERATOR                             */
-  /* *********************************************************************** */
+
   class reverse_iterator {
    public:
     typedef iterator iterator_type;
@@ -281,7 +258,7 @@ class map {
     explicit reverse_iterator(iterator x) throw() : current(x){};
 
     reverse_iterator(const reverse_iterator& u) throw() : current(u.current){};
-    reverse_iterator& operator=(reverse_iterator const& it) throw() {  // PB?
+    reverse_iterator& operator=(reverse_iterator const& it) throw() {
       if (&it == this) return (*this);
       ptr_(it.ptr_);
       return (*this);
@@ -329,8 +306,6 @@ class map {
    protected:
     iterator current;
   };
-
-  /* ***************** const reverse operator **************** */
 
   class const_reverse_iterator {
     typedef iterator iterator_type;
@@ -393,10 +368,6 @@ class map {
     iterator current;
   };
 
-  /* ********************************************************************** */
-  /*                                CLASS                                   */
-  /* ********************************************************************** */
-
   typedef Key key_type;
   typedef Value mapped_type;
   typedef pair<Key, Value> value_type;
@@ -433,14 +404,10 @@ class map {
   typedef typename Allocator::template rebind<Node<pair<Key, Value> > >::other
       node_allocator;
 
-  /* ********************************************************************** */
-  /*                      CONSTRUCTORS & DESTRUCTOR                         */
-  /* ********************************************************************** */
-
-  explicit map(const key_compare& comp = key_compare(),
-               const allocator_type& alloc = allocator_type())
-      : a(alloc) {
+  explicit map(const key_compare& = key_compare(),
+               const allocator_type& alloc = allocator_type()) {
     try {
+      a = alloc;
     } catch (std::exception& e) {
       throw e;
     }
@@ -448,10 +415,11 @@ class map {
 
   template <typename InputIterator>
   map(InputIterator first, InputIterator last,
-      const key_compare& comp = key_compare(),
+      const key_compare& = key_compare(),
       const allocator_type& alloc = allocator_type()) {
     try {
       a = alloc;
+
       while (first != last) {
         this->insert(first.node->content);
         first++;
@@ -491,9 +459,6 @@ class map {
 
   ~map() throw() { clear(); };
 
-  /* ********************************************************************* */
-  /*                             ITERATORS                                 */
-  /* ********************************************************************* */
   iterator begin() throw() {
     if (header.count == 0) return end();
     iterator itb(_startNode);
@@ -530,19 +495,11 @@ class map {
     return const_reverse_iterator(it.node->left);
   }
 
-  /* ********************************************************************* */
-  /*                             CAPACITY                                  */
-  /* ********************************************************************* */
-
   bool empty() const throw() { return header.count == 0; }
   std::size_t size() const throw() { return header.count; }
   std::size_t max_size() const throw() {
     return std::numeric_limits<std::size_t>::max();
   }
-
-  /* ********************************************************************* */
-  /*                             ELEMENT ACCESS                            */
-  /* ********************************************************************* */
 
   mapped_type& operator[](const key_type& k) {
     try {
@@ -608,10 +565,6 @@ class map {
       throw std::out_of_range("");
   };
 
-  /* ******************************************************************** */
-  /*                               MOFIFIERS                              */
-  /* ******************************************************************** */
-
   pair<iterator, bool> insert(const value_type& x) {
     try {
       if (header.count == 0) {
@@ -662,7 +615,7 @@ class map {
     }
   };
 
-  iterator insert(iterator position, const value_type& x) {  // NOLINT
+  iterator insert(iterator position, const value_type& x) {
     try {
       if (position.node == &header.endNode) return insert(x).first;
 
@@ -755,7 +708,7 @@ class map {
     }
   };
 
-  void erase(iterator position) throw() {  // NOLINT
+  void erase(iterator position) throw() {
     if (position == &header.endNode) return;
     bool noChild = (position.node->left == NULL ||
                     position.node->left == &header.rendNode) &&
@@ -805,9 +758,7 @@ class map {
         }
       }
       rebalanceTree(_startNode);
-    } else if (position.node->parent->left ==
-               position.node)  // delete from left subtree
-    {
+    } else if (position.node->parent->left == position.node) {
       if (noChild) {
         position.node->parent->left = position.node->left;
         position.node->parent->left_height = 0;
@@ -857,9 +808,7 @@ class map {
       rebalanceTree(position.node->parent->right);
       rebalanceNodeBis(position.node->parent);
 
-    } else if (position.node->parent->right ==
-               position.node)  // delete frome right subtree
-    {
+    } else if (position.node->parent->right == position.node) {
       if (position.node->right == &header.endNode) {
       }
       if (noChild) {
@@ -969,17 +918,9 @@ class map {
     header.endNode.parent = NULL;
   };
 
-  /* *********************************************************************  */
-  /*                                  OBSERVERS                             */
-  /* *********************************************************************  */
-
   value_compare value_comp() const { return value_compare(); }
   key_compare key_comp() const { return key_compare(); };
   Allocator get_allocator() throw() { return a; }
-
-  /* ********************************************************************  */
-  /*                                 OPERATIONS                            */
-  /* ********************************************************************  */
 
   iterator find(const key_type& k) {
     return iterator(searchToFind(k, _startNode));
@@ -1035,10 +976,6 @@ class map {
   pair<iterator, iterator> equal_range(const key_type& k) {
     return ft::pair<iterator, iterator>(lower_bound(k), upper_bound(k));
   };
-
-  /* ********************************************************************** */
-  /*                                  UTILS                                 */
-  /* ********************************************************************** */
 
  private:
   void recursiveDealloc(node_ptr n) {
@@ -1259,20 +1196,10 @@ class map {
     return searchToAdd(key, root->left);
   }
 
-  Node<value_type>* getStart() { return _startNode; };
-
-  /* ********************************************************************** */
-  /*                               MEMBER VALUES                            */
-  /* ********************************************************************** */
-
   node_allocator a;
   mapHeader<value_type, Allocator, Key, Value> header;
   Node<value_type>* _startNode;
 };
-
-/* *********************************************************************** */
-/*                               NON MEMBER FUNCTIONS                      */
-/* *********************************************************************** */
 
 template <class Key, class T, class Compare, class Allocator>
 bool operator==(const map<Key, T, Compare, Allocator>& x,

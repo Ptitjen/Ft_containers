@@ -17,11 +17,9 @@
 
 namespace ft {
 
-/* ******************** class vector ********************* */
-
 template <class T, class Allocator = std::allocator<T> >
 class vector {
-  /* ***************** vector iterator ***************** */
+ public:
   class iterator {
    public:
     typedef T value_type;
@@ -30,7 +28,6 @@ class vector {
     typedef std::random_access_iterator_tag iterator_category;
     typedef long long unsigned difference_type;
 
-    /* Constructors and destructor */
     iterator() throw() : ptr_(NULL){};
     iterator(pointer ptr) throw() : ptr_(ptr) {}
     iterator(iterator const& it) throw() : ptr_(it.ptr_){};
@@ -41,7 +38,6 @@ class vector {
     };
     ~iterator() throw(){};
 
-    /* incrementation and decrementation */
     iterator& operator++() {
       ptr_++;
       return *this;
@@ -93,7 +89,6 @@ class vector {
 
     reference operator[](difference_type n) const { return ptr_ + n; };
 
-    /* comparison */
     bool operator==(const iterator& rhs) { return ptr_ == rhs.ptr_; }
     bool operator!=(const iterator& rhs) { return ptr_ != rhs.ptr_; }
 
@@ -106,8 +101,6 @@ class vector {
     pointer ptr_;
   };
 
-  /* **************** const iterator *************** */
-
   class const_iterator {
    public:
     typedef T value_type;
@@ -116,7 +109,6 @@ class vector {
     typedef std::random_access_iterator_tag iterator_category;
     typedef long long unsigned difference_type;
 
-    /* Constructors and destructor */
     const_iterator() throw() : ptr_(NULL){};
     const_iterator(pointer ptr) throw() : ptr_(ptr) {}
     const_iterator(iterator const& it) throw() : ptr_(it.ptr_){};
@@ -129,7 +121,6 @@ class vector {
     };
     ~const_iterator() throw(){};
 
-    /* incrementation and decrementation */
     const_iterator& operator++() {
       ptr_++;
       return *this;
@@ -150,11 +141,9 @@ class vector {
       return it;
     }
 
-    /* deref */
     reference operator*() const { return *ptr_; }
     pointer operator->() const { return ptr_; }
 
-    /* add and substract */
     const_iterator operator+(difference_type n) const {
       iterator it = *this;
       it.ptr_ = ptr_ + n;
@@ -183,10 +172,8 @@ class vector {
       return *this;
     };
 
-    /* ref */
     reference operator[](difference_type n) const { return ptr_ + n; };
 
-    /* comparison */
     bool operator==(const const_iterator& rhs) { return ptr_ == rhs.ptr_; }
     bool operator!=(const const_iterator& rhs) { return ptr_ != rhs.ptr_; }
 
@@ -199,8 +186,6 @@ class vector {
     pointer ptr_;
   };
 
- public:
-  /************ TYPEDEFS ************/
   typedef typename Allocator::reference reference;
   typedef typename Allocator::const_reference const_reference;
   typedef iterator iterator;
@@ -214,7 +199,6 @@ class vector {
   typedef ft::reverse_iterator<iterator> reverse_iterator;
   typedef ft::const_reverse_iterator<const_iterator> const_reverse_iterator;
 
-  /************ CONSTRUCTORS AND DESTRUCTOR ************/
   explicit vector(allocator_type const& alloc = Allocator()) {
     try {
       a = alloc;
@@ -331,8 +315,6 @@ class vector {
 
   allocator_type get_allocator() const throw() { return a; };
 
-  /**************** ITERATOR OPERATORS *****************/
-
   iterator begin() throw() { return _array; };
 
   const_iterator begin() const throw() { return _array; };
@@ -341,8 +323,6 @@ class vector {
 
   const_iterator end() const throw() { return _array + _size; };
 
-  /**************** REVERSE ITERATOR OPERATORS *****************/
-  // return directement reverseop
   reverse_iterator rbegin() throw() {
     return reverse_iterator(_array + _size - 1);
   };
@@ -357,7 +337,6 @@ class vector {
     return const_reverse_iterator(_array - 1);
   };
 
-  /**************** CAPACITY *****************/
   size_type size() const throw() { return _size; };
   size_type max_size() const throw() { return _max_size; };
 
@@ -394,8 +373,6 @@ class vector {
     }
   };
 
-  /**************** ACCESS *****************/
-
   reference operator[](size_type n) throw() { return *(_array + n); };
   const_reference operator[](size_type n) const throw() {
     return *(_array + n);
@@ -429,8 +406,6 @@ class vector {
   const_reference front() const throw() { return *_array; };
   reference back() throw() { return *(_array + _size - 1); };
   const_reference back() const throw() { return *(_array + _size - 1); };
-
-  /**************** MODIFIERS *****************/
 
   void push_back(const T& x) {
     try {
