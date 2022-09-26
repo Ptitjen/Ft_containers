@@ -120,4 +120,6 @@ class ThrowingConstructor {
  public:
   ThrowingConstructor() { throw std::exception(); }
 };
+
+std::ostream& operator<<(std::ostream& o, bli const& rhs);
 #endif

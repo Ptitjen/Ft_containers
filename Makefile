@@ -1,6 +1,6 @@
-SRCSFT = srcs/mainFt.cpp srcs/tests_utils/chrono.cpp srcs/tests_utils/tests_utils.cpp
+SRCSFT = srcs/mainFt.cpp srcs/tests_utils/chrono_mono.cpp srcs/tests_utils/tests_utils.cpp
 
-SRCSSTD = srcs/mainStd.cpp srcs/tests_utils/chrono.cpp srcs/tests_utils/tests_utils.cpp
+SRCSSTD = srcs/mainStd.cpp srcs/tests_utils/chrono_mono.cpp srcs/tests_utils/tests_utils.cpp
 
 OBJSFT = ${SRCSFT:.cpp=.o}
 
@@ -14,7 +14,7 @@ RM	= @rm -f
 
 CFLAGS = -Wall -Wextra -Werror
 
-CC = clang++ -std=c++98 -fsanitize=address -g
+CC = c++ -std=c++98 
 
 all:	${NAMEFT}	${NAMESTD}	
 

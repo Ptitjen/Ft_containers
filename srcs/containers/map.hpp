@@ -418,6 +418,8 @@ class map {
   typedef const_reverse_iterator const_reverse_iterator;
   class value_compare
       : public std::binary_function<value_type, value_type, bool> {
+    friend class map;
+
    protected:
     Compare comp;
     value_compare(Compare c) : comp(c) {}
